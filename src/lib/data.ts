@@ -1,5 +1,10 @@
 
-import type { Transaction, ReferredUser } from '@/lib/types';
+import type {
+  Transaction,
+  ReferredUser,
+  SubscriptionTier,
+  ReferralMilestone,
+} from '@/lib/types';
 
 export const transactions: Transaction[] = [
   {
@@ -69,32 +74,115 @@ export const transactions: Transaction[] = [
 ];
 
 export const referredUsers: ReferredUser[] = [
-    {
-        id: '1',
-        name: 'Alice Johnson',
-        email: 'alice@example.com',
-        signupDate: new Date('2024-06-15'),
-        status: 'Active',
-    },
-    {
-        id: '2',
-        name: 'Bob Williams',
-        email: 'bob@example.com',
-        signupDate: new Date('2024-06-20'),
-        status: 'Active',
-    },
-    {
-        id: '3',
-        name: 'Charlie Brown',
-        email: 'charlie@example.com',
-        signupDate: new Date('2024-07-01'),
-        status: 'Pending',
-    },
-    {
-        id: '4',
-        name: 'Diana Prince',
-        email: 'diana@example.com',
-        signupDate: new Date('2024-07-05'),
-        status: 'Active',
-    }
-]
+  {
+    id: '1',
+    name: 'Alice Johnson',
+    email: 'alice@example.com',
+    signupDate: new Date('2024-06-15'),
+    status: 'Active',
+  },
+  {
+    id: '2',
+    name: 'Bob Williams',
+    email: 'bob@example.com',
+    signupDate: new Date('2024-06-20'),
+    status: 'Active',
+  },
+  {
+    id: '3',
+    name: 'Charlie Brown',
+    email: 'charlie@example.com',
+    signupDate: new Date('2024-07-01'),
+    status: 'Pending',
+  },
+  {
+    id: '4',
+    name: 'Diana Prince',
+    email: 'diana@example.com',
+    signupDate: new Date('2024-07-05'),
+    status: 'Active',
+  },
+  {
+    id: '5',
+    name: 'Ethan Hunt',
+    email: 'ethan@example.com',
+    signupDate: new Date('2024-07-06'),
+    status: 'Active',
+  },
+  {
+    id: '6',
+    name: 'Fiona Glenanne',
+    email: 'fiona@example.com',
+    signupDate: new Date('2024-07-08'),
+    status: 'Pending',
+  },
+];
+
+export const REFERRAL_BONUS = 10;
+
+export const subscriptionTiers: SubscriptionTier[] = [
+  {
+    name: 'Bronze',
+    requiredReferrals: 0,
+    earningCap: 100,
+    borderColor: 'border-yellow-700',
+    gradientFrom: 'from-yellow-100',
+    gradientTo: 'to-stone-100',
+    textColor: 'text-yellow-800',
+  },
+  {
+    name: 'Silver',
+    requiredReferrals: 5,
+    earningCap: 500,
+    borderColor: 'border-slate-400',
+    gradientFrom: 'from-slate-200',
+    gradientTo: 'to-white',
+    textColor: 'text-slate-700',
+  },
+  {
+    name: 'Gold',
+    requiredReferrals: 20,
+    earningCap: 2500,
+    borderColor: 'border-amber-500',
+    gradientFrom: 'from-amber-200',
+    gradientTo: 'to-yellow-100',
+    textColor: 'text-amber-800',
+  },
+  {
+    name: 'Platinum',
+    requiredReferrals: 50,
+    earningCap: 10000,
+    borderColor: 'border-sky-500',
+    gradientFrom: 'from-sky-200',
+    gradientTo: 'to-cyan-100',
+    textColor: 'text-sky-800',
+  },
+];
+
+export const referralMilestones: ReferralMilestone[] = [
+  {
+    name: 'First Referral!',
+    requiredReferrals: 1,
+    reward: 5,
+  },
+  {
+    name: 'Referral Pro',
+    requiredReferrals: 5,
+    reward: 25,
+  },
+  {
+    name: 'Super Referrer',
+    requiredReferrals: 10,
+    reward: 75,
+  },
+  {
+    name: 'Referral Machine',
+    requiredReferrals: 25,
+    reward: 200,
+  },
+  {
+    name: 'Referral King',
+    requiredReferrals: 50,
+    reward: 500,
+  },
+];

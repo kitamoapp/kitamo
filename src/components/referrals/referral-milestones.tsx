@@ -1,0 +1,72 @@
+
+'use client';
+
+import { CheckCircle, Award } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { referralMilestones, referredUsers } from '@/lib/data';
+import { useCurrency } from '@/context/currency-context';
+
+export function ReferralMilestones() {
+  const { formatCurrency } = useCurrency();
+  const activeReferrals = referredUsers.filter(
+    (user) => user.status === 'Active'
+  ).length;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Referral Milestones</CardTitle>
+        <CardDescription>
+          Earn bonuses as you refer more friends.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ul className="space-y-4">
+          {referralMilestones.map((milestone, index) => {
+            const isCompleted = activeReferrals >= milestone.requiredReferrals;
+            return (
+              <li key={index} className="flex items-start">
+                <div className="flex-shrink-0">
+                  {isCompleted ? (
+                    <CheckCircle className="h-6 w-6 text-green-500" />
+                  ) : (
+                    <Award
+                      className={cn(
+                        'h-6 w-6',
+                        activeReferrals >=
+                          (referralMilestones[index - 1]?.requiredReferrals ||
+                            0)
+                          ? 'text-primary'
+                          : 'text-muted-foreground'
+                      )}
+                    />
+                  )}
+                </div>
+                <div className="ml-3">
+                  <p
+                    className={cn(
+                      'font-semibold',
+                      isCompleted && 'text-green-600 dark:text-green-400'
+                    )}
+                  >
+                    {milestone.name} ({milestone.requiredReferrals} Referrals)
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Reward: {formatCurrency(milestone.reward)}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </CardContent>
+    </Card>
+  );
+}

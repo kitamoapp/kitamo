@@ -23,3 +23,19 @@ export type Category = {
   label: string;
   icon: React.ElementType;
 };
+
+export type SubscriptionTier = {
+  name: string;
+  requiredReferrals: number;
+  earningCap: number;
+  borderColor: string;
+  gradientFrom: string;
+  gradientTo: string;
+  textColor: string;
+};
+
+export type ReferralMilestone = {
+    name: string;
+    requiredReferrals: number;
+    reward: number;
+}

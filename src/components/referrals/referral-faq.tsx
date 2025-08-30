@@ -29,9 +29,19 @@ const faqs = [
     answer: 'There is no limit to how many friends you can refer!',
   },
   {
+    question: 'How do subscription tiers work?',
+    answer:
+      'As you refer more active users, you will unlock higher subscription tiers. Each tier increases your maximum earning potential from referrals.',
+  },
+  {
+    question: 'What are referral milestones?',
+    answer:
+      'Milestones are goals based on the number of active users you have referred. Reaching a milestone unlocks a one-time bonus reward.',
+  },
+  {
     question: 'When will I see my bonus?',
     answer:
-      "Your referral bonus will be credited to your account as soon as your referred friend's status becomes 'Active'.",
+      "Your referral bonus will be credited to your account as soon as your referred friend's status becomes 'Active'. Milestone bonuses are credited instantly upon reaching the milestone.",
   },
 ];
 
