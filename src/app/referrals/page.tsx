@@ -1,3 +1,4 @@
+
 import { AppLayout } from '@/components/app-layout';
 import { ReferralCodeCard } from '@/components/referrals/referral-code-card';
 import { ReferredUsersTable } from '@/components/referrals/referred-users-table';

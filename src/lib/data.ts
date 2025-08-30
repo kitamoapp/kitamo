@@ -1,3 +1,4 @@
+
 import type { Transaction, ReferredUser } from '@/lib/types';
 
 export const transactions: Transaction[] = [

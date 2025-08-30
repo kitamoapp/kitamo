@@ -1,3 +1,4 @@
+
 import { referredUsers } from '@/lib/data';
 import {
   Table,
@@ -44,7 +45,7 @@ export function ReferredUsersTable() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
                       <AvatarImage
-                        src={`https://picsum.photos/100/100?random=${user.id}`}
+                        src={`https://picsum.photos/100/100?random=${'user.id'}`}
                         alt={user.name}
                         data-ai-hint="person portrait"
                       />
