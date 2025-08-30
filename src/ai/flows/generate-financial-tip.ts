@@ -19,6 +19,7 @@ const FinancialTipInputSchema = z.object({
     .describe(
       'A record of spending categories and the amount spent in each category.'
     ),
+  currency: z.string().describe('The currency of the financial amounts.'),
 });
 export type FinancialTipInput = z.infer<typeof FinancialTipInputSchema>;
 
@@ -35,7 +36,7 @@ const prompt = ai.definePrompt({
   name: 'financialTipPrompt',
   input: {schema: FinancialTipInputSchema},
   output: {schema: FinancialTipOutputSchema},
-  prompt: `You are a personal finance advisor. Based on the user's income, expenses, and spending categories, provide a personalized financial tip.
+  prompt: `You are a personal finance advisor. Based on the user's income, expenses, and spending categories, provide a personalized financial tip. The currency is in {{currency}}.
 
 Income: {{income}}
 Expenses: {{expenses}}

@@ -18,12 +18,14 @@ import {
 } from '@/ai/flows/generate-financial-tip';
 import { Skeleton } from '@/components/ui/skeleton';
 import { transactions } from '@/lib/data';
+import { useCurrency } from '@/context/currency-context';
 
 export function AiTipCard() {
   const [tip, setTip] = useState('');
   const [loading, setLoading] = useState(true);
+  const { currency } = useCurrency();
 
-  const getFinancialData = (): FinancialTipInput => {
+  const getFinancialData = (): Omit<FinancialTipInput, 'currency'> => {
     const income = transactions
       .filter((t) => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
@@ -47,7 +49,7 @@ export function AiTipCard() {
     setLoading(true);
     try {
       const financialData = getFinancialData();
-      const result = await generateFinancialTip(financialData);
+      const result = await generateFinancialTip({ ...financialData, currency });
       setTip(result.tip);
     } catch (error) {
       console.error('Failed to generate financial tip:', error);
@@ -59,7 +61,7 @@ export function AiTipCard() {
 
   useEffect(() => {
     fetchTip();
-  }, []);
+  }, [currency]);
 
   return (
     <Card className="bg-primary/10 border-primary/20">

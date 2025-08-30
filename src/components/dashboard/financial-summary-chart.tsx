@@ -8,6 +8,7 @@ import {
   ChartConfig,
   ChartTooltip,
 } from '../ui/chart';
+import { useCurrency } from '@/context/currency-context';
 
 const chartData = transactions
   .reduce(
@@ -48,6 +49,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function FinancialSummaryChart() {
+  const { formatCurrency } = useCurrency();
   return (
     <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
       <ResponsiveContainer width="100%" height={250}>
@@ -64,9 +66,11 @@ export function FinancialSummaryChart() {
             axisLine={false}
             tickMargin={8}
             fontSize={12}
-            tickFormatter={(value) => `$${value}`}
+            tickFormatter={(value) => formatCurrency(value).replace(/\.00$/, '')}
           />
-          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartTooltip
+            content={<ChartTooltipContent formatter={(value, name) => formatCurrency(value as number)} />}
+           />
           <Bar dataKey="income" fill="var(--color-income)" radius={4} />
           <Bar dataKey="expenses" fill="var(--color-expenses)" radius={4} />
         </BarChart>
