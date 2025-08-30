@@ -15,12 +15,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle authentication
+    // Here you would typically handle user creation
     // For this demo, we'll just redirect to the dashboard
     router.push('/dashboard');
   };
@@ -30,44 +30,51 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center">
           <PiggyBank className="mb-4 h-12 w-12 text-primary" />
-          <h1 className="text-3xl font-bold">Welcome to KitaMo</h1>
+          <h1 className="text-3xl font-bold">Create an Account</h1>
           <p className="text-muted-foreground">
-            Sign in to manage your finances
+            Start your financial journey with KitaMo
           </p>
         </div>
         <Card>
           <CardHeader>
-            <CardTitle>Login</CardTitle>
+            <CardTitle>Sign Up</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account.
+              Enter your information to create an account.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleSignup} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" type="text" placeholder="Your Name" required />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="name@example.com"
-                  defaultValue="user@example.com"
                   required
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" defaultValue="password" required />
+                <Input id="password" type="password" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Input id="confirm-password" type="password" required />
               </div>
               <Button type="submit" className="w-full">
-                Sign In
+                Create Account
               </Button>
             </form>
           </CardContent>
         </Card>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" className="underline">
-            Sign up
+          Already have an account?{' '}
+          <Link href="/" className="underline">
+            Sign in
           </Link>
         </div>
       </div>
