@@ -17,7 +17,7 @@ import {
   type FinancialTipInput,
 } from '@/ai/flows/generate-financial-tip';
 import { Skeleton } from '@/components/ui/skeleton';
-import { transactions } from '@/lib/data';
+import { useTransactions } from '@/context/transaction-context';
 import { useCurrency } from '@/context/currency-context';
 import { Label } from '../ui/label';
 import {
@@ -36,6 +36,7 @@ export function AiTipCard() {
   const [employmentStatus, setEmploymentStatus] = useState('');
 
   const { currency } = useCurrency();
+  const { transactions } = useTransactions();
 
   const getFinancialData = (): Omit<
     FinancialTipInput,
@@ -93,7 +94,7 @@ export function AiTipCard() {
     if (!demographicArea || !financialGoal || !employmentStatus) {
       setTip('Please fill in your details below to get a personalized tip.');
     }
-  }, [currency, demographicArea, financialGoal, employmentStatus]);
+  }, [currency, demographicArea, financialGoal, employmentStatus, transactions]);
 
   const canFetchTip =
     demographicArea.trim() !== '' &&

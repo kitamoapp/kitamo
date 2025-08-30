@@ -10,7 +10,7 @@ import {
   YAxis,
   Legend,
 } from 'recharts';
-import { transactions } from '@/lib/data';
+import { useTransactions } from '@/context/transaction-context';
 import {
   ChartTooltipContent,
   ChartContainer,
@@ -29,33 +29,6 @@ import {
 } from '../ui/select';
 import { ExpenseBreakdownChart } from './expense-breakdown-chart';
 
-const barChartData = transactions
-  .reduce(
-    (acc, t) => {
-      const day = t.date.toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'short',
-      });
-      let entry = acc.find((e) => e.day === day);
-      if (!entry) {
-        entry = { day, income: 0, expenses: 0 };
-        acc.push(entry);
-      }
-      if (t.type === 'income') {
-        entry.income += t.amount;
-      } else {
-        entry.expenses += t.amount;
-      }
-      return acc;
-    },
-    [] as { day: string; income: number; expenses: number }[]
-  )
-  .sort(
-    (a, b) =>
-      new Date(a.day + ', 2024').getTime() -
-      new Date(b.day + ', 2024').getTime()
-  );
-
 const barChartConfig = {
   income: {
     label: 'Income',
@@ -72,11 +45,42 @@ type ChartType = 'bar' | 'pie';
 export function FinancialSummaryChart() {
   const { formatCurrency } = useCurrency();
   const [chartType, setChartType] = useState<ChartType>('bar');
+  const { transactions } = useTransactions();
+
+  const barChartData = transactions
+    .reduce(
+      (acc, t) => {
+        const day = new Date(t.date).toLocaleDateString('en-US', {
+          day: 'numeric',
+          month: 'short',
+        });
+        let entry = acc.find((e) => e.day === day);
+        if (!entry) {
+          entry = { day, income: 0, expenses: 0 };
+          acc.push(entry);
+        }
+        if (t.type === 'income') {
+          entry.income += t.amount;
+        } else {
+          entry.expenses += t.amount;
+        }
+        return acc;
+      },
+      [] as { day: string; income: number; expenses: number }[]
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.day + ', 2024').getTime() -
+        new Date(b.day + ', 2024').getTime()
+    );
 
   return (
     <>
       <div className="mb-4 flex justify-end">
-        <Select value={chartType} onValueChange={(v) => setChartType(v as ChartType)}>
+        <Select
+          value={chartType}
+          onValueChange={(v) => setChartType(v as ChartType)}
+        >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Select chart type" />
           </SelectTrigger>

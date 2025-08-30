@@ -2,28 +2,13 @@
 'use client';
 
 import { Pie, PieChart, ResponsiveContainer, Tooltip, Cell } from 'recharts';
-import { transactions } from '@/lib/data';
+import { useTransactions } from '@/context/transaction-context';
 import {
   ChartContainer,
   ChartConfig,
   ChartTooltipContent,
 } from '../ui/chart';
 import { useCurrency } from '@/context/currency-context';
-
-const expenseData = transactions
-  .filter((t) => t.type === 'expense')
-  .reduce(
-    (acc, t) => {
-      let entry = acc.find((e) => e.category === t.category);
-      if (!entry) {
-        entry = { category: t.category, total: 0 };
-        acc.push(entry);
-      }
-      entry.total += t.amount;
-      return acc;
-    },
-    [] as { category: string; total: number }[]
-  );
 
 const chartConfig = {
   Groceries: { label: 'Groceries', color: 'hsl(var(--chart-1))' },
@@ -38,12 +23,24 @@ const chartConfig = {
 
 export function ExpenseBreakdownChart() {
   const { formatCurrency } = useCurrency();
+  const { transactions } = useTransactions();
 
+  const expenseData = transactions
+    .filter((t) => t.type === 'expense')
+    .reduce(
+      (acc, t) => {
+        let entry = acc.find((e) => e.category === t.category);
+        if (!entry) {
+          entry = { category: t.category, total: 0 };
+          acc.push(entry);
+        }
+        entry.total += t.amount;
+        return acc;
+      },
+      [] as { category: string; total: number }[]
+    );
   return (
-    <ChartContainer
-      config={chartConfig}
-      className="min-h-[300px] w-full"
-    >
+    <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Tooltip

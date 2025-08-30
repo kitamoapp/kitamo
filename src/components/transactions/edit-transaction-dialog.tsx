@@ -1,17 +1,9 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   CalendarIcon,
-  Car,
-  Gift,
-  Heart,
-  Home,
-  Plus,
-  ShoppingBag,
-  Utensils,
-  Briefcase,
 } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -26,7 +18,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -50,7 +41,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useTransactions } from '@/context/transaction-context';
-import { expenseCategories, incomeCategories } from '@/lib/categories';
+import type { Transaction } from '@/lib/types';
+import { incomeCategories, expenseCategories } from '@/lib/categories';
 
 const formSchema = z.object({
   type: z.enum(['income', 'expense'], { required_error: 'Select a type.' }),
@@ -60,54 +52,53 @@ const formSchema = z.object({
   description: z.string().min(1, 'Please enter a description.'),
 });
 
-export function AddTransactionDialog() {
-  const [open, setOpen] = useState(false);
+interface EditTransactionDialogProps {
+  transaction: Transaction;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function EditTransactionDialog({ transaction, onOpenChange }: EditTransactionDialogProps) {
   const { toast } = useToast();
-  const { addTransaction } = useTransactions();
+  const { updateTransaction } = useTransactions();
+  const [open, setOpen] = useState(true);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: 'expense',
-      amount: 0,
-      description: '',
-      date: new Date(),
+      ...transaction,
+      date: new Date(transaction.date),
     },
   });
 
   const transactionType = form.watch('type');
 
+  useEffect(() => {
+    form.reset({
+      ...transaction,
+      date: new Date(transaction.date)
+    });
+  }, [transaction, form]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    addTransaction({
-      ...values,
-      id: crypto.randomUUID(),
-      date: values.date.toISOString(),
+    updateTransaction({
+        ...values,
+        id: transaction.id,
+        date: values.date.toISOString(),
     });
     toast({
       title: 'Success!',
-      description: 'Your transaction has been added.',
+      description: 'Your transaction has been updated.',
     });
-    form.reset({
-      type: 'expense',
-      amount: 0,
-      description: '',
-      date: new Date(),
-    });
-    setOpen(false);
+    onOpenChange(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="-ml-1 mr-2 h-4 w-4" />
-          Add Transaction
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Transaction</DialogTitle>
+          <DialogTitle>Edit Transaction</DialogTitle>
           <DialogDescription>
-            Record a new income or expense to track your finances.
+            Update the details of your transaction.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -168,7 +159,6 @@ export function AddTransactionDialog() {
                   <FormLabel>Category</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
                     value={field.value}
                   >
                     <FormControl>
@@ -212,7 +202,7 @@ export function AddTransactionDialog() {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, 'PPP')
+                            format(new Date(field.value), 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -223,7 +213,7 @@ export function AddTransactionDialog() {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value}
+                        selected={new Date(field.value)}
                         onSelect={field.onChange}
                         initialFocus
                       />
@@ -249,7 +239,7 @@ export function AddTransactionDialog() {
             />
 
             <DialogFooter>
-              <Button type="submit">Save Transaction</Button>
+              <Button type="submit">Save Changes</Button>
             </DialogFooter>
           </form>
         </Form>
@@ -257,4 +247,3 @@ export function AddTransactionDialog() {
     </Dialog>
   );
 }
-

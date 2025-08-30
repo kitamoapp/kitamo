@@ -1,9 +1,10 @@
+
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
   category: string;
   amount: number;
-  date: Date;
+  date: string; // Changed to string to be serializable
   description: string;
 };
 
@@ -16,3 +17,9 @@ export type ReferredUser = {
 };
 
 export type Currency = 'USD' | 'EUR' | 'JPY' | 'GBP' | 'PHP';
+
+export type Category = {
+  value: string;
+  label: string;
+  icon: React.ElementType;
+};
