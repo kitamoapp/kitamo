@@ -21,12 +21,11 @@ import {
 } from '../ui/chart';
 import { useCurrency } from '@/context/currency-context';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import { ExpenseBreakdownChart } from './expense-breakdown-chart';
 
 const barChartConfig = {
@@ -44,7 +43,6 @@ type ChartType = 'bar' | 'pie';
 
 export function FinancialSummaryChart() {
   const { formatCurrency } = useCurrency();
-  const [chartType, setChartType] = useState<ChartType>('bar');
   const { transactions } = useTransactions();
 
   const barChartData = transactions
@@ -75,22 +73,14 @@ export function FinancialSummaryChart() {
     );
 
   return (
-    <>
-      <div className="mb-4 flex justify-end">
-        <Select
-          value={chartType}
-          onValueChange={(v) => setChartType(v as ChartType)}
-        >
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Select chart type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="bar">Income vs. Expenses</SelectItem>
-            <SelectItem value="pie">Expense Breakdown</SelectItem>
-          </SelectContent>
-        </Select>
+    <Tabs defaultValue="bar">
+      <div className="flex items-center justify-end">
+        <TabsList>
+          <TabsTrigger value="bar">Income vs. Expenses</TabsTrigger>
+          <TabsTrigger value="pie">Expense Breakdown</TabsTrigger>
+        </TabsList>
       </div>
-      {chartType === 'bar' ? (
+      <TabsContent value="bar" className="mt-4">
         <ChartContainer
           config={barChartConfig}
           className="min-h-[250px] w-full"
@@ -126,9 +116,10 @@ export function FinancialSummaryChart() {
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
-      ) : (
+      </TabsContent>
+      <TabsContent value="pie" className="mt-4">
         <ExpenseBreakdownChart />
-      )}
-    </>
+      </TabsContent>
+    </Tabs>
   );
 }
