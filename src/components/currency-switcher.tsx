@@ -9,8 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-type Currency = 'USD' | 'EUR' | 'JPY' | 'GBP';
+import type { Currency } from '@/lib/types';
 
 export function CurrencySwitcher() {
   const { currency, setCurrency } = useCurrency();
@@ -25,6 +24,7 @@ export function CurrencySwitcher() {
         <SelectItem value="EUR">EUR</SelectItem>
         <SelectItem value="JPY">JPY</SelectItem>
         <SelectItem value="GBP">GBP</SelectItem>
+        <SelectItem value="PHP">PHP</SelectItem>
       </SelectContent>
     </Select>
   );

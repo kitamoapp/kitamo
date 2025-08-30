@@ -2,8 +2,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-type Currency = 'USD' | 'EUR' | 'JPY' | 'GBP';
+import type { Currency } from '@/lib/types';
 
 interface CurrencyContextType {
   currency: Currency;

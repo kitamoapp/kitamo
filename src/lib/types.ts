@@ -14,3 +14,5 @@ export type ReferredUser = {
   signupDate: Date;
   status: 'Active' | 'Pending';
 };
+
+export type Currency = 'USD' | 'EUR' | 'JPY' | 'GBP' | 'PHP';
