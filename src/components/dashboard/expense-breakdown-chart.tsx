@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Pie, PieChart, ResponsiveContainer, Tooltip, Cell } from 'recharts';
@@ -41,9 +42,9 @@ export function ExpenseBreakdownChart() {
   return (
     <ChartContainer
       config={chartConfig}
-      className="min-h-[250px] w-full"
+      className="min-h-[300px] w-full"
     >
-      <ResponsiveContainer width="100%" height={250}>
+      <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Tooltip
             content={
@@ -64,7 +65,7 @@ export function ExpenseBreakdownChart() {
             nameKey="category"
             cx="50%"
             cy="50%"
-            outerRadius={80}
+            outerRadius={100}
             fill="#8884d8"
             label={({
               cx,
