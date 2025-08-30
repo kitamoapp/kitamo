@@ -23,10 +23,15 @@ const FinancialTipInputSchema = z.object({
   demographicArea: z
     .string()
     .describe('The demographic area of the user (e.g., "Urban City", "Suburban Area", "Rural Countryside"). This helps understand cost of living.'),
-  financialBackground: z
+  financialGoal: z
     .string()
     .describe(
-      'A brief description of the user\'s financial situation or profession (e.g., "student with part-time job", "young professional in tech", "family with two kids", "freelancer").'
+      'The primary financial goal of the user (e.g., "Saving for Retirement", "Building an Emergency Fund", "Paying Off Debt").'
+    ),
+    employmentStatus: z
+    .string()
+    .describe(
+      'The employment status of the user (e.g., "Full-time Employee", "Part-time Employee", "Freelancer/Self-Employed", "Student", "Unemployed").'
     ),
 });
 export type FinancialTipInput = z.infer<typeof FinancialTipInputSchema>;
@@ -52,14 +57,15 @@ Based on the user's financial details below, generate a concise and highly relev
 *   **Total Income:** {{income}}
 *   **Total Expenses:** {{expenses}}
 *   **Living Area:** {{demographicArea}}
-*   **Financial Background:** {{financialBackground}}
+*   **Employment:** {{employmentStatus}}
+*   **Main Financial Goal:** {{financialGoal}}
 
 **Spending Breakdown:**
 {{#each spendingCategories}}
 *   **{{@key}}:** {{this}}
 {{/each}}
 
-Analyze all this information to identify the most impactful area for improvement or the next logical step in their financial journey. Frame your advice in a positive and easy-to-understand way.`,
+Analyze all this information to identify the most impactful area for improvement or the next logical step in their financial journey. Frame your advice in a positive and easy-to-understand way, directly addressing their financial goal and circumstances.`,
 });
 
 const generateFinancialTipFlow = ai.defineFlow(
