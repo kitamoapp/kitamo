@@ -20,6 +20,14 @@ const FinancialTipInputSchema = z.object({
       'A record of spending categories and the amount spent in each category.'
     ),
   currency: z.string().describe('The currency of the financial amounts.'),
+  demographicArea: z
+    .string()
+    .describe('The demographic area of the user (e.g., "urban", "suburban", "rural").'),
+  financialBackground: z
+    .string()
+    .describe(
+      'A brief description of the user\'s financial background (e.g., "student", "young professional", "family with kids").'
+    ),
 });
 export type FinancialTipInput = z.infer<typeof FinancialTipInputSchema>;
 
@@ -36,7 +44,7 @@ const prompt = ai.definePrompt({
   name: 'financialTipPrompt',
   input: {schema: FinancialTipInputSchema},
   output: {schema: FinancialTipOutputSchema},
-  prompt: `You are a personal finance advisor. Based on the user's income, expenses, and spending categories, provide a personalized financial tip. The currency is in {{currency}}.
+  prompt: `You are a personal finance advisor. Based on the user's income, expenses, spending categories, demographic area, and financial background, provide a personalized financial tip. The currency is in {{currency}}.
 
 Income: {{income}}
 Expenses: {{expenses}}
@@ -44,8 +52,10 @@ Spending Categories:
 {{#each spendingCategories}}
   - {{key}}: {{value}}
 {{/each}}
+Demographic Area: {{demographicArea}}
+Financial Background: {{financialBackground}}
 
-Tip:`,
+Provide a concise, actionable, and highly relevant financial tip based on all this information.`,
 });
 
 const generateFinancialTipFlow = ai.defineFlow(
