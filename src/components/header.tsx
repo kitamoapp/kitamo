@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, PiggyBank } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useState } from 'react';
 
 import { UserNav } from '@/components/user-nav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/logo';
 
 export function Header() {
   const pathname = usePathname();
@@ -25,7 +26,7 @@ export function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/dashboard" className="mr-6 flex items-center space-x-2">
-            <PiggyBank className="h-6 w-6 text-primary" />
+            <Logo className="h-6 w-6 text-primary" />
             <span className="font-bold">KitaMo</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
@@ -65,7 +66,7 @@ export function Header() {
                   className="flex items-center space-x-2"
                   onClick={() => setSheetOpen(false)}
                 >
-                  <PiggyBank className="h-6 w-6 text-primary" />
+                  <Logo className="h-6 w-6 text-primary" />
                   <span className="font-bold">KitaMo</span>
                 </Link>
                 {navItems.map((item) => (
