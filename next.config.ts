@@ -24,9 +24,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        async_hooks: false,
+      };
+    }
+    return config;
   },
+  experimental: {
+  },
+  allowedDevOrigins: ['https://6000-firebase-studio-1756530008162.cluster-yylgzpipxrar4v4a72liastuqy.cloudworkstations.dev'],
 };
 
 export default nextConfig;
