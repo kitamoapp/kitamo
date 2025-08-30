@@ -1,3 +1,4 @@
+
 import { transactions } from '@/lib/data';
 import {
   Table,
@@ -16,13 +17,10 @@ import {
     CardHeader,
     CardTitle,
   } from '@/components/ui/card';
+import { useCurrency } from '@/context/currency-context';
 
 export function TransactionsTable() {
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
+  const { formatCurrency } = useCurrency();
 
   const sortedTransactions = [...transactions].sort(
     (a, b) => b.date.getTime() - a.date.getTime()

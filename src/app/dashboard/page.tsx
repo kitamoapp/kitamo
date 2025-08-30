@@ -1,3 +1,6 @@
+
+'use client';
+
 import { AppLayout } from '@/components/app-layout';
 import {
   Card,
@@ -13,8 +16,10 @@ import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-
 import { AiTipCard } from '@/components/dashboard/ai-tip-card';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
+import { useCurrency } from '@/context/currency-context';
 
 export default function DashboardPage() {
+  const { currency, formatCurrency } = useCurrency();
   const totalIncome = transactions
     .filter((t) => t.type === 'income')
     .reduce((acc, t) => acc + t.amount, 0);
@@ -23,17 +28,14 @@ export default function DashboardPage() {
     .reduce((acc, t) => acc + t.amount, 0);
   const balance = totalIncome - totalExpenses;
 
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-
   return (
     <AppLayout>
       <div className="flex items-center justify-between space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <AddTransactionDialog />
+      </div>
+      <div className="mt-6 grid grid-cols-1 gap-6">
+        <AiTipCard />
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <SummaryCard
@@ -65,7 +67,6 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         <div className="lg:col-span-2 space-y-6">
-          <AiTipCard />
           <RecentTransactions />
         </div>
       </div>

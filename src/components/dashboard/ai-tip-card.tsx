@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -61,12 +62,17 @@ export function AiTipCard() {
   }, []);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Lightbulb className="h-5 w-5 text-yellow-500" />
-          AI Financial Tip
-        </CardTitle>
+    <Card className="bg-primary/10 border-primary/20">
+      <CardHeader className="flex-row items-start gap-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20">
+            <Lightbulb className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+            <CardTitle className="text-primary">Your AI Financial Tip</CardTitle>
+            <CardDescription>
+                Personalized advice to help you improve your financial health.
+            </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
         {loading ? (
@@ -76,7 +82,7 @@ export function AiTipCard() {
             <Skeleton className="h-4 w-3/4" />
           </div>
         ) : (
-          <p className="text-sm">{tip}</p>
+          <p className="text-lg font-medium">{tip}</p>
         )}
       </CardContent>
       <CardFooter>
@@ -85,11 +91,12 @@ export function AiTipCard() {
           size="sm"
           onClick={fetchTip}
           disabled={loading}
+          className="text-primary hover:bg-primary/20 hover:text-primary"
         >
           <RefreshCw
             className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`}
           />
-          New Tip
+          Get a New Tip
         </Button>
       </CardFooter>
     </Card>

@@ -1,3 +1,4 @@
+
 import { transactions } from '@/lib/data';
 import {
   Card,
@@ -24,6 +25,7 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Button } from '../ui/button';
+import { useCurrency } from '@/context/currency-context';
 
 const categoryIcons: { [key: string]: React.ElementType } = {
   Groceries: Utensils,
@@ -39,15 +41,11 @@ const categoryIcons: { [key: string]: React.ElementType } = {
 };
 
 export function RecentTransactions() {
+    const { formatCurrency } = useCurrency();
   const recentTransactions = [...transactions]
     .sort((a, b) => b.date.getTime() - a.date.getTime())
     .slice(0, 5);
 
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
 
   return (
     <Card>
