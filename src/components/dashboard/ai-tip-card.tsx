@@ -20,8 +20,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { transactions } from '@/lib/data';
 import { useCurrency } from '@/context/currency-context';
 import { Label } from '../ui/label';
-import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 export function AiTipCard() {
   const [tip, setTip] = useState('');
@@ -105,20 +111,25 @@ export function AiTipCard() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="demographic-area">Your Living Area</Label>
-            <Input
-              id="demographic-area"
-              value={demographicArea}
-              onChange={(e) => setDemographicArea(e.target.value)}
-              placeholder="e.g., Urban, Suburban, Rural"
-            />
+            <Select value={demographicArea} onValueChange={setDemographicArea}>
+                <SelectTrigger id="demographic-area">
+                    <SelectValue placeholder="Select your area" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="Urban City">Urban City</SelectItem>
+                    <SelectItem value="Suburban Area">Suburban Area</SelectItem>
+                    <SelectItem value="Rural Countryside">Rural Countryside</SelectItem>
+                </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="financial-background">Your Financial Profile</Label>
-            <Input
+            <Label htmlFor="financial-background">Your Financial Profile & Background</Label>
+            <Textarea
               id="financial-background"
               value={financialBackground}
               onChange={(e) => setFinancialBackground(e.target.value)}
-              placeholder="e.g., Student, Young Professional"
+              placeholder="e.g., 'I am a student with a part-time job trying to save for a car.' or 'I am a young professional in the tech industry with some student loan debt.'"
+              className="h-[100px]"
             />
           </div>
         </div>

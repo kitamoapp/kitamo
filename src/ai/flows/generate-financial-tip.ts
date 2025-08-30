@@ -22,7 +22,7 @@ const FinancialTipInputSchema = z.object({
   currency: z.string().describe('The currency of the financial amounts.'),
   demographicArea: z
     .string()
-    .describe('The demographic area of the user (e.g., "urban city", "suburb near a city", "rural countryside"). This helps understand cost of living.'),
+    .describe('The demographic area of the user (e.g., "Urban City", "Suburban Area", "Rural Countryside"). This helps understand cost of living.'),
   financialBackground: z
     .string()
     .describe(
