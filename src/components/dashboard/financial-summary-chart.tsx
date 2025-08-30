@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { transactions } from '@/lib/data';
 import {
@@ -9,8 +10,16 @@ import {
   ChartTooltip,
 } from '../ui/chart';
 import { useCurrency } from '@/context/currency-context';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
+import { ExpenseBreakdownChart } from './expense-breakdown-chart';
 
-const chartData = transactions
+const barChartData = transactions
   .reduce(
     (acc, t) => {
       const day = t.date.toLocaleDateString('en-US', {
@@ -37,7 +46,7 @@ const chartData = transactions
       new Date(b.day + ', 2024').getTime()
   );
 
-const chartConfig = {
+const barChartConfig = {
   income: {
     label: 'Income',
     color: 'hsl(var(--chart-2))',
@@ -48,33 +57,63 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+type ChartType = 'bar' | 'pie';
+
 export function FinancialSummaryChart() {
   const { formatCurrency } = useCurrency();
+  const [chartType, setChartType] = useState<ChartType>('bar');
+
   return (
-    <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
-      <ResponsiveContainer width="100%" height={250}>
-        <BarChart data={chartData} accessibilityLayer>
-          <XAxis
-            dataKey="day"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            fontSize={12}
-          />
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            fontSize={12}
-            tickFormatter={(value) => formatCurrency(value).replace(/\.00$/, '')}
-          />
-          <ChartTooltip
-            content={<ChartTooltipContent formatter={(value, name) => formatCurrency(value as number)} />}
-           />
-          <Bar dataKey="income" fill="var(--color-income)" radius={4} />
-          <Bar dataKey="expenses" fill="var(--color-expenses)" radius={4} />
-        </BarChart>
-      </ResponsiveContainer>
-    </ChartContainer>
+    <>
+      <div className="mb-4 flex justify-end">
+        <Select value={chartType} onValueChange={(v) => setChartType(v as ChartType)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select chart type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="bar">Income vs. Expenses</SelectItem>
+            <SelectItem value="pie">Expense Breakdown</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      {chartType === 'bar' ? (
+        <ChartContainer
+          config={barChartConfig}
+          className="min-h-[250px] w-full"
+        >
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={barChartData} accessibilityLayer>
+              <XAxis
+                dataKey="day"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                fontSize={12}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                fontSize={12}
+                tickFormatter={(value) =>
+                  formatCurrency(value).replace(/\.00$/, '')
+                }
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    formatter={(value) => formatCurrency(value as number)}
+                  />
+                }
+              />
+              <Bar dataKey="income" fill="var(--color-income)" radius={4} />
+              <Bar dataKey="expenses" fill="var(--color-expenses)" radius={4} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      ) : (
+        <ExpenseBreakdownChart />
+      )}
+    </>
   );
 }
