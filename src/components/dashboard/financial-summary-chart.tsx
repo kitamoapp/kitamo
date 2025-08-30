@@ -1,13 +1,23 @@
+
 'use client';
 
 import { useState } from 'react';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Legend,
+} from 'recharts';
 import { transactions } from '@/lib/data';
 import {
   ChartTooltipContent,
   ChartContainer,
   ChartConfig,
   ChartTooltip,
+  ChartLegend,
+  ChartLegendContent,
 } from '../ui/chart';
 import { useCurrency } from '@/context/currency-context';
 import {
@@ -106,6 +116,7 @@ export function FinancialSummaryChart() {
                   />
                 }
               />
+              <ChartLegend content={<ChartLegendContent />} />
               <Bar dataKey="income" fill="var(--color-income)" radius={4} />
               <Bar dataKey="expenses" fill="var(--color-expenses)" radius={4} />
             </BarChart>
