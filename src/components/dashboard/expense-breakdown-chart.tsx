@@ -31,17 +31,25 @@ export function ExpenseBreakdownChart() {
       (acc, t) => {
         let entry = acc.find((e) => e.category === t.category);
         if (!entry) {
-          entry = { category: t.category, total: 0 };
+          entry = { category: t.category, total: 0, fill: '' };
           acc.push(entry);
         }
         entry.total += t.amount;
         return acc;
       },
-      [] as { category: string; total: number }[]
-    );
+      [] as { category: string; total: number; fill: string }[]
+    )
+    .map((item) => ({
+      ...item,
+      fill: chartConfig[item.category as keyof typeof chartConfig]?.color || '#8884d8',
+    }));
+
   return (
-    <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-      <ResponsiveContainer width="100%" height={300}>
+    <ChartContainer
+      config={chartConfig}
+      className="min-h-[250px] w-full"
+    >
+      <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Tooltip
             content={
@@ -62,47 +70,38 @@ export function ExpenseBreakdownChart() {
             nameKey="category"
             cx="50%"
             cy="50%"
-            outerRadius={100}
-            fill="#8884d8"
+            outerRadius={80}
+            labelLine={false}
             label={({
               cx,
               cy,
               midAngle,
               innerRadius,
               outerRadius,
-              value,
+              percent,
               index,
             }) => {
               const RADIAN = Math.PI / 180;
-              const radius = 25 + innerRadius + (outerRadius - innerRadius);
+              const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
               const x = cx + radius * Math.cos(-midAngle * RADIAN);
               const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+              if (percent < 0.05) return null;
 
               return (
                 <text
                   x={x}
                   y={y}
-                  fill="hsl(var(--foreground))"
+                  fill="white"
                   textAnchor={x > cx ? 'start' : 'end'}
                   dominantBaseline="central"
-                  className="text-xs"
+                  className="text-xs font-medium"
                 >
                   {expenseData[index].category}
                 </text>
               );
             }}
-            labelLine={false}
-          >
-            {expenseData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={
-                  chartConfig[entry.category as keyof typeof chartConfig]
-                    ?.color || '#8884d8'
-                }
-              />
-            ))}
-          </Pie>
+          />
         </PieChart>
       </ResponsiveContainer>
     </ChartContainer>

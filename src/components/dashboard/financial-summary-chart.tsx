@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -20,13 +19,6 @@ import {
   ChartLegendContent,
 } from '../ui/chart';
 import { useCurrency } from '@/context/currency-context';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import { ExpenseBreakdownChart } from './expense-breakdown-chart';
 
 const barChartConfig = {
   income: {
@@ -39,7 +31,6 @@ const barChartConfig = {
   },
 } satisfies ChartConfig;
 
-type ChartType = 'bar' | 'pie';
 
 export function FinancialSummaryChart() {
   const { formatCurrency } = useCurrency();
@@ -73,53 +64,40 @@ export function FinancialSummaryChart() {
     );
 
   return (
-    <Tabs defaultValue="bar">
-      <div className="flex items-center justify-end">
-        <TabsList>
-          <TabsTrigger value="bar">Income vs. Expenses</TabsTrigger>
-          <TabsTrigger value="pie">Expense Breakdown</TabsTrigger>
-        </TabsList>
-      </div>
-      <TabsContent value="bar" className="mt-4">
-        <ChartContainer
-          config={barChartConfig}
-          className="min-h-[250px] w-full"
-        >
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={barChartData} accessibilityLayer>
-              <XAxis
-                dataKey="day"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                fontSize={12}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                fontSize={12}
-                tickFormatter={(value) =>
-                  formatCurrency(value).replace(/\.00$/, '')
-                }
-              />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    formatter={(value) => formatCurrency(value as number)}
-                  />
-                }
-              />
-              <ChartLegend content={<ChartLegendContent />} />
-              <Bar dataKey="income" fill="var(--color-income)" radius={4} />
-              <Bar dataKey="expenses" fill="var(--color-expenses)" radius={4} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartContainer>
-      </TabsContent>
-      <TabsContent value="pie" className="mt-4">
-        <ExpenseBreakdownChart />
-      </TabsContent>
-    </Tabs>
+      <ChartContainer
+        config={barChartConfig}
+        className="min-h-[250px] w-full"
+      >
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={barChartData} accessibilityLayer>
+            <XAxis
+              dataKey="day"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              fontSize={12}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              fontSize={12}
+              tickFormatter={(value) =>
+                formatCurrency(value).replace(/\.00$/, '')
+              }
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  formatter={(value) => formatCurrency(value as number)}
+                />
+              }
+            />
+            <ChartLegend content={<ChartLegendContent />} />
+            <Bar dataKey="income" fill="var(--color-income)" radius={4} />
+            <Bar dataKey="expenses" fill="var(--color-expenses)" radius={4} />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
   );
 }

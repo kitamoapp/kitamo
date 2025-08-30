@@ -31,6 +31,7 @@ import { AiTipCard } from '@/components/dashboard/ai-tip-card';
 import { useCurrency } from '@/context/currency-context';
 import type { Currency } from '@/lib/types';
 import { TransactionsTable } from '@/components/transactions/transactions-table';
+import { ExpenseBreakdownChart } from '@/components/dashboard/expense-breakdown-chart';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -85,17 +86,30 @@ export default function DashboardPage() {
             />
           </div>
 
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Financial Summary</CardTitle>
-              <CardDescription>
-                Your income and expenses over time.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pl-2">
-              <FinancialSummaryChart />
-            </CardContent>
-          </Card>
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Financial Summary</CardTitle>
+                <CardDescription>
+                  Your income and expenses over time.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pl-2">
+                <FinancialSummaryChart />
+              </CardContent>
+            </Card>
+             <Card>
+              <CardHeader>
+                <CardTitle>Expense Breakdown</CardTitle>
+                <CardDescription>
+                  How you are spending your money.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ExpenseBreakdownChart />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
         <TabsContent value="transactions">
           <div className="mt-4 space-y-4">
