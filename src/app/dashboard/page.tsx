@@ -28,7 +28,6 @@ import {
 } from 'lucide-react';
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
 import { AiTipCard } from '@/components/dashboard/ai-tip-card';
-import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
 import { useCurrency } from '@/context/currency-context';
 import type { Currency } from '@/lib/types';
 import { TransactionsTable } from '@/components/transactions/transactions-table';
@@ -100,9 +99,6 @@ export default function DashboardPage() {
         </TabsContent>
         <TabsContent value="transactions">
           <div className="mt-4 space-y-4">
-            <div className="flex justify-end">
-              <AddTransactionDialog />
-            </div>
             <TransactionsTable />
           </div>
         </TabsContent>

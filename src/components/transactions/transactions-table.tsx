@@ -1,4 +1,5 @@
 
+
 import { transactions } from '@/lib/data';
 import {
   Table,
@@ -18,6 +19,7 @@ import {
     CardTitle,
   } from '@/components/ui/card';
 import { useCurrency } from '@/context/currency-context';
+import { AddTransactionDialog } from './add-transaction-dialog';
 
 export function TransactionsTable() {
   const { formatCurrency } = useCurrency();
@@ -28,9 +30,12 @@ export function TransactionsTable() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Transaction History</CardTitle>
-        <CardDescription>A detailed list of your income and expenses.</CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Transaction History</CardTitle>
+          <CardDescription>A detailed list of your income and expenses.</CardDescription>
+        </div>
+        <AddTransactionDialog />
       </CardHeader>
       <CardContent>
         <Table>
