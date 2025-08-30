@@ -59,35 +59,35 @@ export default function DashboardPage() {
         <AddTransactionDialog />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6">
-        <AiTipCard />
-      </div>
-
-      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <SummaryCard
-          title="Total Income"
-          value={formatCurrency(totalIncome)}
-          icon={TrendingUp}
-        />
-        <SummaryCard
-          title="Total Expenses"
-          value={formatCurrency(totalExpenses)}
-          icon={TrendingDown}
-        />
-        <SummaryCard
-          title="Balance"
-          value={formatCurrency(balance)}
-          icon={BalanceIcon}
-        />
-      </div>
-
       <Tabs defaultValue="overview" className="mt-6">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <Card className="mt-4">
+          <div className="mt-6 grid grid-cols-1 gap-6">
+            <AiTipCard />
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <SummaryCard
+              title="Total Income"
+              value={formatCurrency(totalIncome)}
+              icon={TrendingUp}
+            />
+            <SummaryCard
+              title="Total Expenses"
+              value={formatCurrency(totalExpenses)}
+              icon={TrendingDown}
+            />
+            <SummaryCard
+              title="Balance"
+              value={formatCurrency(balance)}
+              icon={BalanceIcon}
+            />
+          </div>
+
+          <Card className="mt-6">
             <CardHeader>
               <CardTitle>Financial Summary</CardTitle>
               <CardDescription>
