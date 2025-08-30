@@ -56,7 +56,6 @@ export default function DashboardPage() {
     <AppLayout>
       <div className="flex items-center justify-between space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <AddTransactionDialog />
       </div>
 
       <Tabs defaultValue="overview" className="mt-6">
@@ -100,8 +99,11 @@ export default function DashboardPage() {
           </Card>
         </TabsContent>
         <TabsContent value="transactions">
-          <div className="mt-4">
-             <TransactionsTable />
+          <div className="mt-4 space-y-4">
+            <div className="flex justify-end">
+              <AddTransactionDialog />
+            </div>
+            <TransactionsTable />
           </div>
         </TabsContent>
       </Tabs>
