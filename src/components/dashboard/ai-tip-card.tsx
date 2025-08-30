@@ -25,10 +25,10 @@ import { Textarea } from '../ui/textarea';
 
 export function AiTipCard() {
   const [tip, setTip] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [demographicArea, setDemographicArea] = useState('urban');
+  const [loading, setLoading] = useState(false);
+  const [demographicArea, setDemographicArea] = useState('');
   const [financialBackground, setFinancialBackground] =
-    useState('young professional');
+    useState('');
   const { currency } = useCurrency();
 
   const getFinancialData = (): Omit<
@@ -58,6 +58,10 @@ export function AiTipCard() {
   };
 
   const fetchTip = async () => {
+    if (!demographicArea || !financialBackground) {
+        setTip("Please fill in your demographic area and financial background to get a tip.")
+        return;
+    }
     setLoading(true);
     try {
       const financialData = getFinancialData();
@@ -77,8 +81,14 @@ export function AiTipCard() {
   };
 
   useEffect(() => {
-    fetchTip();
-  }, [currency]);
+    // We don't fetch tip on initial load anymore.
+    // User needs to fill in info and click the button.
+    if (!demographicArea || !financialBackground) {
+        setTip("Please fill in your demographic area and financial background to get a personalized tip.")
+    }
+  }, [currency, demographicArea, financialBackground]);
+  
+  const canFetchTip = demographicArea.trim() !== '' && financialBackground.trim() !== '';
 
   return (
     <Card className="bg-primary/10 border-primary/20">
@@ -129,7 +139,7 @@ export function AiTipCard() {
           variant="ghost"
           size="sm"
           onClick={fetchTip}
-          disabled={loading}
+          disabled={loading || !canFetchTip}
           className="text-primary hover:bg-primary/20 hover:text-primary"
         >
           <RefreshCw
