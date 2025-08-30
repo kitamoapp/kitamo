@@ -150,6 +150,7 @@ export function AiTipCard() {
                 <SelectItem value="Investing for Growth">
                   Investing for Growth
                 </SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
