@@ -41,8 +41,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '../ui/alert-dialog';
+import { SetReminderDialog } from './set-reminder-dialog';
 
 export function TransactionsTable() {
   const { formatCurrency } = useCurrency();
@@ -84,7 +84,10 @@ export function TransactionsTable() {
               A detailed list of your income and expenses.
             </CardDescription>
           </div>
-          <AddTransactionDialog />
+          <div className="flex gap-2">
+            <SetReminderDialog />
+            <AddTransactionDialog />
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
