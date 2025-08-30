@@ -77,7 +77,7 @@ export function FinancialSummaryChart() {
     <>
       <div className="mb-4 flex justify-end">
         <Select value={chartType} onValueChange={(v) => setChartType(v as ChartType)}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Select chart type" />
           </SelectTrigger>
           <SelectContent>
