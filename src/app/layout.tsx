@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { CurrencyProvider } from '@/context/currency-context';
 import { TransactionProvider } from '@/context/transaction-context';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'KitaMo',
@@ -39,12 +40,17 @@ export default function RootLayout({
         <meta name="theme-color" content="#4A45E5" />
       </head>
       <body className={cn('min-h-screen bg-background font-body antialiased')}>
-        <CurrencyProvider>
-          <TransactionProvider>
-            {children}
-          </TransactionProvider>
-        </CurrencyProvider>
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <CurrencyProvider>
+            <TransactionProvider>{children}</TransactionProvider>
+          </CurrencyProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
