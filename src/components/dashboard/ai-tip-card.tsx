@@ -81,10 +81,8 @@ export function AiTipCard() {
   };
 
   useEffect(() => {
-    // We don't fetch tip on initial load anymore.
-    // User needs to fill in info and click the button.
     if (!demographicArea || !financialBackground) {
-        setTip("Please fill in your demographic area and financial background to get a personalized tip.")
+        setTip("Please fill in your details below to get a personalized tip.")
     }
   }, [currency, demographicArea, financialBackground]);
   
@@ -106,21 +104,21 @@ export function AiTipCard() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="demographic-area">Demographic Area</Label>
+            <Label htmlFor="demographic-area">Your Living Area</Label>
             <Input
               id="demographic-area"
               value={demographicArea}
               onChange={(e) => setDemographicArea(e.target.value)}
-              placeholder="e.g., urban, suburban, rural"
+              placeholder="e.g., Urban, Suburban, Rural"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="financial-background">Financial Background</Label>
+            <Label htmlFor="financial-background">Your Financial Profile</Label>
             <Input
               id="financial-background"
               value={financialBackground}
               onChange={(e) => setFinancialBackground(e.target.value)}
-              placeholder="e.g., student, young professional"
+              placeholder="e.g., Student, Young Professional"
             />
           </div>
         </div>
@@ -145,7 +143,7 @@ export function AiTipCard() {
           <RefreshCw
             className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`}
           />
-          Get a New Tip
+          {tip ? "Get a New Tip" : "Get My First Tip"}
         </Button>
       </CardFooter>
     </Card>

@@ -22,11 +22,11 @@ const FinancialTipInputSchema = z.object({
   currency: z.string().describe('The currency of the financial amounts.'),
   demographicArea: z
     .string()
-    .describe('The demographic area of the user (e.g., "urban", "suburban", "rural").'),
+    .describe('The demographic area of the user (e.g., "urban city", "suburb near a city", "rural countryside"). This helps understand cost of living.'),
   financialBackground: z
     .string()
     .describe(
-      'A brief description of the user\'s financial background (e.g., "student", "young professional", "family with kids").'
+      'A brief description of the user\'s financial situation or profession (e.g., "student with part-time job", "young professional in tech", "family with two kids", "freelancer").'
     ),
 });
 export type FinancialTipInput = z.infer<typeof FinancialTipInputSchema>;
@@ -44,18 +44,22 @@ const prompt = ai.definePrompt({
   name: 'financialTipPrompt',
   input: {schema: FinancialTipInputSchema},
   output: {schema: FinancialTipOutputSchema},
-  prompt: `You are a personal finance advisor. Based on the user's income, expenses, spending categories, demographic area, and financial background, provide a personalized financial tip. The currency is in {{currency}}.
+  prompt: `You are a friendly and encouraging personal finance advisor. Your goal is to provide a single, actionable, and personalized financial tip.
 
-Income: {{income}}
-Expenses: {{expenses}}
-Spending Categories:
+Based on the user's financial details below, generate a concise and highly relevant tip. The user's currency is {{currency}}.
+
+**User's Financial Profile:**
+*   **Total Income:** {{income}}
+*   **Total Expenses:** {{expenses}}
+*   **Living Area:** {{demographicArea}}
+*   **Financial Background:** {{financialBackground}}
+
+**Spending Breakdown:**
 {{#each spendingCategories}}
-  - {{key}}: {{value}}
+*   **{{@key}}:** {{this}}
 {{/each}}
-Demographic Area: {{demographicArea}}
-Financial Background: {{financialBackground}}
 
-Provide a concise, actionable, and highly relevant financial tip based on all this information.`,
+Analyze all this information to identify the most impactful area for improvement or the next logical step in their financial journey. Frame your advice in a positive and easy-to-understand way.`,
 });
 
 const generateFinancialTipFlow = ai.defineFlow(
