@@ -11,12 +11,29 @@ import {
 } from '@/components/ui/card';
 import { transactions } from '@/lib/data';
 import { SummaryCard } from '@/components/dashboard/summary-card';
-import { DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
+import {
+  DollarSign,
+  TrendingDown,
+  TrendingUp,
+  Euro,
+  JapaneseYen,
+  PoundSterling,
+  PhilippinePeso,
+} from 'lucide-react';
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
 import { AiTipCard } from '@/components/dashboard/ai-tip-card';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
 import { useCurrency } from '@/context/currency-context';
+import type { Currency } from '@/lib/types';
+
+const currencyIcons: Record<Currency, React.ElementType> = {
+  USD: DollarSign,
+  EUR: Euro,
+  JPY: JapaneseYen,
+  GBP: PoundSterling,
+  PHP: PhilippinePeso,
+};
 
 export default function DashboardPage() {
   const { currency, formatCurrency } = useCurrency();
@@ -27,6 +44,7 @@ export default function DashboardPage() {
     .filter((t) => t.type === 'expense')
     .reduce((acc, t) => acc + t.amount, 0);
   const balance = totalIncome - totalExpenses;
+  const BalanceIcon = currencyIcons[currency] || DollarSign;
 
   return (
     <AppLayout>
@@ -51,7 +69,7 @@ export default function DashboardPage() {
         <SummaryCard
           title="Balance"
           value={formatCurrency(balance)}
-          icon={DollarSign}
+          icon={BalanceIcon}
         />
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-5">
