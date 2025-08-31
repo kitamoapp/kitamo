@@ -47,6 +47,7 @@ import { SetReminderDialog } from '@/components/transactions/set-reminder-dialog
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { SetBudgetDialog } from '@/components/budgets/set-budget-dialog';
 import { BudgetSummaryCard } from '@/components/dashboard/budget-summary-card';
+import { UpcomingBillsCard } from '@/components/dashboard/upcoming-bills-card';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -71,6 +72,7 @@ export default function DashboardPage() {
     expenseBreakdown: true,
     transactionHistory: true,
     budgetSummary: true,
+    upcomingBills: true,
   });
 
   const totalIncome = transactions
@@ -129,6 +131,14 @@ export default function DashboardPage() {
                     />
                   </div>
                   <div className="flex items-center justify-between rounded-lg border p-4">
+                    <Label htmlFor="upcoming-bills-toggle" className="font-normal">Show Upcoming Bills</Label>
+                    <Switch
+                      id="upcoming-bills-toggle"
+                      checked={visibleComponents.upcomingBills}
+                      onCheckedChange={(checked) => handleVisibilityChange('upcomingBills', checked)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border p-4">
                     <Label htmlFor="financial-summary-toggle" className="font-normal">Show Financial Summary</Label>
                     <Switch
                       id="financial-summary-toggle"
@@ -184,9 +194,15 @@ export default function DashboardPage() {
           </div>
         )}
         
-        {visibleComponents.budgetSummary && (
-          <BudgetSummaryCard />
-        )}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+           {visibleComponents.budgetSummary && (
+             <BudgetSummaryCard />
+           )}
+           {visibleComponents.upcomingBills && (
+             <UpcomingBillsCard />
+           )}
+        </div>
+
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {visibleComponents.financialSummary && (

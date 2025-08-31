@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { SubscriptionProvider } from '@/context/subscription-context';
 import { ReferredUserProvider } from '@/context/referred-user-context';
 import { BudgetProvider } from '@/context/budget-context';
+import { ReminderProvider } from '@/context/reminder-context';
 
 export const metadata: Metadata = {
   title: 'KitaMo',
@@ -53,7 +54,11 @@ export default function RootLayout({
             <TransactionProvider>
               <ReferredUserProvider>
                 <SubscriptionProvider>
-                  <BudgetProvider>{children}</BudgetProvider>
+                  <BudgetProvider>
+                    <ReminderProvider>
+                      {children}
+                    </ReminderProvider>
+                  </BudgetProvider>
                 </SubscriptionProvider>
               </ReferredUserProvider>
             </TransactionProvider>

@@ -45,3 +45,12 @@ export type ReferralMilestone = {
   name:string;
   requiredReferrals: number;
 };
+
+export type Reminder = {
+    id: string;
+    title: string;
+    amount: number;
+    category: string;
+    date: string;
+    recurrence: 'none' | 'daily' | 'weekly' | 'monthly';
+}
