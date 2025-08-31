@@ -25,12 +25,14 @@ const LOCAL_STORAGE_KEY = 'kitamo-budgets';
 
 export const BudgetProvider = ({ children }: { children: ReactNode }) => {
   const { currency } = useCurrency();
-  const [budgets, setBudgets] = useState<Budgets>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (!item) return {};
+  const [budgets, setBudgets] = useState<Budgets>({});
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  useEffect(() => {
+    // Load from local storage only on the client side
+    try {
+      const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (item) {
         const storedData = JSON.parse(item);
         
         // Convert stored budget amounts to the current currency
@@ -43,31 +45,28 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
             const amountInBase = storedData.budgets[category] / fromRate;
             convertedBudgets[category] = amountInBase * toRate;
         }
-        return convertedBudgets;
-
-      } catch (error) {
-        console.error('Error reading budgets from localStorage', error);
-        return {};
+        setBudgets(convertedBudgets);
       }
+    } catch (error) {
+      console.error('Error reading budgets from localStorage', error);
     }
-    return {};
-  });
-
+    setIsLoaded(true);
+  }, []); // Empty dependency array ensures this runs once on mount on client.
 
   useEffect(() => {
-    // Persist budgets to localStorage whenever they change
-    try {
-       if (typeof window !== 'undefined') {
-         const dataToStore = {
+    // Persist budgets to localStorage whenever they change, but only after initial load
+    if (isLoaded) {
+      try {
+        const dataToStore = {
             currency,
             budgets
-         };
-         window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToStore));
-       }
-    } catch (error) {
-      console.error('Error saving budgets to localStorage', error);
+        };
+        window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToStore));
+      } catch (error) {
+        console.error('Error saving budgets to localStorage', error);
+      }
     }
-  }, [budgets, currency]);
+  }, [budgets, currency, isLoaded]);
 
   const setBudget = useCallback((category: string, amount: number) => {
     setBudgets((prev) => ({ ...prev, [category]: amount }));
