@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -14,8 +15,14 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
+import { Button } from '../ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
 
 export function ReferralFaq() {
+  const { toast } = useToast();
+  const [feedback, setFeedback] = useState<Record<number, boolean>>({});
+
   const faqs = [
     {
       question: 'How do I refer a friend?',
@@ -47,6 +54,14 @@ export function ReferralFaq() {
     },
   ];
 
+  const handleFeedback = (index: number) => {
+    setFeedback((prev) => ({ ...prev, [index]: true }));
+    toast({
+      title: 'Feedback Received',
+      description: 'Thank you for your input!',
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -60,7 +75,38 @@ export function ReferralFaq() {
           {faqs.map((faq, index) => (
             <AccordionItem value={`item-${index}`} key={index}>
               <AccordionTrigger>{faq.question}</AccordionTrigger>
-              <AccordionContent>{faq.answer}</AccordionContent>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <p>{faq.answer}</p>
+                  <div className="flex items-center justify-end gap-4 mt-4 pt-4 border-t border-dashed">
+                    {feedback[index] ? (
+                       <p className="text-sm text-muted-foreground">Thank you for your feedback!</p>
+                    ) : (
+                      <>
+                        <p className="text-sm text-muted-foreground">
+                          Was this helpful?
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleFeedback(index)}
+                          >
+                            <ThumbsUp className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleFeedback(index)}
+                          >
+                            <ThumbsDown className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
