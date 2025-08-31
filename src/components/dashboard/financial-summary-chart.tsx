@@ -20,7 +20,7 @@ import {
 import { useCurrency } from '@/context/currency-context';
 import { useMemo } from 'react';
 import type { Period } from '@/app/dashboard/page';
-import { subDays, format, getWeek, getYear, parseISO, startOfDay, startOfWeek, endOfWeek, eachWeekOfInterval, startOfYear, endOfYear, eachMonthOfInterval } from 'date-fns';
+import { subDays, format, getWeek, getYear, parseISO, startOfDay, eachDayOfInterval, subWeeks, eachWeekOfInterval, startOfYear, endOfYear, eachMonthOfInterval } from 'date-fns';
 
 const barChartConfig = {
   income: {
@@ -43,11 +43,11 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
 
     if (period === 'day') {
       // Last 7 days
-      for (let i = 6; i >= 0; i--) {
-        const date = subDays(now, i);
+      const last7Days = eachDayOfInterval({ start: subDays(now, 6), end: now });
+      last7Days.forEach(date => {
         const key = format(date, 'MMM d');
         dataMap.set(key, { income: 0, expenses: 0, sortKey: date.getTime() });
-      }
+      });
 
       const sevenDaysAgo = startOfDay(subDays(now, 6));
       transactions
@@ -62,19 +62,18 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
         });
         
     } else if (period === 'week') {
-        const yearStart = startOfYear(now);
-        const yearEnd = endOfYear(now);
-        const weeksInYear = eachWeekOfInterval({ start: yearStart, end: yearEnd }, { weekStartsOn: 1 });
+        // Last 12 weeks
+        const twelveWeeksAgo = subWeeks(now, 11);
+        const last12Weeks = eachWeekOfInterval({ start: twelveWeeksAgo, end: now }, { weekStartsOn: 1 });
 
-        // Pre-populate map for all weeks of the current year
-        weeksInYear.forEach((weekStartDate, index) => {
+        last12Weeks.forEach((weekStartDate) => {
             const weekNumber = getWeek(weekStartDate, { weekStartsOn: 1 });
             const key = `W${weekNumber}`;
-            dataMap.set(key, { income: 0, expenses: 0, sortKey: weekNumber });
+            dataMap.set(key, { income: 0, expenses: 0, sortKey: weekStartDate.getTime() });
         });
 
         transactions
-            .filter(t => getYear(parseISO(t.date)) === getYear(now))
+            .filter(t => parseISO(t.date) >= twelveWeeksAgo)
             .forEach(t => {
                 const date = parseISO(t.date);
                 const weekNumber = getWeek(date, { weekStartsOn: 1 });
