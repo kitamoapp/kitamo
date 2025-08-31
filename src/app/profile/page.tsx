@@ -18,8 +18,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera } from 'lucide-react';
-import { useState } from 'react';
+import { Camera, Trash2 } from 'lucide-react';
+import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 // For demonstration, we'll have a list of valid codes.
@@ -30,6 +30,7 @@ export default function ProfilePage() {
   const { currentTier } = useSubscription();
   const router = useRouter();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // State for forms
   const [accountInfo, setAccountInfo] = useState({
@@ -43,6 +44,7 @@ export default function ProfilePage() {
   });
   const [referralCode, setReferralCode] = useState('');
   const [hasReferralCode, setHasReferralCode] = useState(false);
+  const [avatarSrc, setAvatarSrc] = useState<string | null>(`https://picsum.photos/100/100`);
 
   const handleAccountInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -120,6 +122,32 @@ export default function ProfilePage() {
     });
   }
 
+  const handleAvatarChangeClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setAvatarSrc(URL.createObjectURL(file));
+      toast({
+        title: 'Photo updated',
+        description: 'Your new profile picture is now displayed.',
+      });
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setAvatarSrc(null);
+    if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
+    toast({
+      title: 'Photo Removed',
+      description: 'Your profile picture has been removed.',
+    });
+  }
+
   return (
     <AppLayout>
       <div className="space-y-8">
@@ -137,16 +165,24 @@ export default function ProfilePage() {
                 <div className="relative">
                   <Avatar className="h-24 w-24 mb-2">
                     <AvatarImage
-                      src={`https://picsum.photos/100/100`}
+                      src={avatarSrc || undefined}
                       alt="User avatar"
                       data-ai-hint="person portrait"
                     />
                     <AvatarFallback>{accountInfo.fullName.charAt(0)}</AvatarFallback>
                   </Avatar>
+                   <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
                   <Button
                     size="icon"
                     variant="outline"
                     className="absolute bottom-1 right-1 h-8 w-8 rounded-full"
+                    onClick={handleAvatarChangeClick}
                   >
                     <Camera className="h-4 w-4" />
                     <span className="sr-only">Change photo</span>
@@ -156,6 +192,17 @@ export default function ProfilePage() {
                 <CardDescription>{accountInfo.email}</CardDescription>
               </CardHeader>
               <CardContent className="text-center">
+                 {avatarSrc && avatarSrc.startsWith('blob:') && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive w-full mb-4"
+                        onClick={handleRemovePhoto}
+                    >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Remove Photo
+                    </Button>
+                )}
                 <Separator className="my-4" />
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Current Plan</p>
