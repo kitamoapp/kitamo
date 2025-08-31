@@ -57,14 +57,10 @@ const MessengerIcon = (props: React.SVGProps<SVGSVGElement>) => (
     width="24"
     height="24"
     viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    fill="currentColor"
     {...props}
   >
-    <path d="M12 2a10 10 0 0 0-10 10c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.1-.65.35-1.08.64-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.1.39-1.99 1.03-2.69a3.6 3.6 0 0 1 .1-2.64s.84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.4.1 2.64.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.72c0 .27.16.58.67.5A10 10 0 0 0 12 2z" />
+    <path d="M12 2C6.48 2 2 6.48 2 12c0 3.13 1.45 5.92 3.75 7.79V22l3.42-1.92c.87.35 1.81.56 2.83.56 5.52 0 10-4.48 10-10S17.52 2 12 2zm1.41 11.59L12 11.17l-1.41 1.42-4.24-4.24 7.07-2.83 2.83 7.07-4.24 4.24z" />
   </svg>
 );
 
@@ -94,24 +90,22 @@ export function ReferralCodeCard() {
   };
   
   const referralLink = `${typeof window !== 'undefined' ? window.location.origin : ''}/signup?ref=${referralCode}`;
-  const referralMessage = `Hey! I'm using KitaMo to manage my finances. You should check it out! Sign up using my referral link: ${referralLink}`;
+  const referralMessage = `Hey! I'm using KitaMo to manage my finances and it's been great. You should check it out! Sign up using my referral link: ${referralLink}`;
 
   const shareActions = [
     { name: 'WhatsApp', icon: WhatsAppIcon, url: `https://wa.me/?text=${encodeURIComponent(referralMessage)}`},
     { name: 'Telegram', icon: TelegramIcon, url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(referralMessage)}` },
-    { name: 'Messenger', icon: MessengerIcon, url: `https://www.facebook.com/dialog/send?app_id=YOUR_APP_ID&link=${encodeURIComponent(referralLink)}&redirect_uri=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}` }
+    { name: 'Messenger', icon: MessengerIcon, url: `fb-messenger://share?link=${encodeURIComponent(referralLink)}` }
   ];
   
   const handleShare = (url: string) => {
-    // A placeholder app_id is used. For a real app, this should be a valid Facebook App ID.
-    const finalUrl = url.replace('YOUR_APP_ID', '1234567890');
-    window.open(finalUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your Referral Code</CardTitle>
+        <CardTitle>Invite Friends</CardTitle>
         <CardDescription>
           Share your code with friends to grow your network.
         </CardDescription>
@@ -145,3 +139,4 @@ export function ReferralCodeCard() {
     </Card>
   );
 }
+
