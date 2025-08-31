@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useCurrency } from '@/context/currency-context';
-import type { SubscriptionTier } from '@/lib/types';
+import type { SubscriptionFeature, SubscriptionTier } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
@@ -34,10 +34,7 @@ export function SubscriptionPlanCard({
     setIsClient(true);
   }, []);
 
-  const renderFeature = (feature: SubscriptionTier['features'][0]) => {
-    if (typeof feature === 'string') {
-      return feature;
-    }
+  const renderFeature = (feature: SubscriptionFeature) => {
     if (feature.earningCap) {
       return feature.text.replace(
         '{cap}',
@@ -70,14 +67,16 @@ export function SubscriptionPlanCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 space-y-4">
-        <ul className="space-y-2">
-          {tier.features.map((feature, index) => (
-            <li key={index} className="flex items-start gap-2">
-              <Check className="h-4 w-4 text-green-500 mt-1" />
-              <span className="text-sm flex-1">{isClient ? renderFeature(feature) : <>&nbsp;</>}</span>
-            </li>
-          ))}
-        </ul>
+        {isClient && (
+          <ul className="space-y-2">
+            {tier.features.map((feature, index) => (
+              <li key={index} className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-green-500 mt-1" />
+                <span className="text-sm flex-1">{renderFeature(feature)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </CardContent>
       <CardFooter>
         <Button
