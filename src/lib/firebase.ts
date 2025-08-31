@@ -39,20 +39,25 @@ const requestNotificationPermission = async () => {
         console.log('Notification permission granted.');
         const messaging = getMessagingInstance();
         if (messaging) {
-            const token = await getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' }); // Replace with your VAPID key
-            console.log('FCM Token:', token);
-            
-            // Listen for foreground messages
-            onMessage(messaging, (payload) => {
-                console.log('Message received. ', payload);
-                // Customize notification here
-                new Notification(payload.notification?.title || 'New Notification', {
-                    body: payload.notification?.body,
-                    icon: '/icons/icon-192x192.png'
+            try {
+                const token = await getToken(messaging, { vapidKey: 'B...' }); // VAPID key is managed by Firebase App Hosting
+                console.log('FCM Token:', token);
+                
+                // Listen for foreground messages
+                onMessage(messaging, (payload) => {
+                    console.log('Message received. ', payload);
+                    // Customize notification here
+                    new Notification(payload.notification?.title || 'New Notification', {
+                        body: payload.notification?.body,
+                        icon: '/icons/icon-192x192.png'
+                    });
                 });
-            });
 
-            return token;
+                return token;
+            } catch (err) {
+                console.error('An error occurred while retrieving token. ', err);
+                return null;
+            }
         }
     } else {
         console.log('Unable to get permission to notify.');
@@ -62,4 +67,5 @@ const requestNotificationPermission = async () => {
 
 
 export { app, auth, requestNotificationPermission, getMessagingInstance };
+
 
