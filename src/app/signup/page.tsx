@@ -1,9 +1,11 @@
 
+
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { PiggyBank } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,14 +17,48 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useReferredUsers } from '@/context/referred-user-context';
+import type { NewReferredUser } from '@/lib/types';
+import { subscriptionTiers } from '@/lib/data';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { addReferredUser } = useReferredUsers();
+  const { toast } = useToast();
+  
+  const [referralCode, setReferralCode] = useState('');
+
+  useEffect(() => {
+    const refCode = searchParams.get('ref') || '';
+    setReferralCode(refCode);
+  }, [searchParams]);
+  
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle user creation and referral code validation.
-    // For this demo, we'll just redirect to the dashboard.
+    const form = e.target as HTMLFormElement;
+    const name = (form.elements.namedItem('name') as HTMLInputElement).value;
+    
+    // For this demo, we'll assign a random plan to the new user.
+    const randomPlan = subscriptionTiers.filter(t => t.price > 0)[Math.floor(Math.random() * (subscriptionTiers.length -1))];
+    const leg = Math.random() > 0.5 ? 'left' : 'right';
+
+    const newUser: NewReferredUser = {
+      name,
+      plan: randomPlan.name,
+      leg,
+      referredBy: referralCode.trim().toUpperCase() || undefined,
+    };
+    
+    addReferredUser(newUser);
+
+    toast({
+        title: 'Welcome!',
+        description: "Your account has been created successfully."
+    });
+
     router.push('/dashboard');
   };
 
@@ -68,7 +104,13 @@ export default function SignupPage() {
               </div>
                <div className="space-y-2">
                 <Label htmlFor="referral-code">Referral Code (Optional)</Label>
-                <Input id="referral-code" type="text" placeholder="Enter referral code" />
+                <Input 
+                  id="referral-code" 
+                  type="text" 
+                  placeholder="Enter referral code" 
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value)}
+                />
               </div>
               <Button type="submit" className="w-full">
                 Create Account

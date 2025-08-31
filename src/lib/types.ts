@@ -1,4 +1,5 @@
 
+
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
@@ -98,6 +99,13 @@ export type PaymentMethodValues = {
   bankName: string;
   provider: string;
   email: string;
-}
+};
+
+export type NewReferredUser = {
+  name: string;
+  leg: 'left' | 'right';
+  plan: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
+  referredBy?: string; // This can be the referral code
+};
 
     
