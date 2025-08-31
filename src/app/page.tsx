@@ -3,6 +3,12 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+} from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +20,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 const GmailIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg 
@@ -38,11 +45,30 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     router.push('/dashboard');
   };
+
+  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+    const authProvider = provider === 'google' 
+        ? new GoogleAuthProvider() 
+        : new FacebookAuthProvider();
+
+    try {
+        await signInWithPopup(auth, authProvider);
+        router.push('/dashboard');
+    } catch(error: any) {
+        console.error("Authentication Error:", error);
+        toast({
+            title: 'Authentication Failed',
+            description: error.message,
+            variant: 'destructive'
+        });
+    }
+  }
 
   return (
     <>
@@ -96,11 +122,11 @@ export default function LoginPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                    <Button variant="outline" onClick={handleLogin}>
+                    <Button variant="outline" onClick={() => handleSocialLogin('google')}>
                         <GmailIcon className="mr-2 h-4 w-4" />
                         Gmail
                     </Button>
-                    <Button variant="outline" onClick={handleLogin}>
+                    <Button variant="outline" onClick={() => handleSocialLogin('facebook')}>
                         <FacebookIcon className="mr-2 h-4 w-4" />
                         Facebook
                     </Button>
