@@ -1,4 +1,6 @@
 
+'use client';
+
 import { AppLayout } from '@/components/app-layout';
 import {
   Card,
@@ -9,10 +11,28 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
 import { RecruitUserDialog } from '@/components/referrals/recruit-user-dialog';
+import { useSettings } from '@/hooks/use-settings';
+import { useToast } from '@/hooks/use-toast';
+import type { Setting } from '@/hooks/use-settings';
 
 export default function SettingsPage() {
+  const { settings, updateSetting, isLoaded } = useSettings();
+  const { toast } = useToast();
+
+  const handleSettingChange = (setting: Setting, checked: boolean) => {
+    updateSetting(setting, checked);
+    toast({
+      title: 'Settings Updated',
+      description: `Your preferences have been saved.`,
+    });
+  };
+
+  if (!isLoaded) {
+    // You can return a loading skeleton here if you want
+    return null;
+  }
+
   return (
     <AppLayout>
       <div className="space-y-8">
@@ -41,6 +61,8 @@ export default function SettingsPage() {
               <Switch
                 id="biometric-login"
                 aria-label="Toggle biometric login"
+                checked={settings.biometricLogin}
+                onCheckedChange={(checked) => handleSettingChange('biometricLogin', checked)}
               />
             </div>
           </CardContent>
@@ -64,6 +86,8 @@ export default function SettingsPage() {
               <Switch
                 id="email-notifications"
                 aria-label="Toggle email notifications"
+                checked={settings.emailNotifications}
+                onCheckedChange={(checked) => handleSettingChange('emailNotifications', checked)}
               />
             </div>
             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
@@ -76,6 +100,8 @@ export default function SettingsPage() {
               <Switch
                 id="push-notifications"
                 aria-label="Toggle push notifications"
+                checked={settings.pushNotifications}
+                onCheckedChange={(checked) => handleSettingChange('pushNotifications', checked)}
               />
             </div>
           </CardContent>
