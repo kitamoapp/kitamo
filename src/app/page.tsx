@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Logo } from '@/components/logo';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -52,7 +51,7 @@ export default function LoginPage() {
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <div className="w-full max-w-md">
           <div className="mb-8 flex flex-col items-center">
-            <Logo className="mb-4 h-12 w-12 text-primary" />
+            <div className="mb-4 text-4xl font-bold text-primary">KitaMo</div>
             <h1 className="text-3xl font-bold">Welcome to KitaMo</h1>
             <p className="text-muted-foreground">
               Sign in to manage your finances

@@ -10,7 +10,6 @@ import { UserNav } from '@/components/user-nav';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/logo';
 import { CurrencySwitcher } from './currency-switcher';
 
 export function Header() {
@@ -28,8 +27,7 @@ export function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/dashboard" className="mr-6 flex items-center space-x-2">
-            <Logo className="h-6 w-6" />
-            <span className="font-bold">KitaMo</span>
+            <span className="font-bold text-lg text-primary">KitaMo</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             {navItems.map((item) => (
@@ -68,8 +66,7 @@ export function Header() {
                   className="flex items-center space-x-2"
                   onClick={() => setSheetOpen(false)}
                 >
-                  <Logo className="h-6 w-6" />
-                  <span className="font-bold">KitaMo</span>
+                  <span className="font-bold text-lg text-primary">KitaMo</span>
                 </Link>
                 {navItems.map((item) => (
                   <Link
