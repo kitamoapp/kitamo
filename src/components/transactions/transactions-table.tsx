@@ -29,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { EditTransactionDialog } from './edit-transaction-dialog';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { Transaction } from '@/lib/types';
 import {
   AlertDialog,
@@ -51,9 +51,12 @@ export function TransactionsTable() {
   const [transactionToDelete, setTransactionToDelete] =
     useState<string | null>(null);
 
-  const sortedTransactions = [...transactions].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  const sortedTransactions = useMemo(() => {
+    return [...transactions].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [transactions]);
+
 
   const handleEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
