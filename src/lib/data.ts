@@ -6,13 +6,13 @@ import type {
   ReferralMilestone,
 } from '@/lib/types';
 
-export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
+export const transactions: Transaction[] = [
   {
     id: '1',
     type: 'income',
     category: 'Salary',
     amount: 5000,
-    date: new Date('2024-07-01'),
+    date: new Date('2024-07-01').toISOString(),
     description: 'Monthly Salary',
   },
   {
@@ -20,7 +20,7 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
     type: 'expense',
     category: 'Rent',
     amount: 1500,
-    date: new Date('2024-07-01'),
+    date: new Date('2024-07-01').toISOString(),
     description: 'Apartment Rent',
   },
   {
@@ -28,7 +28,7 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
     type: 'expense',
     category: 'Groceries',
     amount: 350,
-    date: new Date('2024-07-05'),
+    date: new Date('2024-07-05').toISOString(),
     description: 'Weekly grocery shopping',
   },
   {
@@ -36,7 +36,7 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
     type: 'expense',
     category: 'Transport',
     amount: 120,
-    date: new Date('2024-07-10'),
+    date: new Date('2024-07-10').toISOString(),
     description: 'Gasoline for car',
   },
   {
@@ -44,7 +44,7 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
     type: 'expense',
     category: 'Entertainment',
     amount: 75,
-    date: new Date('2024-07-12'),
+    date: new Date('2024-07-12').toISOString(),
     description: 'Movie tickets',
   },
   {
@@ -52,7 +52,7 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
     type: 'income',
     category: 'Freelance',
     amount: 750,
-    date: new Date('2024-07-15'),
+    date: new Date('2024-07-15').toISOString(),
     description: 'Web design project',
   },
   {
@@ -60,7 +60,7 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
     type: 'expense',
     category: 'Utilities',
     amount: 150,
-    date: new Date('2024-07-20'),
+    date: new Date('2024-07-20').toISOString(),
     description: 'Electricity and Water bill',
   },
   {
@@ -68,7 +68,7 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
     type: 'expense',
     category: 'Shopping',
     amount: 200,
-    date: new Date('2024-07-22'),
+    date: new Date('2024-07-22').toISOString(),
     description: 'New clothes',
   },
 ];

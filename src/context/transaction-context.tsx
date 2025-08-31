@@ -5,12 +5,6 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import type { Transaction } from '@/lib/types';
 import { transactions as initialTransactions } from '@/lib/data';
 
-// Correctly serialize the initial data before it's used anywhere.
-const serializedInitialTransactions = initialTransactions.map(t => ({
-  ...t,
-  date: t.date.toISOString(),
-}));
-
 interface TransactionContextType {
   transactions: Transaction[];
   addTransaction: (transaction: Transaction) => void;
@@ -25,7 +19,7 @@ const LOCAL_STORAGE_KEY = 'kitamo-transactions';
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   // Initialize state with the pre-serialized data. This is safe for SSR.
-  const [transactions, setTransactions] = useState<Transaction[]>(serializedInitialTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from localStorage only on the client side.
