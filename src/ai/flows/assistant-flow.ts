@@ -56,6 +56,7 @@ Capabilities:
 - Be proactive, encouraging, and highly professional.
 - The user's currency is {{currency}}.
 
+{{#if financialContext}}
 User's Financial Context:
 *   **Total Income:** {{financialContext.income}}
 *   **Total Expenses:** {{financialContext.expenses}}
@@ -63,6 +64,7 @@ User's Financial Context:
 {{#each financialContext.spendingCategories}}
 *   **{{@key}}:** {{this}}
 {{/each}}
+{{/if}}
 ---
 {{else}}
 ---
