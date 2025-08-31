@@ -28,18 +28,29 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 export default function SubscriptionsPage() {
   const { convertAndFormatCurrency } = useCurrency();
   const { currentTier, setCurrentTier } = useSubscription();
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
   const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(
     null
   );
+  // Simulate if the user has a payment method. Default to false for demo.
+  const [hasPaymentMethod, setHasPaymentMethod] = useState(false);
+
 
   const handleChoosePlan = (tier: SubscriptionTier) => {
     setSelectedTier(tier);
-    setShowConfirmation(true);
+    if (hasPaymentMethod) {
+      setShowConfirmation(true);
+    } else {
+      setShowAddPaymentDialog(true);
+    }
   };
 
   const handleConfirmPurchase = () => {
@@ -49,6 +60,16 @@ export default function SubscriptionsPage() {
     setShowConfirmation(false);
     setSelectedTier(null);
   };
+  
+  const handleAddPaymentMethod = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In a real app, you'd save the payment info to a secure service.
+    // For this demo, we'll just simulate it.
+    setHasPaymentMethod(true);
+    setShowAddPaymentDialog(false);
+    // After adding a payment method, show the confirmation dialog.
+    setShowConfirmation(true);
+  }
 
   return (
     <>
@@ -107,6 +128,39 @@ export default function SubscriptionsPage() {
           </div>
         </div>
       </AppLayout>
+      
+      <Dialog open={showAddPaymentDialog} onOpenChange={setShowAddPaymentDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Payment Method</DialogTitle>
+            <DialogDescription>
+                You don't have a payment method on file. Please add one to continue. This is a simulation.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAddPaymentMethod} className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor='card-number'>Card Number</Label>
+                <Input id='card-number' placeholder='1234 5678 9101 1121' />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2 col-span-2">
+                    <Label htmlFor='expiry'>Expiration</Label>
+                    <Input id='expiry' placeholder='MM / YY' />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor='cvc'>CVC</Label>
+                    <Input id='cvc' placeholder='123' />
+                </div>
+            </div>
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button type='button' variant='outline'>Cancel</Button>
+                </DialogClose>
+                <Button type='submit'>Save and Continue</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog
         open={showConfirmation}
@@ -116,8 +170,7 @@ export default function SubscriptionsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Your Subscription</AlertDialogTitle>
             <AlertDialogDescription>
-              In a real application, this is where you would enter your payment
-              details. For now, please confirm to upgrade your plan to{' '}
+              Your saved payment method will be charged. Please confirm to upgrade your plan to{' '}
               <span className="font-bold">{selectedTier?.name}</span>.
             </AlertDialogDescription>
           </AlertDialogHeader>
