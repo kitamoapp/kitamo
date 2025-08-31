@@ -173,6 +173,14 @@ export default function ProfilePage() {
   useEffect(() => {
     const defaultValues: any = {
       type: editingPaymentMethod?.type || 'Card',
+      cardNumber: '',
+      expiry: '',
+      cvc: '',
+      accountNumber: '',
+      routingNumber: '',
+      bankName: '',
+      provider: '',
+      email: '',
     };
     if (editingPaymentMethod) {
         switch (editingPaymentMethod.type) {
