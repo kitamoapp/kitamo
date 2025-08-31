@@ -21,7 +21,6 @@ export function Header() {
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/referrals', label: 'Referrals' },
     { href: '/subscriptions', label: 'Subscriptions' },
-    { href: '/profile', label: 'Profile' },
   ];
 
   return (
