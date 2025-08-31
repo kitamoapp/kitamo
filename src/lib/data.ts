@@ -142,7 +142,6 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       'All Bronze features',
       'Increased earning cap',
-      'Priority support',
       'Advanced analytics',
     ],
     requiredReferrals: 5,
@@ -158,7 +157,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       'All Silver features',
       'Highest earning cap',
-      'Dedicated account manager',
+      'AI Assistant (Priority Support)',
       'Early access to new features',
     ],
     requiredReferrals: 20,
@@ -173,8 +172,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 50,
     features: [
       'All Gold features',
+      'AI Assistant (Dedicated Account Manager)',
       'Unlimited earning potential',
-      'Customizable rewards',
       'Exclusive partner offers',
     ],
     requiredReferrals: 50,
