@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Star, Zap } from 'lucide-react';
+import { Award, Star, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { useCurrency } from '@/context/currency-context';
@@ -17,30 +17,35 @@ import {
 import { Progress } from '../ui/progress';
 import { useSubscription } from '@/context/subscription-context';
 
-export function SubscriptionTierCard() {
+export function MilestoneProgressCard() {
   const { convertAndFormatCurrency } = useCurrency();
   const {
     currentTier,
     totalEarnings,
+    nextTier,
   } = useSubscription();
   const router = useRouter();
 
   const isBronze = currentTier.name === 'Bronze';
   
+  // For demonstration, let's assume a static goal for the next tier
+  const goal = nextTier ? 10000 : totalEarnings; 
+  const progress = nextTier ? (totalEarnings / goal) * 100 : 100;
+
   return (
     <Card
-      className={`border-2 ${currentTier.borderColor} bg-gradient-to-br ${currentTier.gradientFrom} ${currentTier.gradientTo}`}
+      className={`border-2 border-primary/50 bg-gradient-to-br from-primary/20 to-background`}
     >
       <CardHeader className="flex-row items-start justify-between">
         <div>
           <CardTitle className="flex items-center gap-2 text-xl">
-            <Star className={`h-6 w-6 ${currentTier.textColor}`} />
-            <span className={currentTier.textColor}>
-              {currentTier.name} Tier
+            <Award className={`h-6 w-6 text-primary`} />
+            <span className={`text-foreground`}>
+              Your Progress
             </span>
           </CardTitle>
-          <CardDescription className={`${currentTier.textColor}/80`}>
-            Your current subscription level.
+          <CardDescription className={`text-muted-foreground`}>
+            Keep growing your network to unlock new rewards!
           </CardDescription>
         </div>
         <Button
@@ -48,7 +53,7 @@ export function SubscriptionTierCard() {
           variant="secondary"
           onClick={() => router.push('/subscriptions')}
         >
-          <Zap className="mr-2" /> View Plans
+          <Zap className="mr-2" /> View Ranks
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -69,20 +74,27 @@ export function SubscriptionTierCard() {
             </Button>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
+             <div className="flex justify-between items-end">
+                <div className="text-2xl font-bold text-primary">{currentTier.name} Rank</div>
+                {nextTier && <div className="text-sm text-muted-foreground">Next: {nextTier.name} Rank</div>}
+             </div>
+            <Progress value={progress} className="h-4" />
             <div
-              className={`flex justify-between font-semibold ${currentTier.textColor}`}
+              className={`flex justify-between font-semibold`}
             >
               <span>Current Monthly Earnings (Est.)</span>
               <span>
                 {convertAndFormatCurrency(totalEarnings)}
               </span>
             </div>
-            <div className={`text-sm ${currentTier.textColor}/80 space-y-1`}>
-              <p>
-                This is an estimate of your monthly earnings based on your current network.
-              </p>
-            </div>
+            {nextTier && (
+                 <div className={`text-sm text-muted-foreground space-y-1`}>
+                    <p>
+                        You're only <span className='font-bold text-accent'>{convertAndFormatCurrency(goal - totalEarnings)}</span> away from reaching the {nextTier.name} rank!
+                    </p>
+                 </div>
+            )}
           </div>
         )}
       </CardContent>
