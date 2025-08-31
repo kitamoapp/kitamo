@@ -78,11 +78,11 @@ export function ReferralFaq() {
               <AccordionContent>
                 <div className="space-y-4 text-left">
                   <p>{faq.answer}</p>
-                  <div className="mt-4 pt-4 border-t border-dashed text-center">
+                  <div className="mt-4 pt-4 border-t border-dashed">
                     {feedback[index] ? (
-                       <p className="text-sm text-muted-foreground">Thank you for your feedback!</p>
+                       <p className="text-sm text-muted-foreground text-center">Thank you for your feedback!</p>
                     ) : (
-                      <div className="flex flex-col items-center justify-center gap-2">
+                      <div className="flex items-center justify-between gap-2">
                         <p className="text-sm text-muted-foreground">
                           Was this helpful?
                         </p>
