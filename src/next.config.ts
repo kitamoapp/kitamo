@@ -29,10 +29,8 @@ const nextConfig: NextConfig = {
 
 if (process.env.NODE_ENV === 'development') {
   if (process.env.ALLOWED_DEV_ORIGIN) {
-    nextConfig.experimental = {
-      ...nextConfig.experimental,
-      allowedDevOrigins: [process.env.ALLOWED_DEV_ORIGIN],
-    };
+    // The `allowedDevOrigins` config has been removed as it was causing a startup error.
+    // Modern Next.js handles CORS for development environments differently.
   }
 }
 
