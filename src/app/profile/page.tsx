@@ -82,6 +82,7 @@ interface BankPaymentMethod extends BasePaymentMethod {
     last4: string;
     bankName: string;
     accountNumber?: string;
+    routingNumber?: string;
 }
 
 interface WalletPaymentMethod extends BasePaymentMethod {
@@ -117,6 +118,18 @@ const paymentMethodSchema = z.object({
     bankSchema.extend({ type: z.literal('Bank') }),
     walletSchema.extend({ type: z.literal('Wallet') }),
 ]));
+
+const baseDefaultValues = {
+  type: 'Card' as const,
+  cardNumber: '',
+  expiry: '',
+  cvc: '',
+  accountNumber: '',
+  routingNumber: '',
+  bankName: '',
+  provider: '',
+  email: '',
+};
 
 export default function ProfilePage() {
   const { currentTier } = useSubscription();
@@ -155,50 +168,32 @@ export default function ProfilePage() {
         if (type === 'Wallet') return zodResolver(walletSchema.extend({ type: z.literal('Wallet') }))(data, context, options);
         return zodResolver(paymentMethodSchema)(data, context, options);
     },
-    defaultValues: {
-      type: 'Card',
-      cardNumber: '',
-      expiry: '',
-      cvc: '',
-      accountNumber: '',
-      routingNumber: '',
-      bankName: '',
-      provider: '',
-      email: '',
-    },
+    defaultValues: baseDefaultValues,
   });
   
   const paymentType = paymentForm.watch('type');
 
   useEffect(() => {
-    const defaultValues: any = {
-      type: editingPaymentMethod?.type || 'Card',
-      cardNumber: '',
-      expiry: '',
-      cvc: '',
-      accountNumber: '',
-      routingNumber: '',
-      bankName: '',
-      provider: '',
-      email: '',
-    };
+    let defaultValues = { ...baseDefaultValues };
+
     if (editingPaymentMethod) {
-        switch (editingPaymentMethod.type) {
-            case 'Card':
-                defaultValues.cardNumber = editingPaymentMethod.cardNumber || '';
-                defaultValues.expiry = editingPaymentMethod.expiry;
-                defaultValues.cvc = '';
-                break;
-            case 'Bank':
-                defaultValues.accountNumber = editingPaymentMethod.accountNumber || '';
-                defaultValues.bankName = editingPaymentMethod.bankName;
-                defaultValues.routingNumber = '';
-                break;
-            case 'Wallet':
-                defaultValues.provider = editingPaymentMethod.provider;
-                defaultValues.email = editingPaymentMethod.email;
-                break;
-        }
+      defaultValues.type = editingPaymentMethod.type;
+      
+      switch (editingPaymentMethod.type) {
+        case 'Card':
+          defaultValues.cardNumber = editingPaymentMethod.cardNumber || '';
+          defaultValues.expiry = editingPaymentMethod.expiry || '';
+          break;
+        case 'Bank':
+          defaultValues.accountNumber = editingPaymentMethod.accountNumber || '';
+          defaultValues.routingNumber = editingPaymentMethod.routingNumber || '';
+          defaultValues.bankName = editingPaymentMethod.bankName || '';
+          break;
+        case 'Wallet':
+          defaultValues.provider = editingPaymentMethod.provider || '';
+          defaultValues.email = editingPaymentMethod.email || '';
+          break;
+      }
     }
     paymentForm.reset(defaultValues);
   }, [editingPaymentMethod, paymentForm]);
@@ -330,6 +325,7 @@ export default function ProfilePage() {
                 last4: values.accountNumber.slice(-4),
                 bankName: values.bankName,
                 accountNumber: values.accountNumber,
+                routingNumber: values.routingNumber
             };
             break;
         case 'Wallet':
@@ -359,7 +355,7 @@ export default function ProfilePage() {
       });
     }
 
-    paymentForm.reset();
+    paymentForm.reset(baseDefaultValues);
     setShowPaymentDialog(false);
     setEditingPaymentMethod(null);
   }
@@ -591,7 +587,7 @@ export default function ProfilePage() {
           setShowPaymentDialog(isOpen);
           if (!isOpen) {
             setEditingPaymentMethod(null);
-            paymentForm.reset();
+            paymentForm.reset(baseDefaultValues);
           }
         }}
       >
@@ -613,7 +609,7 @@ export default function ProfilePage() {
                     <Select
                       onValueChange={(value) => {
                           field.onChange(value);
-                          paymentForm.reset({ type: value }); // Reset form to clear irrelevant fields
+                          paymentForm.reset({ ...baseDefaultValues, type: value }); // Reset form to clear irrelevant fields
                       }}
                       value={field.value}
                       disabled={!!editingPaymentMethod} // Prevent changing type when editing
@@ -763,7 +759,7 @@ export default function ProfilePage() {
               <DialogFooter>
                 <DialogClose asChild>
                   <Button type="button" variant="outline" onClick={() => {
-                      paymentForm.reset();
+                      paymentForm.reset(baseDefaultValues);
                       setEditingPaymentMethod(null);
                       setShowPaymentDialog(false);
                     }}>
