@@ -20,23 +20,13 @@ import { useSubscription } from '@/context/subscription-context';
 export function SubscriptionTierCard() {
   const { convertAndFormatCurrency } = useCurrency();
   const {
-    activeReferrals,
     currentTier,
     totalEarnings,
-    directEarnings,
-    indirectEarnings,
-    nextTier,
   } = useSubscription();
   const router = useRouter();
 
   const isBronze = currentTier.name === 'Bronze';
-  const isUnlimited = currentTier.earningCap === Infinity;
-
-  const earningsProgress =
-    !isBronze && !isUnlimited
-      ? (totalEarnings / currentTier.earningCap) * 100
-      : 0;
-
+  
   return (
     <Card
       className={`border-2 ${currentTier.borderColor} bg-gradient-to-br ${currentTier.gradientFrom} ${currentTier.gradientTo}`}
@@ -83,28 +73,14 @@ export function SubscriptionTierCard() {
             <div
               className={`flex justify-between font-semibold ${currentTier.textColor}`}
             >
-              <span>Current Earnings</span>
+              <span>Current Monthly Earnings (Est.)</span>
               <span>
-                {convertAndFormatCurrency(totalEarnings)} /{' '}
-                {isUnlimited
-                  ? 'Unlimited'
-                  : convertAndFormatCurrency(currentTier.earningCap)}
+                {convertAndFormatCurrency(totalEarnings)}
               </span>
             </div>
-            <Progress value={earningsProgress} className="h-2" />
             <div className={`text-sm ${currentTier.textColor}/80 space-y-1`}>
               <p>
-                You have earned a total of{' '}
-                {convertAndFormatCurrency(totalEarnings)} from {activeReferrals}{' '}
-                active referrals in your network.
-              </p>
-              <p>
-                - Direct ({currentTier.directReferralPercent * 100}%):{' '}
-                {convertAndFormatCurrency(directEarnings)}
-              </p>
-              <p>
-                - Indirect ({currentTier.indirectReferralPercent * 100}%):{' '}
-                {convertAndFormatCurrency(indirectEarnings)}
+                This is an estimate of your monthly earnings based on your current network.
               </p>
             </div>
           </div>

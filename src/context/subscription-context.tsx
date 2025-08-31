@@ -17,12 +17,9 @@ import {
 
 interface ReferralEarnings {
   totalEarnings: number;
-  directEarnings: number;
-  indirectEarnings: number;
 }
 
 interface SubscriptionContextType extends ReferralEarnings {
-  activeReferrals: number;
   currentTier: SubscriptionTier;
   setCurrentTier: (tier: SubscriptionTier) => void;
   nextTier: SubscriptionTier | undefined;
@@ -33,71 +30,63 @@ const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
 );
 
 const calculateEarnings = (tier: SubscriptionTier): ReferralEarnings => {
-  let directEarnings = 0;
-  let indirectEarnings = 0;
+  let totalEarnings = 0;
+  
+  const averageReferralRevenue = 15; // Assume average plan price for demo
 
-  const directReferrals = referredUsers.filter(
-    (u) => u.referredBy === 'currentUser' && u.status === 'Active'
-  );
+  // L1
+  const l1Referrals = referredUsers.filter(u => u.referredBy === 'currentUser' && u.status === 'Active');
+  totalEarnings += l1Referrals.length * averageReferralRevenue * (tier.levelPercentages[0] || 0);
 
-  directReferrals.forEach((direct) => {
-    // For demonstration, assume each active referral subscribes to a plan
-    // that costs on average $15.
-    const averageReferralRevenue = 15;
-    directEarnings += averageReferralRevenue * tier.directReferralPercent;
+  // L2
+  const l1Ids = l1Referrals.map(u => u.id);
+  const l2Referrals = referredUsers.filter(u => l1Ids.includes(u.referredBy) && u.status === 'Active');
+  totalEarnings += l2Referrals.length * averageReferralRevenue * (tier.levelPercentages[1] || 0);
 
-    const indirectReferrals = referredUsers.filter(
-      (u) => u.referredBy === direct.id && u.status === 'Active'
-    );
+  // L3
+  const l2Ids = l2Referrals.map(u => u.id);
+  const l3Referrals = referredUsers.filter(u => l2Ids.includes(u.referredBy) && u.status === 'Active');
+  totalEarnings += l3Referrals.length * averageReferralRevenue * (tier.levelPercentages[2] || 0);
+  
+  // L4
+  const l3Ids = l3Referrals.map(u => u.id);
+  const l4Referrals = referredUsers.filter(u => l3Ids.includes(u.referredBy) && u.status === 'Active');
+  totalEarnings += l4Referrals.length * averageReferralRevenue * (tier.levelPercentages[3] || 0);
 
-    indirectReferrals.forEach((indirect) => {
-      indirectEarnings += averageReferralRevenue * tier.indirectReferralPercent;
-    });
-  });
+  // L5
+  const l4Ids = l4Referrals.map(u => u.id);
+  const l5Referrals = referredUsers.filter(u => l4Ids.includes(u.referredBy) && u.status === 'Active');
+  totalEarnings += l5Referrals.length * averageReferralRevenue * (tier.levelPercentages[4] || 0);
 
-  return {
-    totalEarnings: directEarnings + indirectEarnings,
-    directEarnings,
-    indirectEarnings,
-  };
+  return { totalEarnings };
 };
 
 export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const [currentTier, setCurrentTierState] =
     useState<SubscriptionTier>(subscriptionTiers[0]);
 
-  const activeReferrals = useMemo(
-    () =>
-      referredUsers.filter(
-        (u) => u.referredBy === 'currentUser' && u.status === 'Active'
-      ).length,
-    []
-  );
-
   const setCurrentTier = useCallback((tier: SubscriptionTier) => {
     setCurrentTierState(tier);
   }, []);
 
   const nextTier: SubscriptionTier | undefined = useMemo(
-    () => subscriptionTiers[subscriptionTiers.indexOf(currentTier) + 1],
+    () => subscriptionTiers.find(t => t.price > currentTier.price)
+    ,
     [currentTier]
   );
-
-  const { totalEarnings, directEarnings, indirectEarnings } = useMemo(() => {
+    
+  const { totalEarnings } = useMemo(() => {
     if (currentTier.name === 'Bronze') {
-      return { totalEarnings: 0, directEarnings: 0, indirectEarnings: 0 };
+      return { totalEarnings: 0 };
     }
     return calculateEarnings(currentTier);
   }, [currentTier]);
-
+  
   const value = {
-    activeReferrals,
     currentTier,
     setCurrentTier,
     nextTier,
     totalEarnings,
-    directEarnings,
-    indirectEarnings,
   };
 
   return (

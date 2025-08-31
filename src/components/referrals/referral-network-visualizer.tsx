@@ -75,7 +75,7 @@ const LevelConnector = ({ level, percent, earning, referralSource }: { level: nu
             (+ {convertAndFormatCurrency(earning, 'USD')}/mo)
           </div>
         )}
-         <div className="text-xs text-muted-foreground">(Referred by {referralSource})</div>
+         <div className="text-xs text-muted-foreground">(from {referralSource}'s referrals)</div>
       </div>
     </>
   );
@@ -86,10 +86,8 @@ export function ReferralNetworkVisualizer() {
   const { currentTier } = useSubscription();
   const { convertAndFormatCurrency } = useCurrency();
   
-  // Use Platinum tier for demonstration purposes to show all levels
   const tierForDemonstration: SubscriptionTier = subscriptionTiers.find(t => t.name === 'Platinum')!;
     
-  // Hypothetical downlines for demonstration
   const silverPlan = subscriptionTiers.find(t => t.name === 'Silver')!;
   const goldPlan = subscriptionTiers.find(t => t.name === 'Gold')!;
   const platinumPlan = subscriptionTiers.find(t => t.name === 'Platinum')!;
@@ -102,15 +100,9 @@ export function ReferralNetworkVisualizer() {
     goldPlan.price // L5
   ];
 
-  const levelPercentages = [
-    tierForDemonstration.directReferralPercent, // L1
-    tierForDemonstration.indirectReferralPercent, // L2
-    tierForDemonstration.indirectReferralPercent, // L3
-    tierForDemonstration.indirectReferralPercent, // L4
-    tierForDemonstration.indirectReferralPercent, // L5
-  ];
+  const levelPercentages = tierForDemonstration.levelPercentages;
   
-  const levelEarnings = levelRevenues.map((revenue, index) => revenue * levelPercentages[index]);
+  const levelEarnings = levelRevenues.map((revenue, index) => revenue * (levelPercentages[index] || 0));
   const totalEarning = levelEarnings.reduce((acc, earning) => acc + earning, 0);
 
   const referralChain = [
@@ -131,7 +123,6 @@ export function ReferralNetworkVisualizer() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center gap-4 py-8">
-        {/* Main User */}
         <NetworkNode
           name={referralChain[0].name}
           level={referralChain[0].level}
@@ -146,14 +137,14 @@ export function ReferralNetworkVisualizer() {
            <div key={user.name} className="flex flex-col items-center w-full">
              <LevelConnector
                 level={index + 1}
-                percent={levelPercentages[index]}
+                percent={levelPercentages[index] || 0}
                 earning={levelEarnings[index]}
                 referralSource={referralChain[index].name}
              />
              <div className="mt-4">
                 <NetworkNode
                     name={user.name}
-                    level={user.level}
+                    level={`L${index + 1} Referral`}
                     planName={user.planName}
                     imageUrl={user.imageUrl}
                     aiHint={user.aiHint}
@@ -161,12 +152,10 @@ export function ReferralNetworkVisualizer() {
              </div>
            </div>
         ))}
-
-        <div className="mt-4 w-full rounded-lg border border-dashed bg-muted/50 p-4 text-center text-sm text-muted-foreground">
-          This is a visual representation to help you understand the referral
+         <div className="mt-4 w-full rounded-lg border border-dashed bg-muted/50 p-4 text-center text-sm text-muted-foreground">
+          Earnings are capped at 5 levels deep. This is a visual representation to help you understand the referral
           structure. The earnings shown are for demonstration purposes only and
-          do not represent your actual earnings. Your network can have
-          unlimited levels and users, and earning percentages may vary.
+          do not represent your actual earnings.
         </div>
       </CardContent>
     </Card>

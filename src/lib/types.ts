@@ -28,24 +28,20 @@ export type Category = {
 
 export type SubscriptionFeature = {
   text: string;
-  earningCap?: number;
 };
 
 export type SubscriptionTier = {
   name: string;
   price: number;
   features: SubscriptionFeature[];
-  requiredReferrals: number;
-  earningCap: number;
   borderColor: string;
   gradientFrom: string;
   gradientTo: string;
   textColor: string;
-  directReferralPercent: number;
-  indirectReferralPercent: number;
+  levelPercentages: number[];
 };
 
 export type ReferralMilestone = {
-  name: string;
+  name:string;
   requiredReferrals: number;
 };
