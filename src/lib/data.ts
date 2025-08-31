@@ -141,7 +141,6 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 10,
     features: [
       { text: 'All Bronze features' },
-      { text: 'Advanced analytics' },
       { text: 'Earning cap of {cap}', earningCap: 500 },
     ],
     requiredReferrals: 5,
@@ -170,7 +169,6 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 50,
     features: [
       { text: 'All Gold features' },
-      { text: 'Exclusive partner offers' },
       { text: 'Earning cap of {cap}', earningCap: 10000 },
     ],
     requiredReferrals: 50,
