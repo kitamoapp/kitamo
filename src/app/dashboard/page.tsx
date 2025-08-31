@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { transactions } from '@/lib/data';
 import { SummaryCard } from '@/components/dashboard/summary-card';
 import {
   DollarSign,
@@ -20,8 +19,6 @@ import {
   TrendingDown,
   TrendingUp,
   Settings2,
-  Target,
-  Lightbulb,
 } from 'lucide-react';
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
 import { useCurrency } from '@/context/currency-context';
@@ -51,6 +48,8 @@ import { BudgetSummaryCard } from '@/components/dashboard/budget-summary-card';
 import { UpcomingBillsCard } from '@/components/dashboard/upcoming-bills-card';
 import { useTransactions } from '@/context/transaction-context';
 import { FinancialInsightsCard } from '@/components/dashboard/financial-insights-card';
+import { useDashboardComponents } from '@/hooks/use-dashboard-components';
+import type { DashboardComponent } from '@/hooks/use-dashboard-components';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -70,15 +69,8 @@ export default function DashboardPage() {
   const [period, setPeriod] = useState<Period>('month');
 
   // State for dashboard component visibility
-  const [visibleComponents, setVisibleComponents] = useState({
-    summaryCards: true,
-    financialSummary: true,
-    expenseBreakdown: true,
-    transactionHistory: true,
-    budgetSummary: true,
-    upcomingBills: true,
-    financialInsights: true,
-  });
+  const { visibleComponents, handleVisibilityChange } = useDashboardComponents();
+
 
   const { totalIncome, totalExpenses, balance } = useMemo(() => {
     const income = transactions
@@ -103,10 +95,6 @@ export default function DashboardPage() {
     currentTier.name === 'Platinum';
     
   const canViewInsights = currentTier.name !== 'Bronze';
-
-  const handleVisibilityChange = (component: keyof typeof visibleComponents, checked: boolean) => {
-    setVisibleComponents(prev => ({ ...prev, [component]: checked }));
-  }
 
   return (
     <AppLayout>
