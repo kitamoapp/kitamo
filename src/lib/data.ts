@@ -173,7 +173,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     name: 'Gold',
     price: 20,
     features: [
-      { text: 'All Silver features' },
+      { text: 'All Bronze features' },
       { text: 'Earning cap of {cap}', earningCap: 500 },
       { text: '25% from direct referrals' },
       { text: '15% from indirect referrals' },
