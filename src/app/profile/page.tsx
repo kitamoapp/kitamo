@@ -337,7 +337,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {paymentMethods.map(method => (
-                        <div key={method.id} className="flex items-center justify-between rounded-lg border p-4">
+                        <div key={method.id} className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4 rounded-lg border p-4">
                             <div className="flex items-center gap-4">
                                 {getPaymentMethodIcon(method.type)}
                                 <div>
@@ -349,7 +349,7 @@ export default function ProfilePage() {
                                     {method.type === 'Wallet' && <p className="text-sm text-muted-foreground">{method.email}</p>}
                                 </div>
                             </div>
-                            <div className='flex items-center gap-2'>
+                            <div className='flex items-center gap-2 flex-shrink-0'>
                               <Button variant="ghost" size="icon" onClick={() => handleOpenPaymentDialog(method)}>
                                   <Edit className="h-4 w-4" />
                                   <span className='sr-only'>Edit Card</span>

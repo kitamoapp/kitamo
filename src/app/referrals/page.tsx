@@ -21,10 +21,15 @@ export default function ReferralsPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-8">
             <MilestoneProgressCard />
+            <div className="block lg:hidden">
+              <ReferralCodeCard />
+            </div>
             <ReferralNetworkVisualizer />
           </div>
           <div className="lg:col-span-1 space-y-8">
-            <ReferralCodeCard />
+            <div className="hidden lg:block">
+              <ReferralCodeCard />
+            </div>
             <ReferralFaq />
           </div>
         </div>
