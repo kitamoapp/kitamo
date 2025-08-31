@@ -72,7 +72,6 @@ export default function LoginPage() {
                     id="email"
                     type="email"
                     placeholder="name@example.com"
-                    defaultValue="user@example.com"
                     required
                   />
                 </div>
@@ -81,7 +80,6 @@ export default function LoginPage() {
                   <Input
                     id="password"
                     type="password"
-                    defaultValue="password"
                     required
                   />
                 </div>
