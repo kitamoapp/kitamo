@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Star, TrendingUp, Zap } from 'lucide-react';
 
 import {
@@ -21,9 +21,20 @@ import {
 } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { rates } from '@/lib/currency-rates';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
 
 export function SubscriptionTierCard() {
   const { currency, convertAndFormatCurrency } = useCurrency();
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
 
   const activeReferrals = referredUsers.filter(
     (u) => u.status === 'Active'
@@ -52,6 +63,7 @@ export function SubscriptionTierCard() {
     : 100;
 
   return (
+    <>
     <Card
       className={`border-2 ${currentTier.borderColor} bg-gradient-to-br ${currentTier.gradientFrom} ${currentTier.gradientTo}`}
     >
@@ -67,7 +79,7 @@ export function SubscriptionTierCard() {
             Your current subscription level.
           </CardDescription>
         </div>
-        <Button size="sm" variant="secondary">
+        <Button size="sm" variant="secondary" onClick={() => setShowUpgradeDialog(true)}>
           <Zap className="mr-2" /> Upgrade
         </Button>
       </CardHeader>
@@ -112,5 +124,22 @@ export function SubscriptionTierCard() {
         )}
       </CardContent>
     </Card>
+      <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Upgrade Your Plan</AlertDialogTitle>
+            <AlertDialogDescription>
+              This is where a real application would present different subscription plans and payment options. For this demo, this is just a placeholder.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => setShowUpgradeDialog(false)}>
+              Got It!
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
