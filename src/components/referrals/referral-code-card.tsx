@@ -29,7 +29,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
       {...props}
     >
-        <path d="M21.44,11.36c0,5.16-4.18,9.34-9.34,9.34a9.26,9.26,0,0,1-4.71-1.28L2.61,21.39l1.9-4.52a9.3,9.3,0,0,1-1.39-4.88c0-5.16,4.18-9.34,9.34-9.34S21.44,6.2,21.44,11.36Z" />
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
     </svg>
 );
 
@@ -95,10 +95,17 @@ export function ReferralCodeCard() {
   const shareActions = [
     { name: 'WhatsApp', icon: WhatsAppIcon, url: `https://wa.me/?text=${encodeURIComponent(referralMessage)}`},
     { name: 'Telegram', icon: TelegramIcon, url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(referralMessage)}` },
-    { name: 'Messenger', icon: MessengerIcon, url: `fb-messenger://share?link=${encodeURIComponent(referralLink)}` }
+    { name: 'Messenger', icon: MessengerIcon, url: `https://www.facebook.com/dialog/send?app_id=YOUR_FACEBOOK_APP_ID&link=${encodeURIComponent(referralLink)}&redirect_uri=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}` }
   ];
   
   const handleShare = (url: string) => {
+    // For Messenger, we need to replace the placeholder app ID
+    if (url.includes('YOUR_FACEBOOK_APP_ID')) {
+        // In a real app, you would get this from your environment variables
+        // For this demo, we'll use a public example ID.
+        const facebookAppId = '1846626922365001'; 
+        url = url.replace('YOUR_FACEBOOK_APP_ID', facebookAppId);
+    }
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
@@ -139,4 +146,3 @@ export function ReferralCodeCard() {
     </Card>
   );
 }
-
