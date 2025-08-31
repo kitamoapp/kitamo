@@ -77,7 +77,7 @@ export default function DashboardPage() {
     .reduce((acc, t) => acc + t.amount, 0);
   const totalExpenses = transactions
     .filter((t) => t.type === 'expense')
-    .reduce((acc, t) => acc + t'amount, 0);
+    .reduce((acc, t) => acc + t.amount, 0);
   const balance = totalIncome - totalExpenses;
   const BalanceIcon = currencyIcons[currency] || DollarSign;
 
