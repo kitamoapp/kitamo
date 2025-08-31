@@ -1,9 +1,9 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Camera, Trash2 } from 'lucide-react';
+import { Camera, Trash2, Users } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { useReferredUsers } from '@/context/referred-user-context';
+import type { ReferredUser } from '@/lib/types';
 
 interface ProfileHeaderCardProps {
   fullName: string;
@@ -20,6 +22,7 @@ interface ProfileHeaderCardProps {
 
 export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
   const { currentTier } = useSubscription();
+  const { referredUsers } = useReferredUsers();
   const router = useRouter();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -52,6 +55,18 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
       description: 'Your profile picture has been removed.',
     });
   };
+
+  const downlineCount = useMemo(() => {
+    const countDescendants = (userId: string): number => {
+      const children = referredUsers.filter(u => u.referredBy === userId);
+      let count = children.length;
+      for (const child of children) {
+        count += countDescendants(child.id);
+      }
+      return count;
+    }
+    return countDescendants('currentUser');
+  }, [referredUsers]);
 
   return (
     <Card>
@@ -98,23 +113,32 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
           </Button>
         )}
         <Separator className="my-4" />
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Current Plan</p>
-          <Badge
-            className={cn(
-              'text-lg',
-              currentTier.name === 'Platinum' &&
-                'border-sky-500 text-sky-500',
-              currentTier.name === 'Gold' &&
-                'border-amber-500 text-amber-500',
-              currentTier.name === 'Silver' &&
-                'border-slate-500 text-slate-500',
-              currentTier.name === 'Bronze' && 'border-yellow-700 text-yellow-700'
-            )}
-            variant="outline"
-          >
-            {currentTier.name}
-          </Badge>
+        <div className="flex justify-around items-center text-center mb-4">
+            <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Current Plan</p>
+                <Badge
+                    className={cn(
+                    'text-base',
+                    currentTier.name === 'Platinum' &&
+                        'border-sky-500 text-sky-500',
+                    currentTier.name === 'Gold' &&
+                        'border-amber-500 text-amber-500',
+                    currentTier.name === 'Silver' &&
+                        'border-slate-500 text-slate-500',
+                    currentTier.name === 'Bronze' && 'border-yellow-700 text-yellow-700'
+                    )}
+                    variant="outline"
+                >
+                    {currentTier.name}
+                </Badge>
+            </div>
+             <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Total Downlines</p>
+                <div className="flex items-center justify-center gap-2">
+                    <Users className="h-5 w-5 text-primary" />
+                    <p className="text-xl font-bold">{downlineCount}</p>
+                </div>
+            </div>
         </div>
         <Button className="mt-4 w-full" onClick={() => router.push('/subscriptions')}>
           Manage Subscription
