@@ -12,16 +12,11 @@ import type { Reminder } from '@/lib/types';
 
 // Helper to handle serialization of Date objects
 const serializeReminders = (reminders: Reminder[]) => {
-  return JSON.stringify(
-    reminders.map((r) => ({ ...r, date: r.date.toString() }))
-  );
+  return JSON.stringify(reminders);
 };
 
 const deserializeReminders = (jsonString: string): Reminder[] => {
-  return JSON.parse(jsonString).map((r: any) => ({
-    ...r,
-    date: new Date(r.date),
-  }));
+  return JSON.parse(jsonString);
 };
 
 interface ReminderContextType {
@@ -43,6 +38,7 @@ const initialReminders: Reminder[] = [
 
 export const ReminderProvider = ({ children }: { children: ReactNode }) => {
   const [reminders, setReminders] = useState<Reminder[]>(initialReminders);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     try {
@@ -53,17 +49,18 @@ export const ReminderProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('Error reading reminders from localStorage', error);
     }
+    setIsLoaded(true);
   }, []);
 
   useEffect(() => {
-    try {
-       if (typeof window !== 'undefined') {
-         window.localStorage.setItem(LOCAL_STORAGE_KEY, serializeReminders(reminders));
-       }
-    } catch (error) {
-      console.error('Error saving reminders to localStorage', error);
+    if (isLoaded) {
+        try {
+            window.localStorage.setItem(LOCAL_STORAGE_KEY, serializeReminders(reminders));
+        } catch (error) {
+            console.error('Error saving reminders to localStorage', error);
+        }
     }
-  }, [reminders]);
+  }, [reminders, isLoaded]);
 
   const addReminder = (reminder: Reminder) => {
     setReminders((prev) => [...prev, reminder]);
