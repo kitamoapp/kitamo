@@ -28,14 +28,11 @@ const nextConfig: NextConfig = {
 };
 
 if (process.env.NODE_ENV === 'development') {
-  if (process.env.ALLOWED_DEV_ORIGIN) {
-    const origin = new URL(process.env.ALLOWED_DEV_ORIGIN);
-    nextConfig.experimental = {
-      ...nextConfig.experimental,
-      // The `allowedDevOrigins` config expects a list of protocol://hostname:port strings.
-      allowedDevOrigins: [`${origin.protocol}//${origin.host}`],
-    };
-  }
+  const allowedDevOrigin = 'https://9000-firebase-studio-1756530008162.cluster-yylgzpipxrar4v4a72liastuqy.cloudworkstations.dev';
+  nextConfig.experimental = {
+    ...nextConfig.experimental,
+    allowedDevOrigins: [allowedDevOrigin],
+  };
 }
 
 export default nextConfig;
