@@ -13,7 +13,6 @@ import type { SubscriptionTier } from '@/lib/types';
 import {
   subscriptionTiers,
   referredUsers,
-  REFERRAL_PERCENTAGES,
 } from '@/lib/data';
 
 interface ReferralEarnings {
@@ -33,7 +32,7 @@ const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
   undefined
 );
 
-const calculateEarnings = (): ReferralEarnings => {
+const calculateEarnings = (tier: SubscriptionTier): ReferralEarnings => {
   let directEarnings = 0;
   let indirectEarnings = 0;
 
@@ -42,14 +41,14 @@ const calculateEarnings = (): ReferralEarnings => {
   );
 
   directReferrals.forEach((direct) => {
-    directEarnings += direct.earnings * REFERRAL_PERCENTAGES.direct;
+    directEarnings += direct.earnings * tier.directReferralPercent;
 
     const indirectReferrals = referredUsers.filter(
       (u) => u.referredBy === direct.id && u.status === 'Active'
     );
 
     indirectReferrals.forEach((indirect) => {
-      indirectEarnings += indirect.earnings * REFERRAL_PERCENTAGES.indirect;
+      indirectEarnings += indirect.earnings * tier.indirectReferralPercent;
     });
   });
 
@@ -94,7 +93,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     if (currentTier.name === 'Bronze') {
       return { totalEarnings: 0, directEarnings: 0, indirectEarnings: 0 };
     }
-    return calculateEarnings();
+    return calculateEarnings(currentTier);
   }, [currentTier]);
 
   const value = {

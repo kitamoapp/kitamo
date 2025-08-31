@@ -41,6 +41,8 @@ export type SubscriptionTier = {
   gradientFrom: string;
   gradientTo: string;
   textColor: string;
+  directReferralPercent: number;
+  indirectReferralPercent: number;
 };
 
 export type ReferralMilestone = {

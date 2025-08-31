@@ -6,7 +6,7 @@ import type {
   ReferralMilestone,
 } from '@/lib/types';
 
-export const transactions: Transaction[] = [
+export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
   {
     id: '1',
     type: 'income',
@@ -133,11 +133,6 @@ export const referredUsers: ReferredUser[] = [
   },
 ];
 
-export const REFERRAL_PERCENTAGES = {
-  direct: 0.25, // 25% for direct referrals
-  indirect: 0.15, // 15% for indirect referrals
-};
-
 export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Bronze',
@@ -153,6 +148,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     gradientFrom: 'from-yellow-100',
     gradientTo: 'to-stone-100',
     textColor: 'text-yellow-800',
+    directReferralPercent: 0,
+    indirectReferralPercent: 0,
   },
   {
     name: 'Silver',
@@ -160,8 +157,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       { text: 'All Bronze features' },
       { text: 'Earning cap of {cap}', earningCap: 500 },
-      { text: '25% from direct referrals' },
-      { text: '15% from indirect referrals' },
+      { text: '15% from direct referrals' },
+      { text: '5% from indirect referrals' },
     ],
     requiredReferrals: 5,
     earningCap: 500,
@@ -169,6 +166,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     gradientFrom: 'from-slate-200',
     gradientTo: 'to-white',
     textColor: 'text-slate-700',
+    directReferralPercent: 0.15,
+    indirectReferralPercent: 0.05,
   },
   {
     name: 'Gold',
@@ -176,6 +175,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       { text: 'All Silver features' },
       { text: 'Earning cap of {cap}', earningCap: 2500 },
+      { text: '25% from direct referrals' },
+      { text: '15% from indirect referrals' },
     ],
     requiredReferrals: 20,
     earningCap: 2500,
@@ -183,6 +184,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     gradientFrom: 'from-amber-200',
     gradientTo: 'to-yellow-100',
     textColor: 'text-amber-800',
+    directReferralPercent: 0.25,
+    indirectReferralPercent: 0.15,
   },
   {
     name: 'Platinum',
@@ -190,6 +193,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       { text: 'All Gold features' },
       { text: 'Unlimited Earning Potential', earningCap: Infinity },
+      { text: '35% from direct referrals' },
+      { text: '25% from indirect referrals' },
     ],
     requiredReferrals: 50,
     earningCap: Infinity,
@@ -197,6 +202,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     gradientFrom: 'from-sky-200',
     gradientTo: 'to-cyan-100',
     textColor: 'text-sky-800',
+    directReferralPercent: 0.35,
+    indirectReferralPercent: 0.25,
   },
 ];
 

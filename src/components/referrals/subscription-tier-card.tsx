@@ -5,7 +5,6 @@ import { useMemo, useState } from 'react';
 import { Star, TrendingUp, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { subscriptionTiers, REFERRAL_PERCENTAGES } from '@/lib/data';
 import { useCurrency } from '@/context/currency-context';
 import { Button } from '../ui/button';
 import {
@@ -91,11 +90,11 @@ export function SubscriptionTierCard() {
                   {activeReferrals} active referrals in your network.
                 </p>
                 <p>
-                  - Direct ({REFERRAL_PERCENTAGES.direct * 100}%):{' '}
+                  - Direct ({currentTier.directReferralPercent * 100}%):{' '}
                   {convertAndFormatCurrency(directEarnings)}
                 </p>
                 <p>
-                  - Indirect ({REFERRAL_PERCENTAGES.indirect * 100}%):{' '}
+                  - Indirect ({currentTier.indirectReferralPercent * 100}%):{' '}
                   {convertAndFormatCurrency(indirectEarnings)}
                 </p>
               </div>

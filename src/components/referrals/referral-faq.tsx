@@ -14,8 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import { REFERRAL_PERCENTAGES } from '@/lib/data';
-
 
 export function ReferralFaq() {
   const faqs = [
@@ -26,7 +24,7 @@ export function ReferralFaq() {
     },
     {
       question: 'What do I get for a successful referral?',
-      answer: `For each friend that signs up and becomes an active user on a paid plan, you will receive ${REFERRAL_PERCENTAGES.direct * 100}% of the revenue they generate. If they refer others, you'll earn ${REFERRAL_PERCENTAGES.indirect * 100}% from those indirect referrals as well.`,
+      answer: `Your earning potential depends on your subscription tier. Higher tiers earn a larger percentage from both direct and indirect referrals. For example, Silver members earn 15% from direct referrals and 5% from indirect, while Platinum members earn 35% and 25% respectively.`,
     },
     {
       question: 'How many people can I refer?',
@@ -35,7 +33,7 @@ export function ReferralFaq() {
     {
       question: 'How do subscription tiers work?',
       answer:
-        'As you refer more active users, you will unlock higher subscription tiers. Each tier increases your maximum earning potential from referrals.',
+        'As you refer more active users, you will unlock higher subscription tiers. Each tier increases your maximum earning potential and the percentage you earn from referrals.',
     },
     {
       question: 'What are referral milestones?',
@@ -45,10 +43,9 @@ export function ReferralFaq() {
     {
       question: 'When will I see my bonus?',
       answer:
-        "Your referral earnings will be credited to your account as your referrals generate revenue.",
+        'Your referral earnings will be credited to your account as your referrals generate revenue.',
     },
   ];
-
 
   return (
     <Card>

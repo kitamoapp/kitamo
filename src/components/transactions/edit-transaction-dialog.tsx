@@ -202,7 +202,7 @@ export function EditTransactionDialog({ transaction, onOpenChange }: EditTransac
                           )}
                         >
                           {field.value ? (
-                            format(new Date(field.value), 'PPP')
+                            format(field.value, 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -213,7 +213,7 @@ export function EditTransactionDialog({ transaction, onOpenChange }: EditTransac
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={new Date(field.value)}
+                        selected={field.value}
                         onSelect={field.onChange}
                         initialFocus
                       />
