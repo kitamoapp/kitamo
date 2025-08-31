@@ -137,11 +137,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Bronze',
     price: 0,
-    features: [
-      { text: 'Financial tracking' },
-      { text: 'Customizable dashboard views' },
-      { text: 'Upgrade to earn referral bonuses' },
-    ],
+    features: [{ text: 'Financial tracking' }],
     requiredReferrals: 0,
     earningCap: 0,
     borderColor: 'border-yellow-700',
