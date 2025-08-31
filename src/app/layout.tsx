@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { CurrencyProvider } from '@/context/currency-context';
 import { TransactionProvider } from '@/context/transaction-context';
 import { ThemeProvider } from '@/components/theme-provider';
+import { SubscriptionProvider } from '@/context/subscription-context';
 
 export const metadata: Metadata = {
   title: 'KitaMo',
@@ -47,7 +48,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <CurrencyProvider>
-            <TransactionProvider>{children}</TransactionProvider>
+            <TransactionProvider>
+              <SubscriptionProvider>{children}</SubscriptionProvider>
+            </TransactionProvider>
           </CurrencyProvider>
           <Toaster />
         </ThemeProvider>

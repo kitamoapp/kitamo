@@ -32,6 +32,8 @@ import { useCurrency } from '@/context/currency-context';
 import type { Currency } from '@/lib/types';
 import { TransactionsTable } from '@/components/transactions/transactions-table';
 import { ExpenseBreakdownChart } from '@/components/dashboard/expense-breakdown-chart';
+import { useSubscription } from '@/hooks/use-subscription';
+import { UpgradeCard } from '@/components/upgrade-card';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -43,6 +45,8 @@ const currencyIcons: Record<Currency, React.ElementType> = {
 
 export default function DashboardPage() {
   const { currency, formatCurrency } = useCurrency();
+  const { currentTier } = useSubscription();
+
   const totalIncome = transactions
     .filter((t) => t.type === 'income')
     .reduce((acc, t) => acc + t.amount, 0);
@@ -51,6 +55,11 @@ export default function DashboardPage() {
     .reduce((acc, t) => acc + t.amount, 0);
   const balance = totalIncome - totalExpenses;
   const BalanceIcon = currencyIcons[currency] || DollarSign;
+
+  const canViewAdvancedAnalytics =
+    currentTier.name === 'Silver' ||
+    currentTier.name === 'Gold' ||
+    currentTier.name === 'Platinum';
 
   return (
     <AppLayout>
@@ -98,17 +107,25 @@ export default function DashboardPage() {
                 <FinancialSummaryChart />
               </CardContent>
             </Card>
-             <Card>
-              <CardHeader>
-                <CardTitle>Expense Breakdown</CardTitle>
-                <CardDescription>
-                  How you are spending your money.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ExpenseBreakdownChart />
-              </CardContent>
-            </Card>
+            {canViewAdvancedAnalytics ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Expense Breakdown</CardTitle>
+                  <CardDescription>
+                    How you are spending your money.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ExpenseBreakdownChart />
+                </CardContent>
+              </Card>
+            ) : (
+              <UpgradeCard
+                title="Unlock Advanced Analytics"
+                description="See a detailed breakdown of your expenses by category to better understand your spending habits."
+                buttonText="Upgrade to Silver"
+              />
+            )}
           </div>
         </TabsContent>
         <TabsContent value="transactions">
