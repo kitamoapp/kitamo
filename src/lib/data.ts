@@ -4,7 +4,6 @@ import type {
   ReferredUser,
   SubscriptionTier,
   ReferralMilestone,
-  SubscriptionFeature,
 } from '@/lib/types';
 
 export const transactions: Transaction[] = [
@@ -183,15 +182,15 @@ export const subscriptionTiers: SubscriptionTier[] = [
 
 export const referralMilestones: ReferralMilestone[] = [
   {
-    name: 'Unlock a {cap} earning cap',
+    name: 'Unlock Silver Tier',
     requiredReferrals: 5,
   },
   {
-    name: 'Unlock a {cap} earning cap',
+    name: 'Unlock Gold Tier',
     requiredReferrals: 20,
   },
   {
-    name: 'Unlock an unlimited earning cap',
+    name: 'Unlock Platinum Tier',
     requiredReferrals: 50,
   },
 ];

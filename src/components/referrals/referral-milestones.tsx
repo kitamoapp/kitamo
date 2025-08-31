@@ -14,16 +14,9 @@ import { referralMilestones, referredUsers, subscriptionTiers } from '@/lib/data
 import { useCurrency } from '@/context/currency-context';
 
 export function ReferralMilestones() {
-  const { convertAndFormatCurrency } = useCurrency();
   const activeReferrals = referredUsers.filter(
     (user) => user.status === 'Active'
   ).length;
-
-  const renderMilestoneName = (milestone: (typeof referralMilestones)[0], tier?: (typeof subscriptionTiers)[0]) => {
-    if (!tier) return milestone.name;
-    const cap = tier.earningCap === Infinity ? 'unlimited' : convertAndFormatCurrency(tier.earningCap);
-    return milestone.name.replace('{cap}', cap);
-  };
 
   return (
     <Card>
@@ -64,7 +57,7 @@ export function ReferralMilestones() {
                       isCompleted && 'text-green-600 dark:text-green-400'
                     )}
                   >
-                    {renderMilestoneName(milestone, tier)} ({milestone.requiredReferrals} Referrals)
+                    {milestone.name} ({milestone.requiredReferrals} Referrals)
                   </p>
                 </div>
               </li>
