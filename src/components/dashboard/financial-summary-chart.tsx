@@ -41,35 +41,44 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
   const barChartData = useMemo(() => {
     const now = new Date();
     let filteredTransactions = transactions;
-
+    
+    // 1. More efficient data filtering before processing
     if (period === 'day') {
         const sevenDaysAgo = subDays(now, 6);
         filteredTransactions = transactions.filter(t => new Date(t.date) >= sevenDaysAgo && new Date(t.date) <= now);
+    } else if (period === 'week' || period === 'month') {
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        filteredTransactions = transactions.filter(t => new Date(t.date) >= startOfYear && new Date(t.date) <= now);
     }
 
-    const dataMap = new Map<string, { income: number; expenses: number }>();
+    const dataMap = new Map<string, { income: number; expenses: number; sortKey: number }>();
 
     filteredTransactions.forEach(t => {
       const date = new Date(t.date);
       let key = '';
+      let sortKey = 0;
 
       switch (period) {
         case 'day':
           key = format(date, 'MMM d');
+          sortKey = date.getTime();
           break;
         case 'week':
           key = `Week ${getWeek(date)}`;
+          sortKey = getWeek(date);
           break;
         case 'month':
           key = format(date, 'MMM');
+          sortKey = getMonth(date);
           break;
         case 'year':
           key = format(date, 'yyyy');
+          sortKey = getYear(date);
           break;
       }
 
       if (!dataMap.has(key)) {
-        dataMap.set(key, { income: 0, expenses: 0 });
+        dataMap.set(key, { income: 0, expenses: 0, sortKey });
       }
 
       const entry = dataMap.get(key)!;
@@ -80,29 +89,15 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
       }
     });
 
-    const result = Array.from(dataMap.entries()).map(([key, value]) => ({
-      day: key,
-      ...value,
-    }));
-
-    // Consistent sorting logic needed here for chronological display
-    if (period === 'day' || period === 'month' || period === 'year') {
-        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        result.sort((a, b) => {
-            if (period === 'year') {
-                return parseInt(a.day) - parseInt(b.day);
-            }
-            if (period === 'month') {
-                return monthOrder.indexOf(a.day) - monthOrder.indexOf(b.day);
-            }
-            // For day view, we can rely on string sort if format is `MMM d` and within same year
-            return new Date(a.day + ', ' + getYear(now)).getTime() - new Date(b.day + ', ' + getYear(now)).getTime();
-        });
-    } else if (period === 'week') {
-        result.sort((a,b) => parseInt(a.day.split(' ')[1]) - parseInt(b.day.split(' ')[1]));
-    }
-    
-    return result;
+    // 2. More robust chronological sorting
+    return Array.from(dataMap.entries())
+        .map(([key, value]) => ({
+            day: key,
+            income: value.income,
+            expenses: value.expenses,
+            sortKey: value.sortKey,
+        }))
+        .sort((a, b) => a.sortKey - b.sortKey);
 
   }, [transactions, period]);
 
