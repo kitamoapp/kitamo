@@ -29,9 +29,16 @@ const VALID_REFERRAL_CODES = ['ALICECODE', 'BOBCODE', 'CHARLIECODE'];
 export default function ProfilePage() {
   const { currentTier } = useSubscription();
   const router = useRouter();
+  const { toast } = useToast();
+
+  // State for forms
+  const [fullName, setFullName] = useState('User');
+  const [email, setEmail] = useState('user@example.com');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [referralCode, setReferralCode] = useState('');
   const [hasReferralCode, setHasReferralCode] = useState(false);
-  const { toast } = useToast();
 
 
   const handleSaveReferralCode = () => {
@@ -59,6 +66,42 @@ export default function ProfilePage() {
             variant: 'destructive'
         })
     }
+  }
+
+  const handleSaveChanges = () => {
+    // In a real app, you'd save this to your backend.
+    toast({
+      title: 'Profile Updated',
+      description: 'Your account information has been saved.',
+    });
+  }
+
+  const handleUpdatePassword = () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all password fields.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: 'Error',
+        description: 'New passwords do not match.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    // In a real app, you'd make an API call to change the password.
+    toast({
+      title: 'Password Updated',
+      description: 'Your password has been changed successfully.',
+    });
+    // Clear fields after successful update
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
   }
 
   return (
@@ -133,13 +176,13 @@ export default function ProfilePage() {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" defaultValue="User" />
+                  <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" defaultValue="user@example.com" />
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-                <Button>Save Changes</Button>
+                <Button onClick={handleSaveChanges}>Save Changes</Button>
               </CardContent>
             </Card>
 
@@ -177,17 +220,17 @@ export default function ProfilePage() {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="current-password">Current Password</Label>
-                  <Input id="current-password" type="password" />
+                  <Input id="current-password" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="new-password">New Password</Label>
-                  <Input id="new-password" type="password" />
+                  <Input id="new-password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input id="confirm-password" type="password" />
+                  <Input id="confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                 </div>
-                <Button>Update Password</Button>
+                <Button onClick={handleUpdatePassword}>Update Password</Button>
               </CardContent>
             </Card>
           </div>
