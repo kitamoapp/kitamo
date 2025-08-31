@@ -38,6 +38,8 @@ const LOCAL_STORAGE_KEY = 'kitamo-referred-users';
 
 export const ReferredUserProvider = ({ children }: { children: ReactNode }) => {
   const [referredUsers, setReferredUsers] = useState<ReferredUser[]>(initialReferredUsers);
+  const [isLoaded, setIsLoaded] = useState(false);
+
 
   // Load from localStorage on the client side after initial render
   useEffect(() => {
@@ -49,19 +51,22 @@ export const ReferredUserProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('Error reading from localStorage', error);
     }
+    setIsLoaded(true);
   }, []);
 
   // Persist to localStorage whenever referredUsers changes
   useEffect(() => {
-    try {
-      window.localStorage.setItem(
-        LOCAL_STORAGE_KEY,
-        serializeReferredUsers(referredUsers)
-      );
-    } catch (error) {
-      console.error('Error writing to localStorage', error);
+    if (isLoaded) {
+        try {
+        window.localStorage.setItem(
+            LOCAL_STORAGE_KEY,
+            serializeReferredUsers(referredUsers)
+        );
+        } catch (error) {
+        console.error('Error writing to localStorage', error);
+        }
     }
-  }, [referredUsers]);
+  }, [referredUsers, isLoaded]);
 
   const addReferredUser = (user: ReferredUser) => {
     setReferredUsers((prev) => [user, ...prev]);
