@@ -33,16 +33,16 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const ViberIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const TelegramIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
-      viewBox="0 0 256 256"
+      viewBox="0 0 24 24"
       fill="currentColor"
       {...props}
     >
-        <path d="M152.3,213.2a10.6,10.6,0,0,1-10-5.9l-10.4-23a9,9,0,0,0-8.2-5.3H90.1a9.2,9.2,0,0,0-8.3,5.4L71,207.2a10.6,10.6,0,0,1-10,5.9,10.8,10.8,0,0,1-10.7-12.2l20.4-49.4a57.8,57.8,0,0,1,54-41.5h.3A57.8,57.8,0,0,1,180,157.1l20.4,49.4A10.8,10.8,0,0,1,190,218a10.6,10.6,0,0,1-10-5.9l-10.8-24.5a9,9,0,0,0-8.2-5.3H129.2a9.2,9.2,0,0,0-8.3,5.4L110,207.2A10.6,10.6,0,0,1,100,213.2h0Zm74.2-108.5a10.9,10.9,0,0,0-10.8-9.4,8.2,8.2,0,0,0-8.1,8.4v88.5a8.1,8.1,0,0,0,8.1,8.1,10.7,10.7,0,0,0,10.7-10.8V112.8A10.4,10.4,0,0,0,226.5,104.7ZM38.6,202.8a8.1,8.1,0,0,0,8.1-8.1V106.2a8.2,8.2,0,0,0-8.1-8.4,10.9,10.9,0,0,0-10.8,9.4,10.4,10.4,0,0,0,0,8.1v81.9A10.7,10.7,0,0,0,38.6,202.8Z"></path>
+      <path d="M9.78 18.65l.28-4.23l7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3L3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.57c-.28 1.1-.86 1.32-1.7.82l-4.74-3.51l-2.25 2.15c-.23.22-.42.41-.83.41z" />
     </svg>
 );
 
@@ -90,7 +90,7 @@ export function ReferralCodeCard() {
 
   const shareActions = [
     { name: 'WhatsApp', icon: WhatsAppIcon, url: `https://wa.me/?text=${encodeURIComponent(referralMessage)}`},
-    { name: 'Viber', icon: ViberIcon, url: `viber://forward?text=${encodeURIComponent(referralMessage)}` },
+    { name: 'Telegram', icon: TelegramIcon, url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(referralMessage)}` },
     { name: 'Messenger', icon: MessengerIcon, url: `https://www.facebook.com/dialog/send?app_id=YOUR_APP_ID&link=${encodeURIComponent(referralLink)}&redirect_uri=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}` }
   ];
   
