@@ -17,6 +17,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { format } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -79,7 +80,7 @@ export function AddTransactionDialog() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     addTransaction({
       ...values,
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       date: values.date.toISOString(),
     });
     toast({
@@ -257,4 +258,3 @@ export function AddTransactionDialog() {
     </Dialog>
   );
 }
-
