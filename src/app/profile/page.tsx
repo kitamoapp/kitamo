@@ -18,8 +18,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera, Trash2, CreditCard, PlusCircle } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { Camera, Trash2, CreditCard, PlusCircle, Edit } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -62,6 +62,8 @@ interface PaymentMethod {
     last4: string;
     expiry: string;
     brand: string;
+    // Add full card number for editing purposes, would not be stored in a real DB
+    cardNumber?: string;
 }
 
 const paymentMethodSchema = z.object({
@@ -92,9 +94,10 @@ export default function ProfilePage() {
 
   // State for payment methods
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-      { id: 'card-1', last4: '4242', expiry: '12/26', brand: 'Visa' }
+      { id: 'card-1', last4: '4242', expiry: '12/26', brand: 'Visa', cardNumber: '4242424242424242' }
   ]);
-  const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [editingPaymentMethod, setEditingPaymentMethod] = useState<PaymentMethod | null>(null);
   const [showDeletePaymentAlert, setShowDeletePaymentAlert] = useState(false);
   const [paymentMethodToDelete, setPaymentMethodToDelete] = useState<string | null>(null);
 
@@ -106,6 +109,22 @@ export default function ProfilePage() {
       cvc: '',
     },
   });
+  
+  useEffect(() => {
+    if (editingPaymentMethod) {
+      paymentForm.reset({
+        cardNumber: editingPaymentMethod.cardNumber || '',
+        expiry: editingPaymentMethod.expiry,
+        cvc: '', // CVC is not stored, so it's always cleared
+      });
+    } else {
+      paymentForm.reset({
+        cardNumber: '',
+        expiry: '',
+        cvc: '',
+      });
+    }
+  }, [editingPaymentMethod, paymentForm]);
 
 
   const handleAccountInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,20 +230,45 @@ export default function ProfilePage() {
     });
   }
 
-  const handleAddPaymentMethod = (values: z.infer<typeof paymentMethodSchema>) => {
-    const newCard: PaymentMethod = {
-        id: `card-${Date.now()}`,
-        last4: values.cardNumber.slice(-4),
-        expiry: values.expiry,
-        brand: values.cardNumber.startsWith('4') ? 'Visa' : 'Mastercard'
-    };
-    setPaymentMethods(prev => [...prev, newCard]);
-    toast({
-        title: 'Payment Method Added',
-        description: `Card ending in ${newCard.last4} has been added.`
-    })
+  const handleOpenPaymentDialog = (method: PaymentMethod | null) => {
+    setEditingPaymentMethod(method);
+    setShowPaymentDialog(true);
+  }
+
+  const handlePaymentFormSubmit = (values: z.infer<typeof paymentMethodSchema>) => {
+    if (editingPaymentMethod) {
+      // Update existing card
+      const updatedCard: PaymentMethod = {
+          ...editingPaymentMethod,
+          last4: values.cardNumber.slice(-4),
+          expiry: values.expiry,
+          brand: values.cardNumber.startsWith('4') ? 'Visa' : 'Mastercard',
+          cardNumber: values.cardNumber, // Store for future edits
+      };
+      setPaymentMethods(prev => prev.map(p => p.id === updatedCard.id ? updatedCard : p));
+      toast({
+          title: 'Payment Method Updated',
+          description: `Card ending in ${updatedCard.last4} has been updated.`
+      });
+    } else {
+      // Add new card
+      const newCard: PaymentMethod = {
+          id: `card-${Date.now()}`,
+          last4: values.cardNumber.slice(-4),
+          expiry: values.expiry,
+          brand: values.cardNumber.startsWith('4') ? 'Visa' : 'Mastercard',
+          cardNumber: values.cardNumber,
+      };
+      setPaymentMethods(prev => [...prev, newCard]);
+      toast({
+          title: 'Payment Method Added',
+          description: `Card ending in ${newCard.last4} has been added.`
+      });
+    }
+
     paymentForm.reset();
-    setShowAddPaymentDialog(false);
+    setShowPaymentDialog(false);
+    setEditingPaymentMethod(null);
   }
 
   const handleDeletePaymentInitiate = (id: string) => {
@@ -364,13 +408,19 @@ export default function ProfilePage() {
                                     <p className="text-sm text-muted-foreground">Expires {card.expiry}</p>
                                 </div>
                             </div>
-                            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeletePaymentInitiate(card.id)}>
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Remove
-                            </Button>
+                            <div className='flex items-center gap-2'>
+                              <Button variant="ghost" size="icon" onClick={() => handleOpenPaymentDialog(card)}>
+                                  <Edit className="h-4 w-4" />
+                                  <span className='sr-only'>Edit Card</span>
+                              </Button>
+                              <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDeletePaymentInitiate(card.id)}>
+                                  <Trash2 className="h-4 w-4" />
+                                  <span className='sr-only'>Remove Card</span>
+                              </Button>
+                            </div>
                         </div>
                     ))}
-                    <Button variant="outline" className="w-full" onClick={() => setShowAddPaymentDialog(true)}>
+                    <Button variant="outline" className="w-full" onClick={() => handleOpenPaymentDialog(null)}>
                         <PlusCircle className="h-4 w-4 mr-2" />
                         Add New Card
                     </Button>
@@ -430,18 +480,23 @@ export default function ProfilePage() {
     </AppLayout>
 
      <Dialog
-        open={showAddPaymentDialog}
-        onOpenChange={setShowAddPaymentDialog}
+        open={showPaymentDialog}
+        onOpenChange={(isOpen) => {
+          setShowPaymentDialog(isOpen);
+          if (!isOpen) {
+            setEditingPaymentMethod(null);
+          }
+        }}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Payment Method</DialogTitle>
+            <DialogTitle>{editingPaymentMethod ? 'Edit' : 'Add'} Payment Method</DialogTitle>
             <DialogDescription>
-              Please enter your card details. This is a simulation.
+              {editingPaymentMethod ? 'Update your card details.' : 'Please enter your card details. This is a simulation.'}
             </DialogDescription>
           </DialogHeader>
           <Form {...paymentForm}>
-            <form onSubmit={paymentForm.handleSubmit(handleAddPaymentMethod)} className="space-y-4">
+            <form onSubmit={paymentForm.handleSubmit(handlePaymentFormSubmit)} className="space-y-4">
               <FormField
                 control={paymentForm.control}
                 name="cardNumber"
@@ -489,11 +544,15 @@ export default function ProfilePage() {
               </div>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button type="button" variant="outline" onClick={() => paymentForm.reset()}>
+                  <Button type="button" variant="outline" onClick={() => {
+                      paymentForm.reset();
+                      setEditingPaymentMethod(null);
+                      setShowPaymentDialog(false);
+                    }}>
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button type="submit">Add Card</Button>
+                <Button type="submit">{editingPaymentMethod ? 'Save Changes' : 'Add Card'}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -516,5 +575,7 @@ export default function ProfilePage() {
       </AlertDialog>
     </>
   );
+
+    
 
     
