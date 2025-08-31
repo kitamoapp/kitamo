@@ -13,6 +13,7 @@ import { Share2 } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { useCurrency } from '@/context/currency-context';
 import { subscriptionTiers } from '@/lib/data';
+import type { SubscriptionTier } from '@/lib/types';
 
 const NetworkNode = ({
   name,
@@ -59,6 +60,11 @@ export function ReferralNetworkVisualizer() {
   const { currentTier } = useSubscription();
   const { convertAndFormatCurrency } = useCurrency();
   
+  // Use Silver tier for demonstration purposes if the user is on Bronze
+  const tierForDemonstration: SubscriptionTier = currentTier.name === 'Bronze' 
+    ? subscriptionTiers.find(t => t.name === 'Silver')! 
+    : currentTier;
+    
   // Hypothetical downlines for demonstration
   const silverPlan = subscriptionTiers.find(t => t.name === 'Silver')!;
   const goldPlan = subscriptionTiers.find(t => t.name === 'Gold')!;
@@ -66,8 +72,8 @@ export function ReferralNetworkVisualizer() {
   const directReferralRevenue = silverPlan.price;
   const indirectReferralRevenue = goldPlan.price;
 
-  const directEarning = directReferralRevenue * currentTier.directReferralPercent;
-  const indirectEarning = indirectReferralRevenue * currentTier.indirectReferralPercent;
+  const directEarning = directReferralRevenue * tierForDemonstration.directReferralPercent;
+  const indirectEarning = indirectReferralRevenue * tierForDemonstration.indirectReferralPercent;
 
   return (
     <Card>
@@ -99,7 +105,7 @@ export function ReferralNetworkVisualizer() {
             Direct Referrals (Level 1)
           </div>
           <div className="text-sm font-bold text-primary">
-            You Earn {currentTier.directReferralPercent * 100}%
+            You Earn {tierForDemonstration.directReferralPercent * 100}%
           </div>
           <div className="flex w-full justify-center gap-8 md:gap-16">
             <div className="flex flex-col items-center">
@@ -127,7 +133,7 @@ export function ReferralNetworkVisualizer() {
             Indirect Referrals (Level 2)
           </div>
            <div className="text-sm font-bold text-primary">
-            You Earn {currentTier.indirectReferralPercent * 100}%
+            You Earn {tierForDemonstration.indirectReferralPercent * 100}%
           </div>
           <div className="mt-2 flex justify-center gap-8">
             <NetworkNode
