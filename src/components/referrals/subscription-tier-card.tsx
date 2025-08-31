@@ -68,25 +68,15 @@ export function SubscriptionTierCard() {
         </CardHeader>
         <CardContent className="space-y-4">
           {!canEarn && nextTier ? (
-             <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
+            <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
               <h3 className="font-semibold text-foreground">
                 Unlock Your Earning Potential!
               </h3>
               <p className="text-sm text-muted-foreground">
                 Upgrade to the {nextTier.name} plan to start earning up to{' '}
-                {convertAndFormatCurrency(nextTier.earningCap)} from your referrals.
+                {convertAndFormatCurrency(nextTier.earningCap)} from your
+                referrals.
               </p>
-               <div className="pt-2 text-left">
-                 <div className="flex items-center justify-between text-sm">
-                   <div className="font-semibold text-foreground">
-                     Progress to {nextTier.name}
-                   </div>
-                   <div className="text-muted-foreground">
-                     {activeReferrals} / {nextTier.requiredReferrals} Referrals
-                   </div>
-                 </div>
-                 <Progress value={progressToNextTier} className="mt-1 h-2" />
-               </div>
               <Button
                 size="sm"
                 className="mt-4"
