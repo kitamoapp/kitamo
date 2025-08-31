@@ -20,7 +20,7 @@ import {
 import { useCurrency } from '@/context/currency-context';
 import { useMemo } from 'react';
 import type { Period } from '@/app/dashboard/page';
-import { subDays, format, getWeek, getMonth, getYear, startOfYear, startOfDay, startOfWeek, endOfWeek, parse } from 'date-fns';
+import { subDays, format, getWeek, getMonth, getYear, startOfYear, startOfDay, parseISO } from 'date-fns';
 
 const barChartConfig = {
   income: {
@@ -39,62 +39,76 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
 
   const barChartData = useMemo(() => {
     const now = new Date();
-    let filteredTransactions = transactions;
+    let dataMap = new Map<string, { income: number; expenses: number; sortKey: number }>();
 
-    const sevenDaysAgo = startOfDay(subDays(now, 6));
-    const beginningOfYear = startOfYear(now);
+    if (period === 'day') {
+      const sevenDaysAgo = startOfDay(subDays(now, 6));
+      // Pre-populate the map for the last 7 days
+      for (let i = 0; i < 7; i++) {
+        const date = subDays(now, i);
+        const key = format(date, 'MMM d');
+        dataMap.set(key, { income: 0, expenses: 0, sortKey: date.getTime() });
+      }
 
-    switch (period) {
-      case 'day':
-        filteredTransactions = transactions.filter(t => new Date(t.date) >= sevenDaysAgo);
-        break;
-      case 'week':
-      case 'month':
-      case 'year':
-        filteredTransactions = transactions.filter(t => new Date(t.date).getFullYear() === now.getFullYear());
-        break;
+      transactions
+        .filter(t => parseISO(t.date) >= sevenDaysAgo)
+        .forEach(t => {
+          const date = parseISO(t.date);
+          const key = format(date, 'MMM d');
+          if (dataMap.has(key)) {
+            const entry = dataMap.get(key)!;
+            if (t.type === 'income') entry.income += t.amount;
+            else entry.expenses += t.amount;
+          }
+        });
+        
+    } else if (period === 'week') {
+        const currentYearTransactions = transactions.filter(t => getYear(parseISO(t.date)) === getYear(now));
+        currentYearTransactions.forEach(t => {
+            const date = parseISO(t.date);
+            const weekNumber = getWeek(date, { weekStartsOn: 1 });
+            const key = `Week ${weekNumber}`;
+            if (!dataMap.has(key)) {
+                dataMap.set(key, { income: 0, expenses: 0, sortKey: weekNumber });
+            }
+            const entry = dataMap.get(key)!;
+            if (t.type === 'income') entry.income += t.amount;
+            else entry.expenses += t.amount;
+        });
+
+    } else if (period === 'month') {
+        // Pre-populate map with all months
+        for(let i=0; i<12; i++) {
+            const monthName = format(new Date(now.getFullYear(), i, 1), 'MMM');
+            dataMap.set(monthName, { income: 0, expenses: 0, sortKey: i });
+        }
+        
+        transactions
+            .filter(t => getYear(parseISO(t.date)) === getYear(now))
+            .forEach(t => {
+                const date = parseISO(t.date);
+                const monthName = format(date, 'MMM');
+                const entry = dataMap.get(monthName)!;
+                if (t.type === 'income') entry.income += t.amount;
+                else entry.expenses += t.amount;
+            });
+
+    } else if (period === 'year') {
+        transactions.forEach(t => {
+            const date = parseISO(t.date);
+            const year = getYear(date);
+            const key = year.toString();
+             if (!dataMap.has(key)) {
+                dataMap.set(key, { income: 0, expenses: 0, sortKey: year });
+            }
+            const entry = dataMap.get(key)!;
+            if (t.type === 'income') entry.income += t.amount;
+            else entry.expenses += t.amount;
+        })
     }
 
-    const dataMap = new Map<string, { income: number; expenses: number; sortKey: number }>();
 
-    filteredTransactions.forEach(t => {
-      const date = new Date(t.date);
-      let key = '';
-      let sortKey = 0;
-
-      switch (period) {
-        case 'day':
-          key = format(date, 'MMM d');
-          sortKey = date.getTime();
-          break;
-        case 'week':
-          const weekNumber = getWeek(date, { weekStartsOn: 1 });
-          key = `Week ${weekNumber}`;
-          sortKey = weekNumber;
-          break;
-        case 'month':
-          key = format(date, 'MMM');
-          sortKey = getMonth(date);
-          break;
-        case 'year':
-          key = format(date, 'yyyy');
-          sortKey = getYear(date);
-          break;
-      }
-
-      if (!dataMap.has(key)) {
-        dataMap.set(key, { income: 0, expenses: 0, sortKey });
-      }
-
-      const entry = dataMap.get(key)!;
-      if (t.type === 'income') {
-        entry.income += t.amount;
-      } else {
-        entry.expenses += t.amount;
-      }
-    });
-
-    const sortedData = Array.from(dataMap.entries())
+    return Array.from(dataMap.entries())
       .map(([key, value]) => ({
         label: key,
         income: value.income,
@@ -103,30 +117,6 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
       }))
       .sort((a, b) => a.sortKey - b.sortKey);
 
-    if (period === 'day') {
-      const result = [];
-      for (let i = 6; i >= 0; i--) {
-        const date = subDays(now, i);
-        const key = format(date, 'MMM d');
-        const existingEntry = sortedData.find(d => d.label === key);
-        if (existingEntry) {
-          result.push(existingEntry);
-        } else {
-          result.push({ label: key, income: 0, expenses: 0, sortKey: date.getTime() });
-        }
-      }
-      return result;
-    }
-    
-    if (period === 'month') {
-        const months = Array.from({length: 12}, (_, i) => format(new Date(now.getFullYear(), i, 1), 'MMM'));
-        return months.map((monthName, index) => {
-            const existing = sortedData.find(d => d.label === monthName);
-            return existing || { label: monthName, income: 0, expenses: 0, sortKey: index };
-        });
-    }
-
-    return sortedData;
   }, [transactions, period]);
 
   return (
