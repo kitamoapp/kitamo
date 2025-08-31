@@ -75,8 +75,6 @@ export default function DashboardPage() {
     currentTier.name === 'Gold' ||
     currentTier.name === 'Platinum';
 
-  const canCustomizeDashboard = currentTier.name === 'Platinum';
-
   const handleVisibilityChange = (component: keyof typeof visibleComponents, checked: boolean) => {
     setVisibleComponents(prev => ({ ...prev, [component]: checked }));
   }
@@ -86,57 +84,55 @@ export default function DashboardPage() {
       <div className="space-y-8">
         <div className="flex items-center justify-between space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          {canCustomizeDashboard && (
-             <Dialog open={showCustomizeDialog} onOpenChange={setShowCustomizeDialog}>
-              <DialogTrigger asChild>
-                <Button variant="outline">
-                  <Settings2 className="mr-2 h-4 w-4" />
-                  Customize
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Customize Dashboard</DialogTitle>
-                  <DialogDescription>
-                    Select the components you want to see on your dashboard.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="flex items-center justify-between rounded-lg border p-4">
-                    <Label htmlFor="summary-cards-toggle" className="font-normal">Show Summary Cards</Label>
-                    <Switch
-                      id="summary-cards-toggle"
-                      checked={visibleComponents.summaryCards}
-                      onCheckedChange={(checked) => handleVisibilityChange('summaryCards', checked)}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border p-4">
-                    <Label htmlFor="financial-summary-toggle" className="font-normal">Show Financial Summary</Label>
-                    <Switch
-                      id="financial-summary-toggle"
-                      checked={visibleComponents.financialSummary}
-                      onCheckedChange={(checked) => handleVisibilityChange('financialSummary', checked)}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border p-4">
-                    <Label htmlFor="expense-breakdown-toggle" className="font-normal">Show Expense Breakdown</Label>
-                    <Switch
-                      id="expense-breakdown-toggle"
-                      checked={visibleComponents.expenseBreakdown}
-                      onCheckedChange={(checked) => handleVisibilityChange('expenseBreakdown', checked)}
-                      disabled={!canViewAdvancedAnalytics}
-                    />
-                     {!canViewAdvancedAnalytics && (
-                        <p className="text-xs text-muted-foreground mt-1">Upgrade to Silver to enable.</p>
-                      )}
-                  </div>
+          <Dialog open={showCustomizeDialog} onOpenChange={setShowCustomizeDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Settings2 className="mr-2 h-4 w-4" />
+                Customize
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Customize Dashboard</DialogTitle>
+                <DialogDescription>
+                  Select the components you want to see on your dashboard.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <Label htmlFor="summary-cards-toggle" className="font-normal">Show Summary Cards</Label>
+                  <Switch
+                    id="summary-cards-toggle"
+                    checked={visibleComponents.summaryCards}
+                    onCheckedChange={(checked) => handleVisibilityChange('summaryCards', checked)}
+                  />
                 </div>
-                <DialogFooter>
-                  <Button onClick={() => setShowCustomizeDialog(false)}>Done</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          )}
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <Label htmlFor="financial-summary-toggle" className="font-normal">Show Financial Summary</Label>
+                  <Switch
+                    id="financial-summary-toggle"
+                    checked={visibleComponents.financialSummary}
+                    onCheckedChange={(checked) => handleVisibilityChange('financialSummary', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <Label htmlFor="expense-breakdown-toggle" className="font-normal">Show Expense Breakdown</Label>
+                  <Switch
+                    id="expense-breakdown-toggle"
+                    checked={visibleComponents.expenseBreakdown}
+                    onCheckedChange={(checked) => handleVisibilityChange('expenseBreakdown', checked)}
+                    disabled={!canViewAdvancedAnalytics}
+                  />
+                    {!canViewAdvancedAnalytics && (
+                      <p className="text-xs text-muted-foreground mt-1">Upgrade to Silver to enable.</p>
+                    )}
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={() => setShowCustomizeDialog(false)}>Done</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {visibleComponents.summaryCards && (
@@ -198,15 +194,6 @@ export default function DashboardPage() {
             </>
           )}
         </div>
-        {!canCustomizeDashboard && (
-          <div className="p-4 bg-muted/40 rounded-lg text-center">
-            <h3 className="font-semibold">Want to Customize Your View?</h3>
-            <p className="text-sm text-muted-foreground">Upgrade to our Platinum plan to personalize your dashboard layout.</p>
-            <Button size="sm" className="mt-2" onClick={() => (window.location.href = '/subscriptions')}>
-              Upgrade to Platinum
-            </Button>
-          </div>
-        )}
       </div>
     </AppLayout>
   );
