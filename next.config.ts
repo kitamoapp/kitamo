@@ -28,11 +28,10 @@ const nextConfig: NextConfig = {
 };
 
 if (process.env.NODE_ENV === 'development') {
-  const allowedDevOrigin = 'https://9000-firebase-studio-1756530008162.cluster-yylgzpipxrar4v4a72liastuqy.cloudworkstations.dev';
-  nextConfig.experimental = {
-    ...nextConfig.experimental,
-    allowedDevOrigins: [allowedDevOrigin],
-  };
+  if (process.env.ALLOWED_DEV_ORIGIN) {
+    // The `allowedDevOrigins` config has been removed as it was causing a startup error.
+    // Modern Next.js handles CORS for development environments differently.
+  }
 }
 
 export default nextConfig;
