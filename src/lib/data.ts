@@ -127,7 +127,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       'Basic financial tracking',
       'Standard referral bonus',
-      'Earning cap of $100',
+      { text: 'Earning cap of {cap}', earningCap: 100 },
       'Customizable dashboard views',
     ],
     requiredReferrals: 0,
@@ -144,7 +144,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
       'All Bronze features',
       'Advanced analytics',
       'Higher referral bonus',
-      'Earning cap of $500',
+      { text: 'Earning cap of {cap}', earningCap: 500 },
     ],
     requiredReferrals: 5,
     earningCap: 500,
@@ -158,9 +158,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 20,
     features: [
       'All Silver features',
-      'Early access to new features',
       'Export reports to PDF & CSV',
-      'Earning cap of $2,500',
+      { text: 'Earning cap of {cap}', earningCap: 2500 },
     ],
     requiredReferrals: 20,
     earningCap: 2500,

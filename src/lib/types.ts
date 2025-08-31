@@ -24,10 +24,15 @@ export type Category = {
   icon: React.ElementType;
 };
 
+export type SubscriptionFeature = {
+  text: string;
+  earningCap?: number;
+};
+
 export type SubscriptionTier = {
   name: string;
   price: number;
-  features: string[];
+  features: (string | SubscriptionFeature)[];
   requiredReferrals: number;
   earningCap: number;
   borderColor: string;

@@ -34,6 +34,19 @@ export function SubscriptionPlanCard({
     setIsClient(true);
   }, []);
 
+  const renderFeature = (feature: SubscriptionTier['features'][0]) => {
+    if (typeof feature === 'string') {
+      return feature;
+    }
+    if (feature.earningCap) {
+      return feature.text.replace(
+        '{cap}',
+        convertAndFormatCurrency(feature.earningCap)
+      );
+    }
+    return feature.text;
+  };
+
   return (
     <Card
       key={tier.name}
@@ -61,7 +74,7 @@ export function SubscriptionPlanCard({
           {tier.features.map((feature, index) => (
             <li key={index} className="flex items-start gap-2">
               <Check className="h-4 w-4 text-green-500 mt-1" />
-              <span className="text-sm flex-1">{feature}</span>
+              <span className="text-sm flex-1">{isClient ? renderFeature(feature) : <>&nbsp;</>}</span>
             </li>
           ))}
         </ul>
