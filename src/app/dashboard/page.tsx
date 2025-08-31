@@ -266,7 +266,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {visibleComponents.financialSummary && (
             <Card>
-              <CardHeader className='flex-row items-center justify-between pb-2 space-y-0'>
+              <CardHeader className='flex-col md:flex-row md:items-center md:justify-between gap-4'>
                 <div>
                   <CardTitle>Financial Summary</CardTitle>
                   <CardDescription>
