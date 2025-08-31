@@ -38,7 +38,8 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
       if (item) {
         setPaymentMethods(JSON.parse(item));
       } else {
-        setPaymentMethods(initialPaymentMethods); // Load initial data if nothing in storage
+        // Only set initial data if local storage is empty on first load.
+        setPaymentMethods(initialPaymentMethods);
       }
     } catch (error) {
       console.error('Error reading payment methods from localStorage', error);
