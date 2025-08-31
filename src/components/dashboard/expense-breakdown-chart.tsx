@@ -57,6 +57,10 @@ export function ExpenseBreakdownChart() {
 
   const expenseData = React.useMemo(() => {
     const expenses = transactions.filter((t) => t.type === 'expense');
+    if (expenses.length === 0) {
+      return [];
+    }
+    
     const totalExpense = expenses.reduce((sum, t) => sum + t.amount, 0);
 
     const categoryTotals = expenses.reduce((acc, t) => {
@@ -75,7 +79,7 @@ export function ExpenseBreakdownChart() {
             chartData.push({
                 name: category,
                 total: categoryTotals[category],
-                fill: chartConfig[category as keyof typeof chartConfig]?.color || '#8884d8',
+                fill: chartConfig[category as keyof typeof chartConfig]?.color || 'hsl(var(--chart-3))',
             });
         }
     }
@@ -84,12 +88,20 @@ export function ExpenseBreakdownChart() {
         chartData.push({
             name: 'Other',
             total: otherTotal,
-            fill: chartConfig['Other']?.color || '#8884d8',
+            fill: chartConfig['Other']?.color || 'hsl(var(--chart-3))',
         });
     }
 
     return chartData;
   }, [transactions]);
+
+  if (expenseData.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-[300px] text-muted-foreground">
+        No expense data for this period.
+      </div>
+    );
+  }
 
 
   return (
