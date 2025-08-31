@@ -147,7 +147,7 @@ export function ReferralNetworkVisualizer() {
           Click the plus icon to expand a user's downline.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center gap-6 py-4 overflow-x-auto">
+      <CardContent className="flex flex-col items-center gap-6 py-4">
         <div className="flex items-center gap-3">
              <Avatar className="h-12 w-12 border-2 border-primary">
                 <AvatarImage src={"https://picsum.photos/100/100?random=0"} alt="You" data-ai-hint="person portrait" />
@@ -165,7 +165,7 @@ export function ReferralNetworkVisualizer() {
           <div className="absolute bottom-0 left-1/2 h-4 w-px -translate-x-1/2 bg-border"></div>
         </div>
 
-        <div className="flex gap-8 lg:gap-16 items-start pt-4">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 justify-center items-start pt-4">
            {directReferrals.map(user => (
               <DirectReferralColumn key={user.id} user={user} allUsers={referredUsers} expandedNodes={expandedNodes} toggleNode={toggleNode} />
             ))}
