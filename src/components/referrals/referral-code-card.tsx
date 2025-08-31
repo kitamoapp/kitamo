@@ -133,9 +133,8 @@ export function ReferralCodeCard() {
         </div>
         <div className="grid grid-cols-3 gap-2 w-full">
             {shareActions.map(action => (
-                 <Button key={action.name} variant="outline" onClick={() => handleShare(action.url)}>
-                    <action.icon className="mr-2 h-4 w-4" />
-                    {action.name}
+                 <Button key={action.name} variant="outline" onClick={() => handleShare(action.url)} aria-label={`Share on ${action.name}`}>
+                    <action.icon className="h-5 w-5" />
                 </Button>
             ))}
         </div>
