@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from './use-toast';
 import { v4 as uuidv4 } from 'uuid';
+import { requestNotificationPermission } from '@/lib/firebase';
 
 export type Setting = 
   | 'biometricLogin'
@@ -17,7 +18,7 @@ const LOCAL_STORAGE_KEY = 'kitamo-settings';
 const defaultSettings: Settings = {
   biometricLogin: false,
   emailNotifications: true,
-  pushNotifications: true,
+  pushNotifications: false, // Default to false until user enables it
 };
 
 export function useSettings() {
@@ -96,15 +97,29 @@ export function useSettings() {
 
   const updateSetting = useCallback(async (setting: Setting, value: boolean): Promise<void> => {
     if (setting === 'biometricLogin' && value === true) {
-        // If enabling biometrics, trigger the setup process
         const success = await setupBiometrics();
         if (success) {
             setSettings(prev => ({ ...prev, [setting]: true }));
         }
-    } else {
-        // For all other cases (including disabling biometrics), just update the state
+    } else if (setting === 'pushNotifications' && value === true) {
+        const token = await requestNotificationPermission();
+        if (token) {
+            setSettings(prev => ({ ...prev, [setting]: true }));
+            toast({
+                title: 'Notifications Enabled',
+                description: 'You will now receive push notifications.',
+            });
+        } else {
+             toast({
+                variant: 'destructive',
+                title: 'Notification Permission Denied',
+                description: 'Please enable notifications in your browser settings.',
+            });
+        }
+    }
+    else {
         setSettings(prev => ({ ...prev, [setting]: value }));
-        if (setting !== 'biometricLogin') {
+        if (setting === 'emailNotifications') {
             toast({
                 title: 'Settings Updated',
                 description: 'Your preferences have been saved.',
@@ -113,6 +128,11 @@ export function useSettings() {
              toast({
                 title: 'Biometric Login Disabled',
                 description: 'You will need to use your password to sign in.',
+            });
+        } else if (setting === 'pushNotifications' && value === false) {
+            toast({
+                title: 'Notifications Disabled',
+                description: 'You will no longer receive push notifications.',
             });
         }
     }
