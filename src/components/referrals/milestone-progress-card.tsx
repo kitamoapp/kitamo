@@ -55,13 +55,6 @@ export function MilestoneProgressCard() {
             Keep growing your network to unlock new rewards!
           </CardDescription>
         </div>
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => router.push('/subscriptions')}
-        >
-          <Zap className="mr-2" /> View Ranks
-        </Button>
       </CardHeader>
       <CardContent className="space-y-4">
         {isBronze ? (
