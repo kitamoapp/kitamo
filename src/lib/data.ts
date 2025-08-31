@@ -114,7 +114,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
   },
   {
     name: 'Gold',
-    price: 20,
+    price: 25,
     features: [
       { text: 'Financial tracking' },
       { text: 'Earn through referral system' },
@@ -128,7 +128,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
   },
   {
     name: 'Platinum',
-    price: 50,
+    price: 40,
     features: [
       { text: 'Financial tracking' },
       { text: 'Earn through referral system' },
