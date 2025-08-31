@@ -22,6 +22,10 @@ import { Camera } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
+// For demonstration, we'll have a list of valid codes.
+// In a real app, these would come from your user database.
+const VALID_REFERRAL_CODES = ['ALICECODE', 'BOBCODE', 'CHARLIECODE'];
+
 export default function ProfilePage() {
   const { currentTier } = useSubscription();
   const router = useRouter();
@@ -31,20 +35,30 @@ export default function ProfilePage() {
 
 
   const handleSaveReferralCode = () => {
-    if (referralCode.trim() === '') {
+    const code = referralCode.trim().toUpperCase();
+    if (code === '') {
         toast({
             title: 'Error',
-            description: 'Please enter a valid referral code.',
+            description: 'Please enter a referral code.',
             variant: 'destructive'
         })
         return;
     }
-    // In a real app, you would validate the code and link the user.
-    setHasReferralCode(true);
-    toast({
-        title: 'Success!',
-        description: 'Your referral code has been applied.'
-    })
+
+    // In a real app, you would make an API call to validate the code.
+    if (VALID_REFERRAL_CODES.includes(code)) {
+      setHasReferralCode(true);
+      toast({
+          title: 'Success!',
+          description: 'Your referral code has been applied.'
+      })
+    } else {
+       toast({
+            title: 'Invalid Code',
+            description: 'The referral code you entered is not valid. Please check and try again.',
+            variant: 'destructive'
+        })
+    }
   }
 
   return (
