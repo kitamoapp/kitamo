@@ -18,13 +18,40 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera, Trash2 } from 'lucide-react';
+import { Camera, Trash2, CreditCard, PlusCircle } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
 
 // For demonstration, we'll have a list of valid codes.
 // In a real app, these would come from your user database.
 const VALID_REFERRAL_CODES = ['ALICECODE', 'BOBCODE', 'CHARLIECODE'];
+
+interface PaymentMethod {
+    id: string;
+    last4: string;
+    expiry: string;
+    brand: string;
+}
 
 export default function ProfilePage() {
   const { currentTier } = useSubscription();
@@ -45,6 +72,15 @@ export default function ProfilePage() {
   const [referralCode, setReferralCode] = useState('');
   const [hasReferralCode, setHasReferralCode] = useState(false);
   const [avatarSrc, setAvatarSrc] = useState<string | null>(`https://picsum.photos/100/100`);
+
+  // State for payment methods
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
+      { id: 'card-1', last4: '4242', expiry: '12/26', brand: 'Visa' }
+  ]);
+  const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
+  const [showDeletePaymentAlert, setShowDeletePaymentAlert] = useState(false);
+  const [paymentMethodToDelete, setPaymentMethodToDelete] = useState<string | null>(null);
+
 
   const handleAccountInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -129,7 +165,8 @@ export default function ProfilePage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setAvatarSrc(URL.createObjectURL(file));
+      const newAvatarSrc = URL.createObjectURL(file);
+      setAvatarSrc(newAvatarSrc);
       toast({
         title: 'Photo updated',
         description: 'Your new profile picture is now displayed.',
@@ -148,7 +185,43 @@ export default function ProfilePage() {
     });
   }
 
+  const handleAddPaymentMethod = (e: React.FormEvent) => {
+    e.preventDefault();
+    // This is a simulation. In a real app, you'd handle card validation and tokenization.
+    const newCard: PaymentMethod = {
+        id: `card-${Date.now()}`,
+        last4: (Math.floor(Math.random() * 9000) + 1000).toString(),
+        expiry: '08/28',
+        brand: 'Mastercard'
+    };
+    setPaymentMethods(prev => [...prev, newCard]);
+    toast({
+        title: 'Payment Method Added',
+        description: `Card ending in ${newCard.last4} has been added.`
+    })
+    setShowAddPaymentDialog(false);
+  }
+
+  const handleDeletePaymentInitiate = (id: string) => {
+    setPaymentMethodToDelete(id);
+    setShowDeletePaymentAlert(true);
+  }
+
+  const handleDeletePaymentConfirm = () => {
+    if (paymentMethodToDelete) {
+        setPaymentMethods(prev => prev.filter(p => p.id !== paymentMethodToDelete));
+        toast({
+            title: 'Payment Method Removed',
+            description: 'The selected card has been deleted.'
+        });
+    }
+    setShowDeletePaymentAlert(false);
+    setPaymentMethodToDelete(null);
+  }
+
+
   return (
+    <>
     <AppLayout>
       <div className="space-y-8">
         <div>
@@ -192,7 +265,7 @@ export default function ProfilePage() {
                 <CardDescription>{accountInfo.email}</CardDescription>
               </CardHeader>
               <CardContent className="text-center">
-                 {avatarSrc && avatarSrc.startsWith('blob:') && (
+                 {avatarSrc && (
                     <Button
                         variant="ghost"
                         size="sm"
@@ -250,6 +323,36 @@ export default function ProfilePage() {
             </Card>
 
             <Card>
+                <CardHeader>
+                    <CardTitle>Payment Methods</CardTitle>
+                    <CardDescription>
+                    Manage your saved payment methods for subscriptions.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {paymentMethods.map(card => (
+                        <div key={card.id} className="flex items-center justify-between rounded-lg border p-4">
+                            <div className="flex items-center gap-4">
+                                <CreditCard className="h-6 w-6" />
+                                <div>
+                                    <p className="font-semibold">{card.brand} ending in {card.last4}</p>
+                                    <p className="text-sm text-muted-foreground">Expires {card.expiry}</p>
+                                </div>
+                            </div>
+                            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeletePaymentInitiate(card.id)}>
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Remove
+                            </Button>
+                        </div>
+                    ))}
+                    <Button variant="outline" className="w-full" onClick={() => setShowAddPaymentDialog(true)}>
+                        <PlusCircle className="h-4 w-4 mr-2" />
+                        Add New Card
+                    </Button>
+                </CardContent>
+            </Card>
+
+            <Card>
               <CardHeader>
                 <CardTitle>Referral Code</CardTitle>
                 <CardDescription>
@@ -300,5 +403,61 @@ export default function ProfilePage() {
         </div>
       </div>
     </AppLayout>
+
+     <Dialog
+        open={showAddPaymentDialog}
+        onOpenChange={setShowAddPaymentDialog}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Payment Method</DialogTitle>
+            <DialogDescription>
+              Please enter your card details. This is a simulation.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAddPaymentMethod} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="card-number">Card Number</Label>
+              <Input id="card-number" placeholder="1234 5678 9101 1121" />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2 col-span-2">
+                <Label htmlFor="expiry">Expiration</Label>
+                <Input id="expiry" placeholder="MM / YY" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cvc">CVC</Label>
+                <Input id="cvc" placeholder="123" />
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit">Add Card</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      
+      <AlertDialog open={showDeletePaymentAlert} onOpenChange={setShowDeletePaymentAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently remove this payment method.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeletePaymentConfirm}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
+
+    
