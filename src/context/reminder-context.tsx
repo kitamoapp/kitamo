@@ -36,24 +36,24 @@ const ReminderContext = createContext<ReminderContextType | undefined>(
 
 const LOCAL_STORAGE_KEY = 'kitamo-reminders';
 
+const initialReminders: Reminder[] = [
+   { id: 'rem-1', title: 'Netflix Subscription', amount: 15.99, category: 'Entertainment', date: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString(), recurrence: 'monthly' },
+   { id: 'rem-2', title: 'Gym Membership', amount: 40, category: 'Health', date: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(), recurrence: 'monthly' },
+];
+
 export const ReminderProvider = ({ children }: { children: ReactNode }) => {
-  const [reminders, setReminders] = useState<Reminder[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-        // Pre-populate with some default reminders if none exist
-        const initialReminders = [
-           { id: 'rem-1', title: 'Netflix Subscription', amount: 15.99, category: 'Entertainment', date: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString(), recurrence: 'monthly' },
-           { id: 'rem-2', title: 'Gym Membership', amount: 40, category: 'Health', date: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(), recurrence: 'monthly' },
-        ];
-        return item ? deserializeReminders(item) : initialReminders;
-      } catch (error) {
-        console.error('Error reading reminders from localStorage', error);
-        return [];
+  const [reminders, setReminders] = useState<Reminder[]>(initialReminders);
+
+  useEffect(() => {
+    try {
+      const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (item) {
+        setReminders(deserializeReminders(item));
       }
+    } catch (error) {
+      console.error('Error reading reminders from localStorage', error);
     }
-    return [];
-  });
+  }, []);
 
   useEffect(() => {
     try {
