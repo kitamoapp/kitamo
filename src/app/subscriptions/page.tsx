@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { AppLayout } from '@/components/app-layout';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,71 +14,123 @@ import {
 } from '@/components/ui/card';
 import { useCurrency } from '@/context/currency-context';
 import { subscriptionTiers } from '@/lib/data';
+import type { SubscriptionTier } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function SubscriptionsPage() {
   const { convertAndFormatCurrency } = useCurrency();
   const { currentTier, setCurrentTier } = useSubscription();
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(
+    null
+  );
+
+  const handleChoosePlan = (tier: SubscriptionTier) => {
+    setSelectedTier(tier);
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmPurchase = () => {
+    if (selectedTier) {
+      setCurrentTier(selectedTier);
+    }
+    setShowConfirmation(false);
+    setSelectedTier(null);
+  };
 
   return (
-    <AppLayout>
-      <div className="space-y-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight">
-            Subscription Plans
-          </h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            Choose the plan that fits your needs and start maximizing your
-            referral earnings.
-          </p>
-        </div>
+    <>
+      <AppLayout>
+        <div className="space-y-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold tracking-tight">
+              Subscription Plans
+            </h1>
+            <p className="mt-2 text-lg text-muted-foreground">
+              Choose the plan that fits your needs and start maximizing your
+              referral earnings.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {subscriptionTiers.map((tier) => (
-            <Card
-              key={tier.name}
-              className={cn(
-                'flex flex-col',
-                tier.name === currentTier.name && 'border-2 border-primary'
-              )}
-            >
-              <CardHeader>
-                <CardTitle>{tier.name}</CardTitle>
-                <CardDescription>
-                  {tier.price > 0
-                    ? `${convertAndFormatCurrency(
-                        tier.price
-                      )} / month`
-                    : 'Free'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1 space-y-4">
-                <ul className="space-y-2">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2">
-                      <Check className="h-4 w-4 text-green-500 mt-1" />
-                      <span className="text-sm flex-1">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  className="w-full"
-                  disabled={tier.name === currentTier.name}
-                  onClick={() => setCurrentTier(tier)}
-                >
-                  {tier.name === currentTier.name
-                    ? 'Current Plan'
-                    : 'Choose Plan'}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {subscriptionTiers.map((tier) => (
+              <Card
+                key={tier.name}
+                className={cn(
+                  'flex flex-col',
+                  tier.name === currentTier.name && 'border-2 border-primary'
+                )}
+              >
+                <CardHeader>
+                  <CardTitle>{tier.name}</CardTitle>
+                  <CardDescription>
+                    {tier.price > 0
+                      ? `${convertAndFormatCurrency(tier.price)} / month`
+                      : 'Free'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 space-y-4">
+                  <ul className="space-y-2">
+                    {tier.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-500 mt-1" />
+                        <span className="text-sm flex-1">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Button
+                    className="w-full"
+                    disabled={tier.name === currentTier.name}
+                    onClick={() => handleChoosePlan(tier)}
+                  >
+                    {tier.name === currentTier.name
+                      ? 'Current Plan'
+                      : 'Choose Plan'}
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
-    </AppLayout>
+      </AppLayout>
+
+      <AlertDialog
+        open={showConfirmation}
+        onOpenChange={setShowConfirmation}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Your Subscription</AlertDialogTitle>
+            <AlertDialogDescription>
+              In a real application, this is where you would enter your payment
+              details. For now, please confirm to upgrade your plan to{' '}
+              <span className="font-bold">{selectedTier?.name}</span>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setSelectedTier(null)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmPurchase}>
+              Confirm Purchase
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
