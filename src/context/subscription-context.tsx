@@ -8,6 +8,7 @@ import {
   ReactNode,
   useMemo,
   useCallback,
+  useEffect,
 } from 'react';
 import type { SubscriptionTier, ReferredUser } from '@/lib/types';
 import { subscriptionTiers } from '@/lib/data';
@@ -29,6 +30,8 @@ interface SubscriptionContextType extends ReferralEarnings {
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
   undefined
 );
+
+const LOCAL_STORAGE_KEY = 'kitamo-subscription-tier';
 
 const getPlanPrice = (planName: ReferredUser['plan']) => {
   return subscriptionTiers.find((t) => t.name === planName)?.price || 0;
@@ -97,10 +100,44 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const { referredUsers } = useReferredUsers();
   const [currentTier, setCurrentTierState] =
     useState<SubscriptionTier>(subscriptionTiers[0]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (item) {
+        const storedTier = JSON.parse(item);
+        const foundTier = subscriptionTiers.find(t => t.name === storedTier.name);
+        if (foundTier) {
+          setCurrentTierState(foundTier);
+        }
+      }
+    } catch (error) {
+      console.error('Error reading subscription tier from localStorage', error);
+    }
+    setIsLoaded(true);
+  }, []);
 
   const setCurrentTier = useCallback((tier: SubscriptionTier) => {
     setCurrentTierState(tier);
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tier));
+      } catch (error) {
+        console.error('Error saving subscription tier to localStorage', error);
+      }
+    }
   }, []);
+  
+  useEffect(() => {
+    if (isLoaded) {
+       try {
+        window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(currentTier));
+      } catch (error) {
+        console.error('Error saving subscription tier to localStorage', error);
+      }
+    }
+  }, [currentTier, isLoaded]);
 
   const nextTier: SubscriptionTier | undefined = useMemo(
     () => subscriptionTiers.find((t) => t.price > currentTier.price),

@@ -19,10 +19,14 @@ const serializeReferredUsers = (users: ReferredUser[]) => {
 };
 
 const deserializeReferredUsers = (jsonString: string): ReferredUser[] => {
-  return JSON.parse(jsonString).map((u: any) => ({
-    ...u,
-    signupDate: new Date(u.signupDate),
-  }));
+  try {
+    return JSON.parse(jsonString).map((u: any) => ({
+      ...u,
+      signupDate: new Date(u.signupDate),
+    }));
+  } catch {
+    return initialReferredUsers;
+  }
 };
 
 interface ReferredUserContextType {
@@ -50,6 +54,8 @@ export const ReferredUserProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error('Error reading from localStorage', error);
+      // Fallback to initial data if localStorage is corrupt or unavailable
+      setReferredUsers(initialReferredUsers);
     }
     setIsLoaded(true);
   }, []);
