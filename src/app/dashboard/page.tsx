@@ -9,12 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
 import { transactions } from '@/lib/data';
 import { SummaryCard } from '@/components/dashboard/summary-card';
 import {
@@ -29,7 +23,6 @@ import {
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
 import { useCurrency } from '@/context/currency-context';
 import type { Currency } from '@/lib/types';
-import { TransactionsTable } from '@/components/transactions/transactions-table';
 import { ExpenseBreakdownChart } from '@/components/dashboard/expense-breakdown-chart';
 import { useSubscription } from '@/hooks/use-subscription';
 import { UpgradeCard } from '@/components/upgrade-card';
@@ -62,73 +55,62 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="flex items-center justify-between space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-      </div>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        </div>
 
-      <Tabs defaultValue="overview" className="mt-6">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview">
-          <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <SummaryCard
-              title="Total Income"
-              value={formatCurrency(totalIncome)}
-              icon={TrendingUp}
-            />
-            <SummaryCard
-              title="Total Expenses"
-              value={formatCurrency(totalExpenses)}
-              icon={TrendingDown}
-            />
-            <SummaryCard
-              title="Balance"
-              value={formatCurrency(balance)}
-              icon={BalanceIcon}
-            />
-          </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <SummaryCard
+            title="Total Income"
+            value={formatCurrency(totalIncome)}
+            icon={TrendingUp}
+          />
+          <SummaryCard
+            title="Total Expenses"
+            value={formatCurrency(totalExpenses)}
+            icon={TrendingDown}
+          />
+          <SummaryCard
+            title="Balance"
+            value={formatCurrency(balance)}
+            icon={BalanceIcon}
+          />
+        </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Financial Summary</CardTitle>
+              <CardDescription>
+                Your income and expenses over time.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <FinancialSummaryChart />
+            </CardContent>
+          </Card>
+          {canViewAdvancedAnalytics ? (
             <Card>
               <CardHeader>
-                <CardTitle>Financial Summary</CardTitle>
+                <CardTitle>Expense Breakdown</CardTitle>
                 <CardDescription>
-                  Your income and expenses over time.
+                  How you are spending your money.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pl-2">
-                <FinancialSummaryChart />
+              <CardContent>
+                <ExpenseBreakdownChart />
               </CardContent>
             </Card>
-            {canViewAdvancedAnalytics ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Expense Breakdown</CardTitle>
-                  <CardDescription>
-                    How you are spending your money.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ExpenseBreakdownChart />
-                </CardContent>
-              </Card>
-            ) : (
-              <UpgradeCard
-                title="Unlock Advanced Analytics"
-                description="See a detailed breakdown of your expenses by category to better understand your spending habits."
-                buttonText="Upgrade to Silver"
-              />
-            )}
-          </div>
-        </TabsContent>
-        <TabsContent value="transactions">
-          <div className="mt-4 space-y-4">
-            <TransactionsTable />
-          </div>
-        </TabsContent>
-      </Tabs>
+          ) : (
+            <UpgradeCard
+              title="Unlock Advanced Analytics"
+              description="See a detailed breakdown of your expenses by category to better understand your spending habits."
+              buttonText="Upgrade to Silver"
+            />
+          )}
+        </div>
+      </div>
     </AppLayout>
   );
 }
