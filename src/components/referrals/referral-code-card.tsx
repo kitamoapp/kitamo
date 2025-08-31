@@ -29,7 +29,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7z"></path>
+        <path d="M21.44,11.36c0,5.16-4.18,9.34-9.34,9.34a9.26,9.26,0,0,1-4.71-1.28L2.61,21.39l1.9-4.52a9.3,9.3,0,0,1-1.39-4.88c0-5.16,4.18-9.34,9.34-9.34S21.44,6.2,21.44,11.36Z" />
     </svg>
 );
 
@@ -64,8 +64,7 @@ const MessengerIcon = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    <path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1" />
-    <path d="M8 13l3 -4l7 4l-3 4l-7 -4" />
+    <path d="M12 2a10 10 0 0 0-10 10c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.1-.65.35-1.08.64-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.1.39-1.99 1.03-2.69a3.6 3.6 0 0 1 .1-2.64s.84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.4.1 2.64.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.72c0 .27.16.58.67.5A10 10 0 0 0 12 2z" />
   </svg>
 );
 
@@ -95,7 +94,7 @@ export function ReferralCodeCard() {
   };
   
   const referralLink = `${typeof window !== 'undefined' ? window.location.origin : ''}/signup?ref=${referralCode}`;
-  const referralMessage = `Hey! I'm using KitaMo to manage my finances. You can sign up using my referral code: ${referralCode}. Link: ${referralLink}`;
+  const referralMessage = `Hey! I'm using KitaMo to manage my finances. You should check it out! Sign up using my referral link: ${referralLink}`;
 
   const shareActions = [
     { name: 'WhatsApp', icon: WhatsAppIcon, url: `https://wa.me/?text=${encodeURIComponent(referralMessage)}`},
@@ -114,7 +113,7 @@ export function ReferralCodeCard() {
       <CardHeader>
         <CardTitle>Your Referral Code</CardTitle>
         <CardDescription>
-          Share this code with your friends so you can earn from their subscriptions.
+          Share your code with friends to grow your network.
         </CardDescription>
       </CardHeader>
       <CardContent>
