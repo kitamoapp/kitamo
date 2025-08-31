@@ -20,31 +20,15 @@ import {
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { useMemo } from 'react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 export function ReferredUsersTable() {
-  const allUserReferrals = useMemo(() => {
-    const direct = referredUsers
-      .filter((u) => u.referredBy === 'currentUser')
-      .map((u) => ({ ...u, tier: 1 }));
-
-    const indirect = direct
-      .map((directReferral) =>
-        referredUsers
-          .filter((u) => u.referredBy === directReferral.id)
-          .map((u) => ({ ...u, tier: 2 }))
-      )
-      .flat();
-
-    return [...direct, ...indirect];
-  }, []);
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Referred Users</CardTitle>
         <CardDescription>
-          Here's a list of users in your referral network.
+          Here's a list of users you have directly referred into your network.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -53,18 +37,20 @@ export function ReferredUsersTable() {
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Sign-up Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Tier</TableHead>
+              <TableHead>Plan</TableHead>
+              <TableHead>Leg</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {allUserReferrals.map((user) => (
+            {referredUsers
+              .filter(u => u.referredBy === 'currentUser')
+              .map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
                       <AvatarImage
-                        src={`https://picsum.photos/100/100?random=${'user.id'}`}
+                        src={`https://picsum.photos/100/100?random=${user.id}`}
                         alt={user.name}
                         data-ai-hint="person portrait"
                       />
@@ -72,28 +58,30 @@ export function ReferredUsersTable() {
                     </Avatar>
                     <div>
                       <div className="font-semibold">{user.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {user.email}
-                      </div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>{user.signupDate.toLocaleDateString()}</TableCell>
                 <TableCell>
                   <Badge
+                    variant="outline"
                     className={cn(
-                      user.status === 'Active'
-                        ? 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/50 dark:text-green-300'
-                        : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300'
+                      user.plan === 'Platinum' && 'border-sky-500 text-sky-500',
+                      user.plan === 'Gold' && 'border-amber-500 text-amber-500',
+                      user.plan === 'Silver' && 'border-slate-500 text-slate-500'
                     )}
                   >
-                    {user.status}
+                    {user.plan}
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline">
-                    {user.tier === 1 ? 'Direct' : 'Indirect'}
-                  </Badge>
+                  <div className='flex items-center gap-1'>
+                    {user.leg === 'left' ? 
+                      <ArrowLeft className="h-4 w-4 text-muted-foreground" /> : 
+                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                    }
+                    <span className="capitalize">{user.leg}</span>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

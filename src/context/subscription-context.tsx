@@ -9,7 +9,7 @@ import {
   useMemo,
   useCallback,
 } from 'react';
-import type { SubscriptionTier } from '@/lib/types';
+import type { SubscriptionTier, ReferredUser } from '@/lib/types';
 import {
   subscriptionTiers,
   referredUsers,
@@ -17,6 +17,9 @@ import {
 
 interface ReferralEarnings {
   totalEarnings: number;
+  leftLegVolume: number;
+  rightLegVolume: number;
+  payableVolume: number;
 }
 
 interface SubscriptionContextType extends ReferralEarnings {
@@ -29,36 +32,49 @@ const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
   undefined
 );
 
+const getPlanPrice = (planName: ReferredUser['plan']) => {
+  return subscriptionTiers.find(t => t.name === planName)?.price || 0;
+}
+
+// Recursive function to calculate volume for a given user's downline
+const getDownlineVolume = (userId: string, allUsers: ReferredUser[]): number => {
+  const directReferrals = allUsers.filter(u => u.referredBy === userId && u.status === 'Active');
+  
+  let volume = 0;
+  for (const referral of directReferrals) {
+    // Add the referral's own plan price to the volume
+    volume += getPlanPrice(referral.plan);
+    // Add the volume from their downline
+    volume += getDownlineVolume(referral.id, allUsers);
+  }
+  return volume;
+};
+
+
 const calculateEarnings = (tier: SubscriptionTier): ReferralEarnings => {
-  let totalEarnings = 0;
+  if (tier.commissionRate === 0) {
+    return { totalEarnings: 0, leftLegVolume: 0, rightLegVolume: 0, payableVolume: 0 };
+  }
+
+  const directReferrals = referredUsers.filter(u => u.referredBy === 'currentUser' && u.status === 'Active');
+
+  const leftLegReferral = directReferrals.find(u => u.leg === 'left');
+  const rightLegReferral = directReferrals.find(u => u.leg === 'right');
   
-  const averageReferralRevenue = 15; // Assume average plan price for demo
+  let leftLegVolume = 0;
+  if (leftLegReferral) {
+    leftLegVolume = getPlanPrice(leftLegReferral.plan) + getDownlineVolume(leftLegReferral.id, referredUsers);
+  }
 
-  // L1
-  const l1Referrals = referredUsers.filter(u => u.referredBy === 'currentUser' && u.status === 'Active');
-  totalEarnings += l1Referrals.length * averageReferralRevenue * (tier.levelPercentages[0] || 0);
-
-  // L2
-  const l1Ids = l1Referrals.map(u => u.id);
-  const l2Referrals = referredUsers.filter(u => l1Ids.includes(u.referredBy) && u.status === 'Active');
-  totalEarnings += l2Referrals.length * averageReferralRevenue * (tier.levelPercentages[1] || 0);
-
-  // L3
-  const l2Ids = l2Referrals.map(u => u.id);
-  const l3Referrals = referredUsers.filter(u => l2Ids.includes(u.referredBy) && u.status === 'Active');
-  totalEarnings += l3Referrals.length * averageReferralRevenue * (tier.levelPercentages[2] || 0);
+  let rightLegVolume = 0;
+  if (rightLegReferral) {
+    rightLegVolume = getPlanPrice(rightLegReferral.plan) + getDownlineVolume(rightLegReferral.id, referredUsers);
+  }
   
-  // L4
-  const l3Ids = l3Referrals.map(u => u.id);
-  const l4Referrals = referredUsers.filter(u => l3Ids.includes(u.referredBy) && u.status === 'Active');
-  totalEarnings += l4Referrals.length * averageReferralRevenue * (tier.levelPercentages[3] || 0);
+  const payableVolume = Math.min(leftLegVolume, rightLegVolume);
+  const totalEarnings = payableVolume * tier.commissionRate;
 
-  // L5
-  const l4Ids = l4Referrals.map(u => u.id);
-  const l5Referrals = referredUsers.filter(u => l4Ids.includes(u.referredBy) && u.status === 'Active');
-  totalEarnings += l5Referrals.length * averageReferralRevenue * (tier.levelPercentages[4] || 0);
-
-  return { totalEarnings };
+  return { totalEarnings, leftLegVolume, rightLegVolume, payableVolume };
 };
 
 export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
@@ -75,9 +91,9 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     [currentTier]
   );
     
-  const { totalEarnings } = useMemo(() => {
+  const { totalEarnings, leftLegVolume, rightLegVolume, payableVolume } = useMemo(() => {
     if (currentTier.name === 'Bronze') {
-      return { totalEarnings: 0 };
+      return { totalEarnings: 0, leftLegVolume: 0, rightLegVolume: 0, payableVolume: 0 };
     }
     return calculateEarnings(currentTier);
   }, [currentTier]);
@@ -87,6 +103,9 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     setCurrentTier,
     nextTier,
     totalEarnings,
+    leftLegVolume,
+    rightLegVolume,
+    payableVolume,
   };
 
   return (

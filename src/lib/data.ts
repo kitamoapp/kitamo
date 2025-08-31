@@ -74,63 +74,17 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
 ];
 
 export const referredUsers: ReferredUser[] = [
-  // Direct Referrals (Tier 1)
-  {
-    id: '1',
-    name: 'Alice Johnson',
-    email: 'alice@example.com',
-    signupDate: new Date('2024-06-15'),
-    status: 'Active',
-    referredBy: 'currentUser', // Main user
-    earnings: 100, // e.g., from subscription
-  },
-  {
-    id: '2',
-    name: 'Bob Williams',
-    email: 'bob@example.com',
-    signupDate: new Date('2024-06-20'),
-    status: 'Active',
-    referredBy: 'currentUser',
-    earnings: 150,
-  },
-  {
-    id: '3',
-    name: 'Charlie Brown',
-    email: 'charlie@example.com',
-    signupDate: new Date('2024-07-01'),
-    status: 'Pending',
-    referredBy: 'currentUser',
-    earnings: 0,
-  },
-  // Indirect Referrals (Tier 2) - Referred by Alice
-  {
-    id: '4',
-    name: 'Diana Prince',
-    email: 'diana@example.com',
-    signupDate: new Date('2024-07-05'),
-    status: 'Active',
-    referredBy: '1', // Referred by Alice
-    earnings: 80,
-  },
-  // Indirect Referrals (Tier 2) - Referred by Bob
-  {
-    id: '5',
-    name: 'Ethan Hunt',
-    email: 'ethan@example.com',
-    signupDate: new Date('2024-07-06'),
-    status: 'Active',
-    referredBy: '2', // Referred by Bob
-    earnings: 120,
-  },
-  {
-    id: '6',
-    name: 'Fiona Glenanne',
-    email: 'fiona@example.com',
-    signupDate: new Date('2024-07-08'),
-    status: 'Pending',
-    referredBy: '2', // Referred by Bob
-    earnings: 0,
-  },
+  // L1 - Direct Referrals
+  { id: '1', name: 'Alice', signupDate: new Date('2024-06-15'), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Gold' },
+  { id: '2', name: 'Bob', signupDate: new Date('2024-06-20'), status: 'Active', referredBy: 'currentUser', leg: 'right', plan: 'Silver' },
+  { id: '3', name: 'Charlie', signupDate: new Date('2024-07-01'), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Platinum' },
+  // L2 - Referred by Alice (L)
+  { id: '4', name: 'Diana', signupDate: new Date('2024-07-05'), status: 'Active', referredBy: '1', leg: 'left', plan: 'Silver' },
+  { id: '5', name: 'Ethan', signupDate: new Date('2024-07-06'), status: 'Active', referredBy: '1', leg: 'right', plan: 'Gold' },
+  // L2 - Referred by Bob (R)
+  { id: '6', name: 'Fiona', signupDate: new Date('2024-07-08'), status: 'Active', referredBy: '2', leg: 'left', plan: 'Platinum' },
+  // L3 - Referred by Diana (L)
+  { id: '7', name: 'George', signupDate: new Date('2024-07-10'), status: 'Active', referredBy: '4', leg: 'right', plan: 'Gold' },
 ];
 
 export const subscriptionTiers: SubscriptionTier[] = [
@@ -142,69 +96,48 @@ export const subscriptionTiers: SubscriptionTier[] = [
     gradientFrom: 'from-yellow-100',
     gradientTo: 'to-stone-100',
     textColor: 'text-yellow-800',
-    levelPercentages: [],
+    commissionRate: 0,
   },
   {
     name: 'Silver',
     price: 10,
     features: [
       { text: 'Financial tracking' },
-      { text: 'Earn through referrals (up to 5 levels)' },
-      { text: '10% from Level 1 referrals' },
-      { text: '5% from Level 2 referrals' },
-      { text: '2% from Level 3-5 referrals' },
+      { text: 'Earn through referral system' },
+      { text: '10% commission on matched volume' },
     ],
     borderColor: 'border-slate-400',
     gradientFrom: 'from-slate-200',
     gradientTo: 'to-white',
     textColor: 'text-slate-700',
-    levelPercentages: [0.1, 0.05, 0.02, 0.02, 0.02],
+    commissionRate: 0.10,
   },
   {
     name: 'Gold',
     price: 20,
     features: [
       { text: 'Financial tracking' },
-      { text: 'Earn through referrals (up to 5 levels)' },
-      { text: '15% from Level 1 referrals' },
-      { text: '10% from Level 2 referrals' },
-      { text: '5% from Level 3-5 referrals' },
+      { text: 'Earn through referral system' },
+      { text: '15% commission on matched volume' },
     ],
     borderColor: 'border-amber-500',
     gradientFrom: 'from-amber-200',
     gradientTo: 'to-yellow-100',
     textColor: 'text-amber-800',
-    levelPercentages: [0.15, 0.1, 0.05, 0.05, 0.05],
+    commissionRate: 0.15,
   },
   {
     name: 'Platinum',
     price: 50,
     features: [
       { text: 'Financial tracking' },
-      { text: 'Earn through referrals (up to 5 levels)' },
-      { text: '20% from Level 1 referrals' },
-      { text: '15% from Level 2 referrals' },
-      { text: '10% from Level 3-5 referrals' },
+      { text: 'Earn through referral system' },
+      { text: '20% commission on matched volume' },
     ],
     borderColor: 'border-sky-500',
     gradientFrom: 'from-sky-200',
     gradientTo: 'to-cyan-100',
     textColor: 'text-sky-800',
-    levelPercentages: [0.2, 0.15, 0.1, 0.1, 0.1],
-  },
-];
-
-export const referralMilestones: ReferralMilestone[] = [
-  {
-    name: 'Unlock Silver Tier',
-    requiredReferrals: 5,
-  },
-  {
-    name: 'Unlock Gold Tier',
-    requiredReferrals: 20,
-  },
-  {
-    name: 'Unlock Platinum Tier',
-    requiredReferrals: 50,
+    commissionRate: 0.20,
   },
 ];

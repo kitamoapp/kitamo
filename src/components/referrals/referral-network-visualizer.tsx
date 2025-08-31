@@ -9,153 +9,85 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Share2 } from 'lucide-react';
+import { Users, ArrowDown, Award, DollarSign } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { useCurrency } from '@/context/currency-context';
-import { subscriptionTiers } from '@/lib/data';
-import type { SubscriptionTier } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
-const NetworkNode = ({
-  name,
-  level,
-  earnings,
-  isYou = false,
-  imageUrl,
-  aiHint,
-  planName,
-}: {
-  name: string;
-  level: string;
-  earnings?: string;
-  isYou?: boolean;
-  imageUrl: string;
-  aiHint: string;
-  planName?: string;
-}) => {
-  return (
-    <div className="flex flex-col items-center gap-2 text-center">
-      <Avatar
-        className={`h-16 w-16 border-4 ${
-          isYou ? 'border-primary' : 'border-muted-foreground'
-        }`}
-      >
-        <AvatarImage src={imageUrl} alt={name} data-ai-hint={aiHint} />
-        <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-      </Avatar>
-      <div className="text-sm">
-        <div className="font-semibold">{name}</div>
-        <div className="text-xs text-muted-foreground">{level}</div>
-        {planName && (
-            <div className="text-xs text-muted-foreground">({planName} Plan)</div>
-        )}
-        {earnings && (
-          <div className="text-xs font-bold text-green-600">{earnings}</div>
-        )}
-      </div>
-    </div>
-  );
-};
 
-const LevelConnector = ({ level, percent, earning, referralSource }: { level: number, percent: number, earning: number, referralSource: string }) => {
-  const { convertAndFormatCurrency } = useCurrency();
+const LegCard = ({ title, volume, isPayableLeg, isWeakerLeg }: { title: string, volume: number, isPayableLeg: boolean, isWeakerLeg: boolean }) => {
+  const { formatCurrency } = useCurrency();
+  
   return (
-    <>
-      <div className="relative mt-4 h-8 w-px bg-border">
-        <Share2 className="absolute -top-3 left-1/2 h-5 w-5 -translate-x-1/2 transform rounded-full bg-background text-primary" />
-      </div>
-      <div className="flex flex-col items-center gap-1">
-        <div className="font-semibold text-muted-foreground">
-          Level {level} Referrals
-        </div>
-        <div className="text-sm font-bold text-primary">
-          You Earn {percent * 100}%
-        </div>
-        {earning > 0 && (
-          <div className="text-xs font-semibold text-green-600">
-            (+ {convertAndFormatCurrency(earning, 'USD')}/mo)
+    <div className={cn(
+      "rounded-lg border p-4 w-full text-center relative",
+      isPayableLeg ? "border-primary bg-primary/10 border-2" : "bg-muted/50"
+    )}>
+       {isWeakerLeg && (
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
+                Pay Leg
+             </span>
           </div>
-        )}
-         <div className="text-xs text-muted-foreground">(from {referralSource}'s referrals)</div>
-      </div>
-    </>
-  );
+       )}
+      <h3 className="font-semibold text-lg">{title}</h3>
+      <div className="text-2xl font-bold text-primary">{formatCurrency(volume)}</div>
+      <p className="text-xs text-muted-foreground">Total Group Volume</p>
+    </div>
+  )
 };
 
 
 export function ReferralNetworkVisualizer() {
-  const { currentTier } = useSubscription();
-  const { convertAndFormatCurrency } = useCurrency();
-  
-  const tierForDemonstration: SubscriptionTier = subscriptionTiers.find(t => t.name === 'Platinum')!;
-    
-  const silverPlan = subscriptionTiers.find(t => t.name === 'Silver')!;
-  const goldPlan = subscriptionTiers.find(t => t.name === 'Gold')!;
-  const platinumPlan = subscriptionTiers.find(t => t.name === 'Platinum')!;
-
-  const levelRevenues = [
-    silverPlan.price, // L1
-    goldPlan.price,   // L2
-    silverPlan.price, // L3
-    platinumPlan.price, // L4
-    goldPlan.price // L5
-  ];
-
-  const levelPercentages = tierForDemonstration.levelPercentages;
-  
-  const levelEarnings = levelRevenues.map((revenue, index) => revenue * (levelPercentages[index] || 0));
-  const totalEarning = levelEarnings.reduce((acc, earning) => acc + earning, 0);
-
-  const referralChain = [
-    { name: "You", level: "Your Account", isYou: true, planName: currentTier.name, referredBy: "", earnings: totalEarning > 0 ? `+ ${convertAndFormatCurrency(totalEarning, 'USD')}/mo Total` : undefined, imageUrl: "https://picsum.photos/100/100?random=0", aiHint: "person portrait" },
-    { name: "Alice", level: "L1 Referral", planName: "Silver", referredBy: "You", imageUrl: "https://picsum.photos/100/100?random=1", aiHint: "person portrait" },
-    { name: "Diana", level: "L2 Referral", planName: "Gold", referredBy: "Alice", imageUrl: "https://picsum.photos/100/100?random=4", aiHint: "person portrait" },
-    { name: "Ethan", level: "L3 Referral", planName: "Silver", referredBy: "Diana", imageUrl: "https://picsum.photos/100/100?random=5", aiHint: "person portrait" },
-    { name: "Fiona", level: "L4 Referral", planName: "Platinum", referredBy: "Ethan", imageUrl: "https://picsum.photos/100/100?random=6", aiHint: "woman portrait" },
-    { name: "George", level: "L5 Referral", planName: "Gold", referredBy: "Fiona", imageUrl: "https://picsum.photos/100/100?random=7", aiHint: "man portrait" },
-  ];
+  const { currentTier, leftLegVolume, rightLegVolume, payableVolume, totalEarnings } = useSubscription();
+  const { formatCurrency } = useCurrency();
+  const isWeakerLegLeft = leftLegVolume <= rightLegVolume;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>How You Earn</CardTitle>
         <CardDescription>
-          A demonstration of how a 5-level referral network generates earnings for you.
+          Your earnings are based on the total sales volume of your weaker leg.
+          This is known as a Binary Plan.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center gap-4 py-8">
-        <NetworkNode
-          name={referralChain[0].name}
-          level={referralChain[0].level}
-          isYou
-          imageUrl={referralChain[0].imageUrl}
-          aiHint={referralChain[0].aiHint}
-          planName={referralChain[0].planName}
-          earnings={referralChain[0].earnings}
-        />
+      <CardContent className="flex flex-col items-center justify-center gap-6 py-8">
+        <div className="flex flex-col items-center gap-2 text-center">
+            <Avatar className="h-20 w-20 border-4 border-primary">
+                <AvatarImage src={"https://picsum.photos/100/100?random=0"} alt="You" data-ai-hint="person portrait" />
+                <AvatarFallback>Y</AvatarFallback>
+            </Avatar>
+            <div className="text-lg">
+                <div className="font-semibold">Your Business Center</div>
+                <div className="text-sm text-muted-foreground">{currentTier.name} Plan</div>
+            </div>
+        </div>
 
-        {referralChain.slice(1).map((user, index) => (
-           <div key={user.name} className="flex flex-col items-center w-full">
-             <LevelConnector
-                level={index + 1}
-                percent={levelPercentages[index] || 0}
-                earning={levelEarnings[index]}
-                referralSource={referralChain[index].name}
-             />
-             <div className="mt-4">
-                <NetworkNode
-                    name={user.name}
-                    level={`L${index + 1} Referral`}
-                    planName={user.planName}
-                    imageUrl={user.imageUrl}
-                    aiHint={user.aiHint}
-                />
-             </div>
-           </div>
-        ))}
-         <div className="mt-4 w-full rounded-lg border border-dashed bg-muted/50 p-4 text-center text-sm text-muted-foreground">
-          Earnings are capped at 5 levels deep. This is a visual representation to help you understand the referral
-          structure. The earnings shown are for demonstration purposes only and
-          do not represent your actual earnings.
+        <ArrowDown className="h-8 w-8 text-muted-foreground" />
+
+        <div className="grid grid-cols-2 gap-6 w-full max-w-md">
+           <LegCard title="Left Leg" volume={leftLegVolume} isPayableLeg={isWeakerLegLeft} isWeakerLeg={isWeakerLegLeft} />
+           <LegCard title="Right Leg" volume={rightLegVolume} isPayableLeg={!isWeakerLegLeft} isWeakerLeg={!isWeakerLegLeft}/>
+        </div>
+
+        <div className="mt-4 w-full rounded-lg border border-dashed bg-muted/50 p-4 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <Award className="h-5 w-5 text-primary"/>
+            <p className="text-sm text-muted-foreground">
+                Your commission is <span className="font-bold text-primary">{currentTier.commissionRate * 100}%</span> of your weaker leg's volume.
+            </p>
+          </div>
+          <div className="mt-2 text-lg">
+             <span className="font-semibold">{formatCurrency(payableVolume)} (Payable Volume)</span>
+             <span className="mx-2">x</span>
+             <span className="font-semibold">{currentTier.commissionRate * 100}% (Rate)</span>
+          </div>
+          <div className="mt-2 flex items-center justify-center gap-2 text-2xl font-bold text-green-600">
+            <DollarSign className="h-6 w-6"/>
+            <span>{formatCurrency(totalEarnings)}</span>
+          </div>
+           <p className="text-xs text-muted-foreground">Estimated Monthly Earnings</p>
         </div>
       </CardContent>
     </Card>
