@@ -19,7 +19,7 @@ import { useSubscription } from '@/hooks/use-subscription';
 
 export default function SubscriptionsPage() {
   const { convertAndFormatCurrency } = useCurrency();
-  const { currentTier } = useSubscription();
+  const { currentTier, setCurrentTier } = useSubscription();
 
   return (
     <AppLayout>
@@ -67,6 +67,7 @@ export default function SubscriptionsPage() {
                 <Button
                   className="w-full"
                   disabled={tier.name === currentTier.name}
+                  onClick={() => setCurrentTier(tier)}
                 >
                   {tier.name === currentTier.name
                     ? 'Current Plan'

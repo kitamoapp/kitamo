@@ -7,6 +7,7 @@ import {
   useState,
   ReactNode,
   useMemo,
+  useCallback,
 } from 'react';
 import type { SubscriptionTier } from '@/lib/types';
 import { subscriptionTiers, referredUsers } from '@/lib/data';
@@ -14,6 +15,7 @@ import { subscriptionTiers, referredUsers } from '@/lib/data';
 interface SubscriptionContextType {
   activeReferrals: number;
   currentTier: SubscriptionTier;
+  setCurrentTier: (tier: SubscriptionTier) => void;
   nextTier: SubscriptionTier | undefined;
 }
 
@@ -27,7 +29,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
-  const currentTier: SubscriptionTier = useMemo(() => {
+  const initialTier = useMemo(() => {
     return (
       [...subscriptionTiers]
         .reverse()
@@ -35,6 +37,13 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
       subscriptionTiers[0]
     );
   }, [activeReferrals]);
+
+  const [currentTier, setCurrentTierState] =
+    useState<SubscriptionTier>(initialTier);
+
+  const setCurrentTier = useCallback((tier: SubscriptionTier) => {
+    setCurrentTierState(tier);
+  }, []);
 
   const nextTier: SubscriptionTier | undefined = useMemo(
     () => subscriptionTiers[subscriptionTiers.indexOf(currentTier) + 1],
@@ -44,6 +53,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     activeReferrals,
     currentTier,
+    setCurrentTier,
     nextTier,
   };
 
