@@ -67,7 +67,35 @@ export function SubscriptionTierCard() {
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          {canEarn ? (
+          {!canEarn && nextTier ? (
+             <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
+              <h3 className="font-semibold text-foreground">
+                Unlock Your Earning Potential!
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Upgrade to the {nextTier.name} plan to start earning up to{' '}
+                {convertAndFormatCurrency(nextTier.earningCap)} from your referrals.
+              </p>
+               <div className="pt-2 text-left">
+                 <div className="flex items-center justify-between text-sm">
+                   <div className="font-semibold text-foreground">
+                     Progress to {nextTier.name}
+                   </div>
+                   <div className="text-muted-foreground">
+                     {activeReferrals} / {nextTier.requiredReferrals} Referrals
+                   </div>
+                 </div>
+                 <Progress value={progressToNextTier} className="mt-1 h-2" />
+               </div>
+              <Button
+                size="sm"
+                className="mt-4"
+                onClick={() => router.push('/subscriptions')}
+              >
+                Upgrade to {nextTier.name}
+              </Button>
+            </div>
+          ) : canEarn ? (
             <div className="space-y-2">
               <div
                 className={`flex justify-between font-semibold ${currentTier.textColor}`}
@@ -99,25 +127,9 @@ export function SubscriptionTierCard() {
                 </p>
               </div>
             </div>
-          ) : (
-            <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
-              <h3 className="font-semibold text-foreground">
-                Start Earning Referral Bonuses!
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Upgrade your plan to earn money for each friend you refer.
-              </p>
-              <Button
-                size="sm"
-                className="mt-2"
-                onClick={() => router.push('/subscriptions')}
-              >
-                Upgrade Now
-              </Button>
-            </div>
-          )}
+          ) : null}
 
-          {nextTier && (
+          {canEarn && nextTier && (
             <div className="space-y-2 rounded-lg bg-background/50 p-4">
               <div className="flex items-center justify-between">
                 <div className="font-semibold text-foreground">
