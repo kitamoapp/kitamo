@@ -36,10 +36,11 @@ export function SubscriptionPlanCard({
 
   const renderFeature = (feature: SubscriptionFeature) => {
     if (feature.earningCap) {
-      return feature.text.replace(
-        '{cap}',
-        convertAndFormatCurrency(feature.earningCap)
-      );
+      const capText =
+        feature.earningCap === Infinity
+          ? 'Unlimited'
+          : convertAndFormatCurrency(feature.earningCap);
+      return feature.text.replace('{cap}', capText);
     }
     return feature.text;
   };

@@ -39,6 +39,8 @@ export function SubscriptionTierCard() {
     : 100;
 
   const canEarn = currentTier.earningCap > 0;
+  const isUnlimited = currentTier.earningCap === Infinity;
+
 
   return (
     <>
@@ -74,11 +76,11 @@ export function SubscriptionTierCard() {
                 <span>Current Earnings</span>
                 <span>
                   {convertAndFormatCurrency(currentEarnings, currency)} /{' '}
-                  {convertAndFormatCurrency(currentTier.earningCap)}
+                  {isUnlimited ? 'Unlimited' : convertAndFormatCurrency(currentTier.earningCap)}
                 </span>
               </div>
               <Progress
-                value={(currentEarnings / convertedEarningCap) * 100}
+                value={isUnlimited ? 100 : (currentEarnings / convertedEarningCap) * 100}
                 className="h-2"
               />
               <p className={`text-sm ${currentTier.textColor}/80`}>
@@ -119,7 +121,7 @@ export function SubscriptionTierCard() {
               <p className="text-sm text-muted-foreground">
                 Refer {nextTier.requiredReferrals - activeReferrals} more
                 friends to unlock an earning cap of{' '}
-                {convertAndFormatCurrency(nextTier.earningCap)}.
+                {nextTier.earningCap === Infinity ? 'Unlimited' : convertAndFormatCurrency(nextTier.earningCap)}.
               </p>
             </div>
           )}

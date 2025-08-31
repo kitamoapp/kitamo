@@ -169,10 +169,10 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 50,
     features: [
       { text: 'All Gold features' },
-      { text: 'Earning cap of {cap}', earningCap: 10000 },
+      { text: 'Unlimited Earning Potential' },
     ],
     requiredReferrals: 50,
-    earningCap: 10000,
+    earningCap: Infinity,
     borderColor: 'border-sky-500',
     gradientFrom: 'from-sky-200',
     gradientTo: 'to-cyan-100',
