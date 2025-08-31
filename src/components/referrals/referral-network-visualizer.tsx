@@ -115,7 +115,6 @@ export function ReferralNetworkVisualizer() {
                 name="Alice"
                 level="L1 Referral"
                 planName="Silver"
-                earnings={`+ ${convertAndFormatCurrency(directEarning)}/mo`}
                 imageUrl="https://picsum.photos/100/100?random=1"
                 aiHint="person portrait"
               />
@@ -142,7 +141,6 @@ export function ReferralNetworkVisualizer() {
               name="Diana"
               level="L2 Referral"
               planName="Gold"
-              earnings={`+ ${convertAndFormatCurrency(indirectEarning)}/mo`}
               imageUrl="https://picsum.photos/100/100?random=4"
               aiHint="person portrait"
             />
