@@ -12,8 +12,13 @@ import type { Reminder } from '@/lib/types';
 
 // Helper to handle serialization of Date objects
 const serializeReminders = (reminders: Reminder[]) => {
-  return JSON.stringify(reminders);
+  return JSON.stringify(reminders.map(r => ({...r, date: r.date.toString()})));
 };
+
+const deserializeReminders = (serialized: string): Reminder[] => {
+    return JSON.parse(serialized).map((r: any) => ({...r, date: new Date(r.date)}));
+}
+
 
 interface ReminderContextType {
   reminders: Reminder[];
@@ -52,7 +57,7 @@ export const ReminderProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isLoaded) {
         try {
-            window.localStorage.setItem(LOCAL_STORAGE_KEY, serializeReminders(reminders));
+            window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(reminders));
         } catch (error) {
             console.error('Error saving reminders to localStorage', error);
         }
