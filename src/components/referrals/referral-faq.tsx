@@ -1,4 +1,6 @@
 
+'use client';
+
 import {
   Accordion,
   AccordionContent,
@@ -12,40 +14,45 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
+import { useCurrency } from '@/context/currency-context';
+import { REFERRAL_BONUS } from '@/lib/data';
 
-const faqs = [
-  {
-    question: 'How do I refer a friend?',
-    answer:
-      "Simply share your unique referral code with them. When they sign up using your code, you'll both receive a bonus.",
-  },
-  {
-    question: 'What do I get for a successful referral?',
-    answer:
-      'For each friend that signs up and becomes an active user, you will receive a $10 credit to your account. Your friend will also receive a $10 credit.',
-  },
-  {
-    question: 'How many people can I refer?',
-    answer: 'There is no limit to how many friends you can refer!',
-  },
-  {
-    question: 'How do subscription tiers work?',
-    answer:
-      'As you refer more active users, you will unlock higher subscription tiers. Each tier increases your maximum earning potential from referrals.',
-  },
-  {
-    question: 'What are referral milestones?',
-    answer:
-      'Milestones are goals based on the number of active users you have referred. Reaching a milestone unlocks a one-time bonus reward.',
-  },
-  {
-    question: 'When will I see my bonus?',
-    answer:
-      "Your referral bonus will be credited to your account as soon as your referred friend's status becomes 'Active'. Milestone bonuses are credited instantly upon reaching the milestone.",
-  },
-];
 
 export function ReferralFaq() {
+  const { formatCurrency } = useCurrency();
+
+  const faqs = [
+    {
+      question: 'How do I refer a friend?',
+      answer:
+        "Simply share your unique referral code with them. When they sign up using your code, you'll both receive a bonus.",
+    },
+    {
+      question: 'What do I get for a successful referral?',
+      answer: `For each friend that signs up and becomes an active user, you will receive a ${formatCurrency(REFERRAL_BONUS)} credit to your account. Your friend will also receive a ${formatCurrency(REFERRAL_BONUS)} credit.`,
+    },
+    {
+      question: 'How many people can I refer?',
+      answer: 'There is no limit to how many friends you can refer!',
+    },
+    {
+      question: 'How do subscription tiers work?',
+      answer:
+        'As you refer more active users, you will unlock higher subscription tiers. Each tier increases your maximum earning potential from referrals.',
+    },
+    {
+      question: 'What are referral milestones?',
+      answer:
+        'Milestones are goals based on the number of active users you have referred. Reaching a milestone unlocks a one-time bonus reward.',
+    },
+    {
+      question: 'When will I see my bonus?',
+      answer:
+        "Your referral bonus will be credited to your account as soon as your referred friend's status becomes 'Active'. Milestone bonuses are credited instantly upon reaching the milestone.",
+    },
+  ];
+
+
   return (
     <Card>
       <CardHeader>
