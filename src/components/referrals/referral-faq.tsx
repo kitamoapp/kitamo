@@ -80,7 +80,7 @@ export function ReferralFaq() {
                   <p>{faq.answer}</p>
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-dashed">
                     {feedback[index] ? (
-                       <p className="text-sm text-muted-foreground w-full text-right">Thank you for your feedback!</p>
+                       <p className="text-sm text-muted-foreground w-full text-left">Thank you for your feedback!</p>
                     ) : (
                       <>
                         <p className="text-sm text-muted-foreground">
