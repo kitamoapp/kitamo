@@ -120,13 +120,6 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
 
   const setCurrentTier = useCallback((tier: SubscriptionTier) => {
     setCurrentTierState(tier);
-    if (typeof window !== 'undefined') {
-      try {
-        window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tier));
-      } catch (error) {
-        console.error('Error saving subscription tier to localStorage', error);
-      }
-    }
   }, []);
   
   useEffect(() => {

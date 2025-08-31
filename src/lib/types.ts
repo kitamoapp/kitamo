@@ -11,7 +11,7 @@ export type Transaction = {
 export type ReferredUser = {
   id: string;
   name: string;
-  signupDate: Date;
+  signupDate: string;
   status: 'Active' | 'Pending';
   referredBy: string | 'currentUser';
   leg: 'left' | 'right';

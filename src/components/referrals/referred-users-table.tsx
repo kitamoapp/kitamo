@@ -62,7 +62,7 @@ export function ReferredUsersTable() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{user.signupDate.toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(user.signupDate).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"

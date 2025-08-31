@@ -75,16 +75,16 @@ export const transactions: Omit<Transaction, 'date'> & { date: Date }[] = [
 
 export const referredUsers: ReferredUser[] = [
   // L1 - Direct Referrals
-  { id: '1', name: 'Alice', signupDate: new Date('2024-06-15'), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Gold' },
-  { id: '2', name: 'Bob', signupDate: new Date('2024-06-20'), status: 'Active', referredBy: 'currentUser', leg: 'right', plan: 'Silver' },
-  { id: '3', name: 'Charlie', signupDate: new Date('2024-07-01'), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Platinum' },
+  { id: '1', name: 'Alice', signupDate: new Date('2024-06-15').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Gold' },
+  { id: '2', name: 'Bob', signupDate: new Date('2024-06-20').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'right', plan: 'Silver' },
+  { id: '3', name: 'Charlie', signupDate: new Date('2024-07-01').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Platinum' },
   // L2 - Referred by Alice (L)
-  { id: '4', name: 'Diana', signupDate: new Date('2024-07-05'), status: 'Active', referredBy: '1', leg: 'left', plan: 'Silver' },
-  { id: '5', name: 'Ethan', signupDate: new Date('2024-07-06'), status: 'Active', referredBy: '1', leg: 'right', plan: 'Gold' },
+  { id: '4', name: 'Diana', signupDate: new Date('2024-07-05').toISOString(), status: 'Active', referredBy: '1', leg: 'left', plan: 'Silver' },
+  { id: '5', name: 'Ethan', signupDate: new Date('2024-07-06').toISOString(), status: 'Active', referredBy: '1', leg: 'right', plan: 'Gold' },
   // L2 - Referred by Bob (R)
-  { id: '6', name: 'Fiona', signupDate: new Date('2024-07-08'), status: 'Active', referredBy: '2', leg: 'left', plan: 'Platinum' },
+  { id: '6', name: 'Fiona', signupDate: new Date('2024-07-08').toISOString(), status: 'Active', referredBy: '2', leg: 'left', plan: 'Platinum' },
   // L3 - Referred by Diana (L)
-  { id: '7', name: 'George', signupDate: new Date('2024-07-10'), status: 'Active', referredBy: '4', leg: 'right', plan: 'Gold' },
+  { id: '7', name: 'George', signupDate: new Date('2024-07-10').toISOString(), status: 'Active', referredBy: '4', leg: 'right', plan: 'Gold' },
 ];
 
 export const subscriptionTiers: SubscriptionTier[] = [

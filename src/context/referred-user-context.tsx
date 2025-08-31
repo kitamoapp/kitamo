@@ -11,24 +11,6 @@ import {
 import type { ReferredUser } from '@/lib/types';
 import { referredUsers as initialReferredUsers } from '@/lib/data';
 
-// Helper to handle serialization of Date objects
-const serializeReferredUsers = (users: ReferredUser[]) => {
-  return JSON.stringify(
-    users.map((u) => ({ ...u, signupDate: u.signupDate.toISOString() }))
-  );
-};
-
-const deserializeReferredUsers = (jsonString: string): ReferredUser[] => {
-  try {
-    return JSON.parse(jsonString).map((u: any) => ({
-      ...u,
-      signupDate: new Date(u.signupDate),
-    }));
-  } catch {
-    return initialReferredUsers;
-  }
-};
-
 interface ReferredUserContextType {
   referredUsers: ReferredUser[];
   addReferredUser: (user: ReferredUser) => void;
@@ -50,7 +32,7 @@ export const ReferredUserProvider = ({ children }: { children: ReactNode }) => {
     try {
       const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
       if (item) {
-        setReferredUsers(deserializeReferredUsers(item));
+        setReferredUsers(JSON.parse(item));
       }
     } catch (error) {
       console.error('Error reading from localStorage', error);
@@ -66,7 +48,7 @@ export const ReferredUserProvider = ({ children }: { children: ReactNode }) => {
         try {
         window.localStorage.setItem(
             LOCAL_STORAGE_KEY,
-            serializeReferredUsers(referredUsers)
+            JSON.stringify(referredUsers)
         );
         } catch (error) {
         console.error('Error writing to localStorage', error);
@@ -75,7 +57,7 @@ export const ReferredUserProvider = ({ children }: { children: ReactNode }) => {
   }, [referredUsers, isLoaded]);
 
   const addReferredUser = (user: ReferredUser) => {
-    setReferredUsers((prev) => [user, ...prev]);
+    setReferredUsers((prev) => [{...user, signupDate: new Date().toISOString()}, ...prev]);
   };
 
   return (
