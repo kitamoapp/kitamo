@@ -19,6 +19,12 @@ export function ReferralMilestones() {
     (user) => user.status === 'Active'
   ).length;
 
+  const renderMilestoneName = (milestone: (typeof referralMilestones)[0], tier?: (typeof subscriptionTiers)[0]) => {
+    if (!tier) return milestone.name;
+    const cap = tier.earningCap === Infinity ? 'unlimited' : convertAndFormatCurrency(tier.earningCap);
+    return milestone.name.replace('{cap}', cap);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -58,7 +64,7 @@ export function ReferralMilestones() {
                       isCompleted && 'text-green-600 dark:text-green-400'
                     )}
                   >
-                    {milestone.name} ({milestone.requiredReferrals} Referrals)
+                    {renderMilestoneName(milestone, tier)} ({milestone.requiredReferrals} Referrals)
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Bonus Reward: {convertAndFormatCurrency(milestone.reward)}
