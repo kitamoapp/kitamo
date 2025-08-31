@@ -38,6 +38,8 @@ export function SubscriptionTierCard() {
     ? (activeReferrals / nextTier.requiredReferrals) * 100
     : 100;
 
+  const canEarn = currentTier.earningCap > 0;
+
   return (
     <>
       <Card
@@ -64,26 +66,44 @@ export function SubscriptionTierCard() {
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <div
-              className={`flex justify-between font-semibold ${currentTier.textColor}`}
-            >
-              <span>Current Earnings</span>
-              <span>
-                {convertAndFormatCurrency(currentEarnings, currency)} /{' '}
-                {convertAndFormatCurrency(currentTier.earningCap)}
-              </span>
+          {canEarn ? (
+            <div className="space-y-2">
+              <div
+                className={`flex justify-between font-semibold ${currentTier.textColor}`}
+              >
+                <span>Current Earnings</span>
+                <span>
+                  {convertAndFormatCurrency(currentEarnings, currency)} /{' '}
+                  {convertAndFormatCurrency(currentTier.earningCap)}
+                </span>
+              </div>
+              <Progress
+                value={(currentEarnings / convertedEarningCap) * 100}
+                className="h-2"
+              />
+              <p className={`text-sm ${currentTier.textColor}/80`}>
+                You have earned{' '}
+                {convertAndFormatCurrency(currentEarnings, currency)} from{' '}
+                {activeReferrals} active referrals.
+              </p>
             </div>
-            <Progress
-              value={(currentEarnings / convertedEarningCap) * 100}
-              className="h-2"
-            />
-            <p className={`text-sm ${currentTier.textColor}/80`}>
-              You have earned{' '}
-              {convertAndFormatCurrency(currentEarnings, currency)} from{' '}
-              {activeReferrals} active referrals.
-            </p>
-          </div>
+          ) : (
+            <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
+              <h3 className="font-semibold text-foreground">
+                Start Earning Referral Bonuses!
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Upgrade your plan to earn money for each friend you refer.
+              </p>
+              <Button
+                size="sm"
+                className="mt-2"
+                onClick={() => router.push('/subscriptions')}
+              >
+                Upgrade Now
+              </Button>
+            </div>
+          )}
 
           {nextTier && (
             <div className="space-y-2 rounded-lg bg-background/50 p-4">
