@@ -87,10 +87,10 @@ export function SetReminderDialog() {
       });
       if (suggestion) {
         if (suggestion.category && availableCategories.some(c => c.value === suggestion.category)) {
-          form.setValue('category', suggestion.category);
+          form.setValue('category', suggestion.category, { shouldValidate: true });
         }
         if (suggestion.amount) {
-          form.setValue('amount', suggestion.amount);
+          form.setValue('amount', suggestion.amount, { shouldValidate: true });
         }
       }
     } catch (error) {
@@ -101,8 +101,20 @@ export function SetReminderDialog() {
   }, [transactions, form, availableCategories]);
 
   useEffect(() => {
-    fetchSuggestion(debouncedTitle);
+    if (debouncedTitle) {
+      fetchSuggestion(debouncedTitle);
+    }
   }, [debouncedTitle, fetchSuggestion]);
+
+  // Clear category when title changes
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'title') {
+        form.setValue('category', '', { shouldValidate: false });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     addReminder({
