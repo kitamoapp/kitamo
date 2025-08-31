@@ -104,13 +104,13 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       { text: 'Financial tracking' },
       { text: 'Earn through referral system' },
-      { text: '10% commission on matched volume' },
+      { text: '20% commission on matched volume' },
     ],
     borderColor: 'border-slate-400',
     gradientFrom: 'from-slate-200',
     gradientTo: 'to-white',
     textColor: 'text-slate-700',
-    commissionRate: 0.10,
+    commissionRate: 0.20,
   },
   {
     name: 'Gold',
@@ -118,13 +118,13 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       { text: 'Financial tracking' },
       { text: 'Earn through referral system' },
-      { text: '15% commission on matched volume' },
+      { text: '20% commission on matched volume' },
     ],
     borderColor: 'border-amber-500',
     gradientFrom: 'from-amber-200',
     gradientTo: 'to-yellow-100',
     textColor: 'text-amber-800',
-    commissionRate: 0.15,
+    commissionRate: 0.20,
   },
   {
     name: 'Platinum',
