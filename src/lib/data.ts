@@ -134,8 +134,8 @@ export const referredUsers: ReferredUser[] = [
 ];
 
 export const REFERRAL_PERCENTAGES = {
-  direct: 0.2, // 20% for direct referrals
-  indirect: 0.1, // 10% for indirect referrals
+  direct: 0.25, // 25% for direct referrals
+  indirect: 0.15, // 15% for indirect referrals
 };
 
 export const subscriptionTiers: SubscriptionTier[] = [
@@ -160,8 +160,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       { text: 'All Bronze features' },
       { text: 'Earning cap of {cap}', earningCap: 500 },
-      { text: '20% from direct referrals' },
-      { text: '10% from indirect referrals' },
+      { text: '25% from direct referrals' },
+      { text: '15% from indirect referrals' },
     ],
     requiredReferrals: 5,
     earningCap: 500,
