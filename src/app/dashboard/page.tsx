@@ -41,6 +41,8 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { TransactionsTable } from '@/components/transactions/transactions-table';
+import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
+import { SetReminderDialog } from '@/components/transactions/set-reminder-dialog';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -86,59 +88,63 @@ export default function DashboardPage() {
       <div className="space-y-8">
         <div className="flex items-center justify-between space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <Dialog open={showCustomizeDialog} onOpenChange={setShowCustomizeDialog}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Settings2 className="mr-2 h-4 w-4" />
-                Customize
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Customize Dashboard</DialogTitle>
-                <DialogDescription>
-                  Select the components you want to see on your dashboard.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <Label htmlFor="summary-cards-toggle" className="font-normal">Show Summary Cards</Label>
-                  <Switch
-                    id="summary-cards-toggle"
-                    checked={visibleComponents.summaryCards}
-                    onCheckedChange={(checked) => handleVisibilityChange('summaryCards', checked)}
-                  />
+          <div className='flex items-center gap-2'>
+            <Dialog open={showCustomizeDialog} onOpenChange={setShowCustomizeDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Settings2 className="mr-2 h-4 w-4" />
+                  Customize
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Customize Dashboard</DialogTitle>
+                  <DialogDescription>
+                    Select the components you want to see on your dashboard.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <Label htmlFor="summary-cards-toggle" className="font-normal">Show Summary Cards</Label>
+                    <Switch
+                      id="summary-cards-toggle"
+                      checked={visibleComponents.summaryCards}
+                      onCheckedChange={(checked) => handleVisibilityChange('summaryCards', checked)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <Label htmlFor="financial-summary-toggle" className="font-normal">Show Financial Summary</Label>
+                    <Switch
+                      id="financial-summary-toggle"
+                      checked={visibleComponents.financialSummary}
+                      onCheckedChange={(checked) => handleVisibilityChange('financialSummary', checked)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <Label htmlFor="expense-breakdown-toggle" className="font-normal">Show Expense Breakdown</Label>
+                    <Switch
+                      id="expense-breakdown-toggle"
+                      checked={visibleComponents.expenseBreakdown}
+                      onCheckedChange={(checked) => handleVisibilityChange('expenseBreakdown', checked)}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <Label htmlFor="transaction-history-toggle" className="font-normal">Show Transaction History</Label>
+                    <Switch
+                      id="transaction-history-toggle"
+                      checked={visibleComponents.transactionHistory}
+                      onCheckedChange={(checked) => handleVisibilityChange('transactionHistory', checked)}
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <Label htmlFor="financial-summary-toggle" className="font-normal">Show Financial Summary</Label>
-                  <Switch
-                    id="financial-summary-toggle"
-                    checked={visibleComponents.financialSummary}
-                    onCheckedChange={(checked) => handleVisibilityChange('financialSummary', checked)}
-                  />
-                </div>
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <Label htmlFor="expense-breakdown-toggle" className="font-normal">Show Expense Breakdown</Label>
-                  <Switch
-                    id="expense-breakdown-toggle"
-                    checked={visibleComponents.expenseBreakdown}
-                    onCheckedChange={(checked) => handleVisibilityChange('expenseBreakdown', checked)}
-                  />
-                </div>
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <Label htmlFor="transaction-history-toggle" className="font-normal">Show Transaction History</Label>
-                  <Switch
-                    id="transaction-history-toggle"
-                    checked={visibleComponents.transactionHistory}
-                    onCheckedChange={(checked) => handleVisibilityChange('transactionHistory', checked)}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button onClick={() => setShowCustomizeDialog(false)}>Done</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                <DialogFooter>
+                  <Button onClick={() => setShowCustomizeDialog(false)}>Done</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <SetReminderDialog />
+            <AddTransactionDialog />
+          </div>
         </div>
 
         {visibleComponents.summaryCards && (

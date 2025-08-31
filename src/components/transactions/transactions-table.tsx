@@ -19,7 +19,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useCurrency } from '@/context/currency-context';
-import { AddTransactionDialog } from './add-transaction-dialog';
 import { useTransactions } from '@/context/transaction-context';
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
@@ -42,7 +41,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog';
-import { SetReminderDialog } from './set-reminder-dialog';
 
 export function TransactionsTable() {
   const { formatCurrency } = useCurrency();
@@ -77,17 +75,11 @@ export function TransactionsTable() {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Transaction History</CardTitle>
-            <CardDescription>
-              A detailed list of your income and expenses.
-            </CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <SetReminderDialog />
-            <AddTransactionDialog />
-          </div>
+        <CardHeader>
+          <CardTitle>Transaction History</CardTitle>
+          <CardDescription>
+            A detailed list of your income and expenses.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
