@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useMemo, useState } from 'react';
-import { Star, TrendingUp, Zap } from 'lucide-react';
+import { Star, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { useCurrency } from '@/context/currency-context';
@@ -16,132 +15,101 @@ import {
   CardTitle,
 } from '../ui/card';
 import { Progress } from '../ui/progress';
-import { useSubscription } from '@/hooks/use-subscription';
+import { useSubscription } from '@/context/subscription-context';
 
 export function SubscriptionTierCard() {
   const { convertAndFormatCurrency } = useCurrency();
   const {
     activeReferrals,
     currentTier,
-    nextTier,
     totalEarnings,
     directEarnings,
     indirectEarnings,
+    nextTier,
   } = useSubscription();
   const router = useRouter();
 
-  const progressToNextTier = nextTier
-    ? (activeReferrals / nextTier.requiredReferrals) * 100
-    : 100;
-
-  const canEarn = currentTier.earningCap > 0;
+  const isBronze = currentTier.name === 'Bronze';
   const isUnlimited = currentTier.earningCap === Infinity;
 
-  const earningsProgress = isUnlimited
-    ? 100
-    : (totalEarnings / currentTier.earningCap) * 100;
+  const earningsProgress =
+    !isBronze && !isUnlimited
+      ? (totalEarnings / currentTier.earningCap) * 100
+      : 0;
 
   return (
-    <>
-      <Card
-        className={`border-2 ${currentTier.borderColor} bg-gradient-to-br ${currentTier.gradientFrom} ${currentTier.gradientTo}`}
-      >
-        <CardHeader className="flex-row items-start justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Star className={`h-6 w-6 ${currentTier.textColor}`} />
-              <span className={currentTier.textColor}>
-                {currentTier.name} Tier
-              </span>
-            </CardTitle>
-            <CardDescription className={`${currentTier.textColor}/80`}>
-              Your current subscription level.
-            </CardDescription>
+    <Card
+      className={`border-2 ${currentTier.borderColor} bg-gradient-to-br ${currentTier.gradientFrom} ${currentTier.gradientTo}`}
+    >
+      <CardHeader className="flex-row items-start justify-between">
+        <div>
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <Star className={`h-6 w-6 ${currentTier.textColor}`} />
+            <span className={currentTier.textColor}>
+              {currentTier.name} Tier
+            </span>
+          </CardTitle>
+          <CardDescription className={`${currentTier.textColor}/80`}>
+            Your current subscription level.
+          </CardDescription>
+        </div>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => router.push('/subscriptions')}
+        >
+          <Zap className="mr-2" /> View Plans
+        </Button>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {isBronze ? (
+          <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
+            <h3 className="font-semibold text-foreground">
+              Unlock Your Earning Potential!
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Upgrade to a paid plan to start earning from your referrals.
+            </p>
+            <Button
+              size="sm"
+              className="mt-4"
+              onClick={() => router.push('/subscriptions')}
+            >
+              Upgrade to Earn
+            </Button>
           </div>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => router.push('/subscriptions')}
-          >
-            <Zap className="mr-2" /> View Plans
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {!canEarn && nextTier ? (
-            <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
-              <h3 className="font-semibold text-foreground">
-                Unlock Your Earning Potential!
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Upgrade to the {nextTier.name} plan to start earning up to{' '}
-                {convertAndFormatCurrency(nextTier.earningCap)} from your
-                referrals.
-              </p>
-              <Button
-                size="sm"
-                className="mt-4"
-                onClick={() => router.push('/subscriptions')}
-              >
-                Upgrade to {nextTier.name}
-              </Button>
-            </div>
-          ) : canEarn ? (
-            <div className="space-y-2">
-              <div
-                className={`flex justify-between font-semibold ${currentTier.textColor}`}
-              >
-                <span>Current Earnings</span>
-                <span>
-                  {convertAndFormatCurrency(totalEarnings)} /{' '}
-                  {isUnlimited
-                    ? 'Unlimited'
-                    : convertAndFormatCurrency(currentTier.earningCap)}
-                </span>
-              </div>
-              <Progress value={earningsProgress} className="h-2" />
-              <div
-                className={`text-sm ${currentTier.textColor}/80 space-y-1`}
-              >
-                <p>
-                  You have earned a total of{' '}
-                  {convertAndFormatCurrency(totalEarnings)} from{' '}
-                  {activeReferrals} active referrals in your network.
-                </p>
-                <p>
-                  - Direct ({currentTier.directReferralPercent * 100}%):{' '}
-                  {convertAndFormatCurrency(directEarnings)}
-                </p>
-                <p>
-                  - Indirect ({currentTier.indirectReferralPercent * 100}%):{' '}
-                  {convertAndFormatCurrency(indirectEarnings)}
-                </p>
-              </div>
-            </div>
-          ) : null}
-
-          {canEarn && nextTier && (
-            <div className="space-y-2 rounded-lg bg-background/50 p-4">
-              <div className="flex items-center justify-between">
-                <div className="font-semibold text-foreground">
-                  Next Tier: {nextTier.name}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {activeReferrals} / {nextTier.requiredReferrals} Referrals
-                </div>
-              </div>
-              <Progress value={progressToNextTier} className="h-2" />
-              <p className="text-sm text-muted-foreground">
-                Refer {nextTier.requiredReferrals - activeReferrals} more
-                friends to unlock an earning cap of{' '}
-                {nextTier.earningCap === Infinity
+        ) : (
+          <div className="space-y-2">
+            <div
+              className={`flex justify-between font-semibold ${currentTier.textColor}`}
+            >
+              <span>Current Earnings</span>
+              <span>
+                {convertAndFormatCurrency(totalEarnings)} /{' '}
+                {isUnlimited
                   ? 'Unlimited'
-                  : convertAndFormatCurrency(nextTier.earningCap)}
-                .
+                  : convertAndFormatCurrency(currentTier.earningCap)}
+              </span>
+            </div>
+            <Progress value={earningsProgress} className="h-2" />
+            <div className={`text-sm ${currentTier.textColor}/80 space-y-1`}>
+              <p>
+                You have earned a total of{' '}
+                {convertAndFormatCurrency(totalEarnings)} from {activeReferrals}{' '}
+                active referrals in your network.
+              </p>
+              <p>
+                - Direct ({currentTier.directReferralPercent * 100}%):{' '}
+                {convertAndFormatCurrency(directEarnings)}
+              </p>
+              <p>
+                - Indirect ({currentTier.indirectReferralPercent * 100}%):{' '}
+                {convertAndFormatCurrency(indirectEarnings)}
               </p>
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

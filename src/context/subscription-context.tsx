@@ -41,14 +41,17 @@ const calculateEarnings = (tier: SubscriptionTier): ReferralEarnings => {
   );
 
   directReferrals.forEach((direct) => {
-    directEarnings += direct.earnings * tier.directReferralPercent;
+    // For demonstration, assume each active referral subscribes to a plan
+    // that costs on average $15.
+    const averageReferralRevenue = 15;
+    directEarnings += averageReferralRevenue * tier.directReferralPercent;
 
     const indirectReferrals = referredUsers.filter(
       (u) => u.referredBy === direct.id && u.status === 'Active'
     );
 
     indirectReferrals.forEach((indirect) => {
-      indirectEarnings += indirect.earnings * tier.indirectReferralPercent;
+      indirectEarnings += averageReferralRevenue * tier.indirectReferralPercent;
     });
   });
 
@@ -60,6 +63,9 @@ const calculateEarnings = (tier: SubscriptionTier): ReferralEarnings => {
 };
 
 export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
+  const [currentTier, setCurrentTierState] =
+    useState<SubscriptionTier>(subscriptionTiers[0]);
+
   const activeReferrals = useMemo(
     () =>
       referredUsers.filter(
@@ -67,18 +73,6 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
       ).length,
     []
   );
-
-  const initialTier = useMemo(() => {
-    return (
-      [...subscriptionTiers]
-        .reverse()
-        .find((tier) => activeReferrals >= tier.requiredReferrals) ||
-      subscriptionTiers[0]
-    );
-  }, [activeReferrals]);
-
-  const [currentTier, setCurrentTierState] =
-    useState<SubscriptionTier>(initialTier);
 
   const setCurrentTier = useCallback((tier: SubscriptionTier) => {
     setCurrentTierState(tier);
@@ -113,11 +107,11 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useSubscriptionContext = () => {
+export const useSubscription = () => {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
     throw new Error(
-      'useSubscriptionContext must be used within a SubscriptionProvider'
+      'useSubscription must be used within a SubscriptionProvider'
     );
   }
   return context;
