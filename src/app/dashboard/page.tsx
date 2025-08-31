@@ -20,7 +20,7 @@ import {
   TrendingDown,
   TrendingUp,
   Settings2,
-  Lightbulb,
+  Target,
 } from 'lucide-react';
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
 import { useCurrency } from '@/context/currency-context';
@@ -45,6 +45,8 @@ import { TransactionsTable } from '@/components/transactions/transactions-table'
 import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
 import { SetReminderDialog } from '@/components/transactions/set-reminder-dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { SetBudgetDialog } from '@/components/budgets/set-budget-dialog';
+import { BudgetSummaryCard } from '@/components/dashboard/budget-summary-card';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -68,6 +70,7 @@ export default function DashboardPage() {
     financialSummary: true,
     expenseBreakdown: true,
     transactionHistory: true,
+    budgetSummary: true,
   });
 
   const totalIncome = transactions
@@ -117,6 +120,14 @@ export default function DashboardPage() {
                       onCheckedChange={(checked) => handleVisibilityChange('summaryCards', checked)}
                     />
                   </div>
+                   <div className="flex items-center justify-between rounded-lg border p-4">
+                    <Label htmlFor="budget-summary-toggle" className="font-normal">Show Budget Summary</Label>
+                    <Switch
+                      id="budget-summary-toggle"
+                      checked={visibleComponents.budgetSummary}
+                      onCheckedChange={(checked) => handleVisibilityChange('budgetSummary', checked)}
+                    />
+                  </div>
                   <div className="flex items-center justify-between rounded-lg border p-4">
                     <Label htmlFor="financial-summary-toggle" className="font-normal">Show Financial Summary</Label>
                     <Switch
@@ -147,6 +158,7 @@ export default function DashboardPage() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+            <SetBudgetDialog />
             <SetReminderDialog />
             <AddTransactionDialog />
           </div>
@@ -170,6 +182,10 @@ export default function DashboardPage() {
               icon={BalanceIcon}
             />
           </div>
+        )}
+        
+        {visibleComponents.budgetSummary && (
+          <BudgetSummaryCard />
         )}
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
