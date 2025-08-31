@@ -44,16 +44,14 @@ export function MilestoneProgressCard() {
   const progress = goal > 0 ? (directReferralsCount / goal) * 100 : 100;
 
   return (
-    <Card
-      className={`border-2 border-primary/50 bg-gradient-to-br from-primary/20 to-background`}
-    >
+    <Card>
       <CardHeader className="flex-row items-start justify-between">
         <div>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Award className={`h-6 w-6 text-primary`} />
-            <span className={`text-foreground`}>Your Progress</span>
+            <span>Your Progress</span>
           </CardTitle>
-          <CardDescription className={`text-muted-foreground`}>
+          <CardDescription>
             Keep growing your network to unlock new rewards!
           </CardDescription>
         </div>
