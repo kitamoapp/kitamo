@@ -60,6 +60,7 @@ export default function DashboardPage() {
     summaryCards: true,
     financialSummary: true,
     expenseBreakdown: true,
+    transactionHistory: true,
   });
 
   const totalIncome = transactions
@@ -122,6 +123,14 @@ export default function DashboardPage() {
                     id="expense-breakdown-toggle"
                     checked={visibleComponents.expenseBreakdown}
                     onCheckedChange={(checked) => handleVisibilityChange('expenseBreakdown', checked)}
+                  />
+                </div>
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <Label htmlFor="transaction-history-toggle" className="font-normal">Show Transaction History</Label>
+                  <Switch
+                    id="transaction-history-toggle"
+                    checked={visibleComponents.transactionHistory}
+                    onCheckedChange={(checked) => handleVisibilityChange('transactionHistory', checked)}
                   />
                 </div>
               </div>
@@ -191,7 +200,7 @@ export default function DashboardPage() {
             </>
           )}
         </div>
-        <TransactionsTable />
+        {visibleComponents.transactionHistory && <TransactionsTable />}
       </div>
     </AppLayout>
   );
