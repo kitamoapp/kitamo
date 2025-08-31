@@ -152,6 +152,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 10,
     features: [
       { text: 'Financial tracking' },
+      { text: 'Earn through referral' },
       { text: 'Earning cap of {cap}', earningCap: 100 },
       { text: '15% from direct referrals' },
       { text: '5% from indirect referrals' },
@@ -170,6 +171,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 20,
     features: [
       { text: 'Financial tracking' },
+      { text: 'Earn through referral' },
       { text: 'Earning cap of {cap}', earningCap: 500 },
       { text: '25% from direct referrals' },
       { text: '15% from indirect referrals' },
@@ -188,6 +190,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 50,
     features: [
       { text: 'Financial tracking' },
+      { text: 'Earn through referral' },
       { text: 'Unlimited Earning Potential', earningCap: Infinity },
       { text: '35% from direct referrals' },
       { text: '25% from indirect referrals' },
