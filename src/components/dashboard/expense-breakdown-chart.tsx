@@ -1,7 +1,8 @@
 
 'use client';
 
-import { Pie, PieChart, ResponsiveContainer, Tooltip, Cell } from 'recharts';
+import * as React from 'react';
+import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { useTransactions } from '@/context/transaction-context';
 import {
   ChartContainer,
@@ -54,25 +55,42 @@ export function ExpenseBreakdownChart() {
   const { formatCurrency } = useCurrency();
   const { transactions } = useTransactions();
 
-  const expenseData = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce(
-      (acc, t) => {
-        let entry = acc.find((e) => e.category === t.category);
-        if (!entry) {
-          entry = { category: t.category, total: 0, fill: '' };
-          acc.push(entry);
-        }
-        entry.total += t.amount;
+  const expenseData = React.useMemo(() => {
+    const expenses = transactions.filter((t) => t.type === 'expense');
+    const totalExpense = expenses.reduce((sum, t) => sum + t.amount, 0);
+
+    const categoryTotals = expenses.reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + t.amount;
         return acc;
-      },
-      [] as { category: string; total: number; fill: string }[]
-    )
-    .map((item) => ({
-      ...item,
-      name: item.category,
-      fill: chartConfig[item.category as keyof typeof chartConfig]?.color || '#8884d8',
-    }));
+    }, {} as Record<string, number>);
+
+    const chartData = [];
+    let otherTotal = 0;
+
+    for (const category in categoryTotals) {
+        const percentage = (categoryTotals[category] / totalExpense);
+        if (percentage < 0.05) { // Group categories making up less than 5%
+            otherTotal += categoryTotals[category];
+        } else {
+            chartData.push({
+                name: category,
+                total: categoryTotals[category],
+                fill: chartConfig[category as keyof typeof chartConfig]?.color || '#8884d8',
+            });
+        }
+    }
+
+    if (otherTotal > 0) {
+        chartData.push({
+            name: 'Other',
+            total: otherTotal,
+            fill: chartConfig['Other']?.color || '#8884d8',
+        });
+    }
+
+    return chartData;
+  }, [transactions]);
+
 
   return (
     <ChartContainer
@@ -84,20 +102,15 @@ export function ExpenseBreakdownChart() {
           <Tooltip
             content={
               <ChartTooltipContent
-                nameKey="category"
-                formatter={(value, name) => (
-                  <div className="flex flex-col">
-                    <span className="font-bold">{name}</span>
-                    <span>{formatCurrency(value as number)}</span>
-                  </div>
-                )}
+                nameKey="name"
+                formatter={(value) => formatCurrency(value as number)}
               />
             }
           />
           <Pie
             data={expenseData}
             dataKey="total"
-            nameKey="category"
+            nameKey="name"
             cx="50%"
             cy="50%"
             outerRadius={80}
