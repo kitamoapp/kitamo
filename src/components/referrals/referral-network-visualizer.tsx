@@ -93,7 +93,7 @@ export function ReferralNetworkVisualizer() {
           imageUrl="https://picsum.photos/100/100?random=0"
           aiHint="person portrait"
           planName={currentTier.name}
-          earnings={totalEarning > 0 ? `+ ${convertAndFormatCurrency(totalEarning)}/mo` : undefined}
+          earnings={totalEarning > 0 ? `+ ${convertAndFormatCurrency(totalEarning)}/mo Total` : undefined}
         />
 
         {/* Connector */}
@@ -109,6 +109,11 @@ export function ReferralNetworkVisualizer() {
           <div className="text-sm font-bold text-primary">
             You Earn {tierForDemonstration.directReferralPercent * 100}%
           </div>
+           {directEarning > 0 && (
+            <div className="text-xs font-semibold text-green-600">
+              (+ {convertAndFormatCurrency(directEarning)}/mo from Alice)
+            </div>
+          )}
           <div className="flex w-full justify-center gap-8 md:gap-16">
             <div className="flex flex-col items-center">
               <NetworkNode
@@ -136,6 +141,11 @@ export function ReferralNetworkVisualizer() {
            <div className="text-sm font-bold text-primary">
             You Earn {tierForDemonstration.indirectReferralPercent * 100}%
           </div>
+          {indirectEarning > 0 && (
+            <div className="text-xs font-semibold text-green-600">
+              (+ {convertAndFormatCurrency(indirectEarning)}/mo from Diana)
+            </div>
+          )}
           <div className="mt-2 flex justify-center gap-8">
             <NetworkNode
               name="Diana"
