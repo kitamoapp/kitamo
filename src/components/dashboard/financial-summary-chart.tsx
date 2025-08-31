@@ -20,7 +20,7 @@ import {
 import { useCurrency } from '@/context/currency-context';
 import { useMemo } from 'react';
 import type { Period } from '@/app/dashboard/page';
-import { subDays, format, getWeek, getMonth, getYear, startOfYear, startOfDay, parseISO } from 'date-fns';
+import { subDays, format, getWeek, getYear, parseISO, startOfDay } from 'date-fns';
 
 const barChartConfig = {
   income: {
