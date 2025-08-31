@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -24,6 +25,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  devIndicators: {
+    buildActivity: false,
+  },
 };
+
+if (process.env.NODE_ENV === 'development') {
+  if (process.env.ALLOWED_DEV_ORIGIN) {
+    nextConfig.experimental = {
+      ...nextConfig.experimental,
+      allowedDevOrigins: [process.env.ALLOWED_DEV_ORIGIN],
+    };
+  }
+}
 
 export default nextConfig;
