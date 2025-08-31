@@ -40,6 +40,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
 
 // For demonstration, we'll have a list of valid codes.
@@ -52,6 +63,12 @@ interface PaymentMethod {
     expiry: string;
     brand: string;
 }
+
+const paymentMethodSchema = z.object({
+  cardNumber: z.string().regex(/^[0-9]{16}$/, 'Please enter a valid 16-digit card number.'),
+  expiry: z.string().regex(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/, 'Please use MM/YY format.'),
+  cvc: z.string().regex(/^[0-9]{3,4}$/, 'Please enter a valid CVC.'),
+});
 
 export default function ProfilePage() {
   const { currentTier } = useSubscription();
@@ -80,6 +97,15 @@ export default function ProfilePage() {
   const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
   const [showDeletePaymentAlert, setShowDeletePaymentAlert] = useState(false);
   const [paymentMethodToDelete, setPaymentMethodToDelete] = useState<string | null>(null);
+
+  const paymentForm = useForm<z.infer<typeof paymentMethodSchema>>({
+    resolver: zodResolver(paymentMethodSchema),
+    defaultValues: {
+      cardNumber: '',
+      expiry: '',
+      cvc: '',
+    },
+  });
 
 
   const handleAccountInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,20 +211,19 @@ export default function ProfilePage() {
     });
   }
 
-  const handleAddPaymentMethod = (e: React.FormEvent) => {
-    e.preventDefault();
-    // This is a simulation. In a real app, you'd handle card validation and tokenization.
+  const handleAddPaymentMethod = (values: z.infer<typeof paymentMethodSchema>) => {
     const newCard: PaymentMethod = {
         id: `card-${Date.now()}`,
-        last4: (Math.floor(Math.random() * 9000) + 1000).toString(),
-        expiry: '08/28',
-        brand: 'Mastercard'
+        last4: values.cardNumber.slice(-4),
+        expiry: values.expiry,
+        brand: values.cardNumber.startsWith('4') ? 'Visa' : 'Mastercard'
     };
     setPaymentMethods(prev => [...prev, newCard]);
     toast({
         title: 'Payment Method Added',
         description: `Card ending in ${newCard.last4} has been added.`
     })
+    paymentForm.reset();
     setShowAddPaymentDialog(false);
   }
 
@@ -415,30 +440,63 @@ export default function ProfilePage() {
               Please enter your card details. This is a simulation.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleAddPaymentMethod} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="card-number">Card Number</Label>
-              <Input id="card-number" placeholder="1234 5678 9101 1121" />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2 col-span-2">
-                <Label htmlFor="expiry">Expiration</Label>
-                <Input id="expiry" placeholder="MM / YY" />
+          <Form {...paymentForm}>
+            <form onSubmit={paymentForm.handleSubmit(handleAddPaymentMethod)} className="space-y-4">
+              <FormField
+                control={paymentForm.control}
+                name="cardNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Card Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="1234 5678 9101 1121" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2 col-span-2">
+                  <FormField
+                    control={paymentForm.control}
+                    name="expiry"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Expiration</FormLabel>
+                        <FormControl>
+                          <Input placeholder="MM/YY" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
+                   <FormField
+                    control={paymentForm.control}
+                    name="cvc"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CVC</FormLabel>
+                        <FormControl>
+                          <Input placeholder="123" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="cvc">CVC</Label>
-                <Input id="cvc" placeholder="123" />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type="submit">Add Card</Button>
-            </DialogFooter>
-          </form>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline" onClick={() => paymentForm.reset()}>
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit">Add Card</Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
       
@@ -458,6 +516,5 @@ export default function ProfilePage() {
       </AlertDialog>
     </>
   );
-}
 
     
