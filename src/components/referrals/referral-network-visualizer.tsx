@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useReferredUsers } from '@/context/referred-user-context';
 import type { ReferredUser } from '@/lib/types';
 import { Button } from '../ui/button';
+import { Skeleton } from '../ui/skeleton';
 
 
 const PlanIcon = ({ plan }: { plan: ReferredUser['plan']}) => {
@@ -103,7 +104,7 @@ const DirectReferralColumn = ({ user, allUsers, expandedNodes, toggleNode }: { u
 
 
 export function ReferralNetworkVisualizer() {
-  const { referredUsers } = useReferredUsers();
+  const { referredUsers, isLoaded } = useReferredUsers();
   const [expandedNodes, setExpandedNodes] = React.useState<Set<string>>(new Set());
 
   const toggleNode = (userId: string) => {
@@ -121,6 +122,21 @@ export function ReferralNetworkVisualizer() {
   const directReferrals = React.useMemo(() => {
     return referredUsers.filter(u => u.referredBy === 'currentUser');
   }, [referredUsers]);
+
+  if (!isLoaded) {
+      return (
+        <Card>
+            <CardHeader>
+                <Skeleton className="h-6 w-1/2" />
+                <Skeleton className="h-4 w-3/4" />
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center gap-4 text-center py-10">
+                <Users className="h-16 w-16 text-muted-foreground/50" />
+                <p className="text-muted-foreground">Loading your network...</p>
+            </CardContent>
+        </Card>
+      )
+  }
 
   if (directReferrals.length === 0) {
     return (

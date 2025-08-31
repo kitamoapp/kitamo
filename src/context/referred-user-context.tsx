@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface ReferredUserContextType {
   referredUsers: ReferredUser[];
   addReferredUser: (user: NewReferredUser) => void;
+  isLoaded: boolean;
 }
 
 const ReferredUserContext = createContext<ReferredUserContextType | undefined>(
@@ -84,7 +85,7 @@ export const ReferredUserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ReferredUserContext.Provider value={{ referredUsers, addReferredUser }}>
+    <ReferredUserContext.Provider value={{ referredUsers, addReferredUser, isLoaded }}>
       {children}
     </ReferredUserContext.Provider>
   );
