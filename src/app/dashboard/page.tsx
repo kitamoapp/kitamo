@@ -45,7 +45,6 @@ import { TransactionsTable } from '@/components/transactions/transactions-table'
 import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
 import { SetReminderDialog } from '@/components/transactions/set-reminder-dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { FinancialInsights } from '@/components/dashboard/financial-insights';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -69,7 +68,6 @@ export default function DashboardPage() {
     financialSummary: true,
     expenseBreakdown: true,
     transactionHistory: true,
-    financialInsights: true,
   });
 
   const totalIncome = transactions
@@ -111,17 +109,6 @@ export default function DashboardPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
-                   <div className="flex items-center justify-between rounded-lg border p-4">
-                    <Label htmlFor="financial-insights-toggle" className="flex items-center font-normal">
-                      <Lightbulb className="mr-2 h-4 w-4 text-yellow-500" />
-                      Show AI Financial Insights
-                    </Label>
-                    <Switch
-                      id="financial-insights-toggle"
-                      checked={visibleComponents.financialInsights}
-                      onCheckedChange={(checked) => handleVisibilityChange('financialInsights', checked)}
-                    />
-                  </div>
                   <div className="flex items-center justify-between rounded-lg border p-4">
                     <Label htmlFor="summary-cards-toggle" className="font-normal">Show Summary Cards</Label>
                     <Switch
@@ -164,10 +151,6 @@ export default function DashboardPage() {
             <AddTransactionDialog />
           </div>
         </div>
-        
-        {visibleComponents.financialInsights && (
-            <FinancialInsights />
-        )}
 
         {visibleComponents.summaryCards && (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
