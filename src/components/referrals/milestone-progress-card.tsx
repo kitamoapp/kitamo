@@ -21,27 +21,14 @@ import { referralMilestones } from '@/lib/data';
 
 export function MilestoneProgressCard() {
   const { convertAndFormatCurrency } = useCurrency();
-  const { currentTier, totalEarnings, nextTier } = useSubscription();
+  const { currentTier, totalEarnings } = useSubscription();
   const { referredUsers } = useReferredUsers();
   const router = useRouter();
 
   const isBronze = currentTier.name === 'Bronze';
-
-  const directReferralsCount = referredUsers.filter(
-    (u) => u.referredBy === 'currentUser'
-  ).length;
-
-  const nextMilestone = referralMilestones.find(
-    (m) => m.requiredReferrals > directReferralsCount
-  );
-  
-  const currentMilestone = [...referralMilestones].reverse().find(
-      (m) => directReferralsCount >= m.requiredReferrals
-  );
-
-
-  const goal = nextMilestone ? nextMilestone.requiredReferrals : (currentMilestone?.requiredReferrals || 0);
-  const progress = goal > 0 ? (directReferralsCount / goal) * 100 : 100;
+  const earningCap = currentTier.earningCap ?? 0;
+  const progress = earningCap > 0 ? (totalEarnings / earningCap) * 100 : 0;
+  const remaining = earningCap - totalEarnings;
 
   return (
     <Card>
@@ -52,7 +39,7 @@ export function MilestoneProgressCard() {
             <span>Your Progress</span>
           </CardTitle>
           <CardDescription>
-            Keep growing your network to unlock new rewards!
+            Track your earnings towards your monthly cap.
           </CardDescription>
         </div>
       </CardHeader>
@@ -78,38 +65,32 @@ export function MilestoneProgressCard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  Next Milestone
+                  Monthly Earnings
                 </p>
                 <p className="font-semibold text-lg text-primary">
-                  {nextMilestone ? nextMilestone.name : 'Max Rank Reached!'}
+                  {convertAndFormatCurrency(totalEarnings)}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-muted-foreground">My Referrals</p>
+                <p className="text-sm text-muted-foreground">Earning Cap</p>
                 <p className="font-semibold text-lg">
-                  {directReferralsCount} / {goal}
+                  {earningCap === Infinity
+                    ? 'Unlimited'
+                    : convertAndFormatCurrency(earningCap)}
                 </p>
               </div>
             </div>
 
             <Progress value={progress} className="h-3" />
 
-            {nextMilestone && (
-              <p className="text-sm text-muted-foreground">
-                You need{' '}
-                <span className="font-bold text-accent">
-                  {nextMilestone.requiredReferrals - directReferralsCount}
-                </span>{' '}
-                more referrals to reach the {nextMilestone.name} rank!
-              </p>
-            )}
-
-            <div
-              className={`flex justify-between font-semibold pt-4 border-t border-dashed`}
-            >
-              <span>Current Monthly Earnings (Est.)</span>
-              <span>{convertAndFormatCurrency(totalEarnings)}</span>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              You have earned{' '}
+              <span className="font-bold text-accent">
+                {convertAndFormatCurrency(totalEarnings)}
+              </span>{' '}
+              of your {convertAndFormatCurrency(earningCap)} cap this
+              month.
+            </p>
           </div>
         )}
       </CardContent>
