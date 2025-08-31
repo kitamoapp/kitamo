@@ -57,12 +57,16 @@ export function useSettings() {
         const challenge = new Uint8Array(32);
         window.crypto.getRandomValues(challenge);
 
+        // WebAuthn user.id must be an ArrayBuffer.
+        const userId = uuidv4();
+        const userIdBuffer = new TextEncoder().encode(userId);
+
         const credential = await navigator.credentials.create({
             publicKey: {
                 challenge,
                 rp: { name: 'KitaMo', id: window.location.hostname },
                 user: {
-                    id: uuidv4() as any,
+                    id: userIdBuffer,
                     name: 'user@example.com',
                     displayName: 'User',
                 },
