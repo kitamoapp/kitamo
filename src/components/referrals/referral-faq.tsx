@@ -82,7 +82,7 @@ export function ReferralFaq() {
                     {feedback[index] ? (
                        <p className="text-sm text-muted-foreground">Thank you for your feedback!</p>
                     ) : (
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center justify-start gap-4">
                         <p className="text-sm text-muted-foreground">
                           Was this helpful?
                         </p>
