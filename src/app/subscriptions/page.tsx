@@ -1,30 +1,29 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/app-layout';
 import { subscriptionTiers } from '@/lib/data';
 import type { PaymentMethod, PaymentMethodValues, SubscriptionTier } from '@/lib/types';
 import { useSubscription } from '@/hooks/use-subscription';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogClose
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { SubscriptionPlanCard } from '@/components/subscriptions/subscription-plan-card';
 import { PaymentMethodForm } from '@/components/payment-method-form';
 import { useToast } from '@/hooks/use-toast';
 import { usePaymentMethods } from '@/context/payment-method-context';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Landmark, Wallet, CreditCard } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function SubscriptionsPage() {
   const { setCurrentTier } = useSubscription();
@@ -36,10 +35,19 @@ export default function SubscriptionsPage() {
   const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(
     null
   );
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (paymentMethods.length > 0) {
+      setSelectedPaymentMethodId(paymentMethods[0].id);
+    }
+  }, [paymentMethods]);
+
 
   const handleChoosePlan = (tier: SubscriptionTier) => {
     setSelectedTier(tier);
     if (paymentMethods.length > 0) {
+      setSelectedPaymentMethodId(paymentMethods[0].id); // Pre-select first payment method
       setShowConfirmation(true);
     } else {
       setShowAddPaymentDialog(true);
@@ -47,7 +55,7 @@ export default function SubscriptionsPage() {
   };
 
   const handleConfirmPurchase = () => {
-    if (selectedTier) {
+    if (selectedTier && selectedPaymentMethodId) {
       setCurrentTier(selectedTier);
        toast({
         title: 'Subscription Updated!',
@@ -56,6 +64,7 @@ export default function SubscriptionsPage() {
     }
     setShowConfirmation(false);
     setSelectedTier(null);
+    setSelectedPaymentMethodId(null);
   };
 
   const handleAddPaymentMethod = (values: PaymentMethodValues) => {
@@ -68,6 +77,16 @@ export default function SubscriptionsPage() {
     // After adding a payment method, show the confirmation dialog.
     setShowConfirmation(true);
   };
+  
+  const getPaymentMethodIcon = (type: PaymentMethod['type']) => {
+      switch (type) {
+          case 'Card': return <CreditCard className="h-6 w-6" />;
+          case 'Bank': return <Landmark className="h-6 w-6" />;
+          case 'Wallet': return <Wallet className="h-6 w-6" />;
+          default: return <CreditCard className="h-6 w-6" />;
+      }
+  }
+
 
   return (
     <>
@@ -108,26 +127,54 @@ export default function SubscriptionsPage() {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Your Subscription</AlertDialogTitle>
-            <AlertDialogDescription>
-              Your saved payment method will be charged. Please confirm to
-              upgrade your plan to{' '}
-              <span className="font-bold">{selectedTier?.name}</span>.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setSelectedTier(null)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmPurchase}>
+      <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Your Subscription</DialogTitle>
+            <DialogDescription>
+              Select a payment method to upgrade your plan to{' '}
+              <span className="font-bold">{selectedTier?.name}</span>. The selected method will be charged.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <RadioGroup value={selectedPaymentMethodId || ''} onValueChange={setSelectedPaymentMethodId}>
+              <div className="space-y-4">
+                {paymentMethods.map((method) => (
+                  <Label 
+                    key={method.id} 
+                    htmlFor={method.id}
+                    className={cn(
+                      "flex items-center gap-4 rounded-lg border p-4 cursor-pointer transition-colors",
+                      selectedPaymentMethodId === method.id && "border-primary ring-2 ring-primary"
+                    )}
+                  >
+                     <RadioGroupItem value={method.id} id={method.id} className="sr-only" />
+                     {getPaymentMethodIcon(method.type)}
+                     <div className='flex-1'>
+                        {method.type === 'Card' && <p className="font-semibold">{method.brand} ending in {method.last4}</p>}
+                        {method.type === 'Card' && <p className="text-sm text-muted-foreground">Expires {method.expiry}</p>}
+                        {method.type === 'Bank' && <p className="font-semibold">{method.bankName} ending in {method.last4}</p>}
+                        {method.type === 'Bank' && <p className="text-sm text-muted-foreground">Bank Account</p>}
+                        {method.type === 'Wallet' && <p className="font-semibold">{method.provider}</p>}
+                        {method.type === 'Wallet' && <p className="text-sm text-muted-foreground">{method.email}</p>}
+                     </div>
+                  </Label>
+                ))}
+              </div>
+            </RadioGroup>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" onClick={() => setSelectedTier(null)}>
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button onClick={handleConfirmPurchase} disabled={!selectedPaymentMethodId}>
               Confirm Purchase
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
