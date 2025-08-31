@@ -127,7 +127,6 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       'Basic financial tracking',
       'Standard referral bonus',
-      'Access to Financial Reports',
       'Earning cap of $100',
     ],
     requiredReferrals: 0,
@@ -159,7 +158,6 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       'All Silver features',
       'Highest earning cap',
-      'Export reports to PDF & CSV',
       'Early access to new features',
     ],
     requiredReferrals: 20,
