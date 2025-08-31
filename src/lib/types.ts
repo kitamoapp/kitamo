@@ -9,7 +9,7 @@ export type Transaction = {
 };
 
 export type ReferredUser = {
-  id: string;
+  id:string;
   name: string;
   signupDate: string;
   status: 'Active' | 'Pending';
@@ -28,11 +28,14 @@ export type Category = {
 
 export type SubscriptionFeature = {
   text: string;
+  // Use earningCap to dynamically insert the value into the text where {cap} is a placeholder
+  earningCap?: number;
 };
 
 export type SubscriptionTier = {
-  name: string;
+  name: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
   price: number;
+  earningCap?: number;
   features: SubscriptionFeature[];
   borderColor: string;
   gradientFrom: string;

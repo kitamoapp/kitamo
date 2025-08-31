@@ -35,14 +35,20 @@ export function SubscriptionPlanCard({
   }, []);
 
   const renderFeature = (feature: SubscriptionFeature) => {
-    if (feature.earningCap) {
+    let text = feature.text;
+    
+    if (text.includes('{commissionRate}')) {
+        text = text.replace('{commissionRate}', (tier.commissionRate * 100).toString());
+    }
+    
+    if (feature.earningCap && text.includes('{cap}')) {
       const capText =
         feature.earningCap === Infinity
           ? 'Unlimited'
           : convertAndFormatCurrency(feature.earningCap);
-      return feature.text.replace('{cap}', capText);
+      text = text.replace('{cap}', capText);
     }
-    return feature.text;
+    return text;
   };
 
   return (
@@ -72,7 +78,7 @@ export function SubscriptionPlanCard({
           <ul className="space-y-2">
             {tier.features.map((feature, index) => (
               <li key={index} className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-green-500 mt-1" />
+                <Check className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
                 <span className="text-sm flex-1">{renderFeature(feature)}</span>
               </li>
             ))}
