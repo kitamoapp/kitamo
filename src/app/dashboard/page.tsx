@@ -19,6 +19,7 @@ import {
   TrendingDown,
   TrendingUp,
   Settings2,
+  Fingerprint,
 } from 'lucide-react';
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
 import { useCurrency } from '@/context/currency-context';
@@ -26,7 +27,7 @@ import type { Currency } from '@/lib/types';
 import { ExpenseBreakdownChart } from '@/components/dashboard/expense-breakdown-chart';
 import { useSubscription } from '@/hooks/use-subscription';
 import { UpgradeCard } from '@/components/upgrade-card';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -37,6 +38,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { TransactionsTable } from '@/components/transactions/transactions-table';
@@ -50,6 +61,7 @@ import { useTransactions } from '@/context/transaction-context';
 import { FinancialInsightsCard } from '@/components/dashboard/financial-insights-card';
 import { useDashboardComponents } from '@/hooks/use-dashboard-components';
 import type { DashboardComponent } from '@/hooks/use-dashboard-components';
+import { useToast } from '@/hooks/use-toast';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -66,7 +78,32 @@ export default function DashboardPage() {
   const { transactions } = useTransactions();
   const { currentTier } = useSubscription();
   const [showCustomizeDialog, setShowCustomizeDialog] = useState(false);
+  const [showBiometricSetup, setShowBiometricSetup] = useState(false);
   const [period, setPeriod] = useState<Period>('month');
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const hasSeenBiometricPrompt = localStorage.getItem('hasSeenBiometricPrompt');
+    if (!hasSeenBiometricPrompt) {
+      setShowBiometricSetup(true);
+    }
+  }, []);
+  
+  const handleBiometricSetup = () => {
+    // In a real app, this would trigger the WebAuthn registration process.
+    localStorage.setItem('hasSeenBiometricPrompt', 'true');
+    setShowBiometricSetup(false);
+    toast({
+        title: 'Biometric Login Enabled',
+        description: 'You can now use biometrics to sign in next time.',
+    });
+  };
+
+  const handleDismissBiometricSetup = () => {
+      localStorage.setItem('hasSeenBiometricPrompt', 'true');
+      setShowBiometricSetup(false);
+  };
+
 
   // State for dashboard component visibility
   const { visibleComponents, handleVisibilityChange } = useDashboardComponents();
@@ -97,6 +134,7 @@ export default function DashboardPage() {
   const canViewInsights = currentTier.name !== 'Bronze';
 
   return (
+    <>
     <AppLayout>
       <div className="space-y-8">
         <div className="flex items-center justify-between space-y-2">
@@ -281,5 +319,24 @@ export default function DashboardPage() {
         {visibleComponents.transactionHistory && <TransactionsTable />}
       </div>
     </AppLayout>
+
+    <AlertDialog open={showBiometricSetup} onOpenChange={setShowBiometricSetup}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                 <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 mb-4'>
+                    <Fingerprint className="h-6 w-6 text-primary" />
+                </div>
+                <AlertDialogTitle className="text-center">Enable Biometric Login?</AlertDialogTitle>
+                <AlertDialogDescription className="text-center">
+                    Would you like to enable biometric authentication (fingerprint or face ID) for faster and more secure logins next time?
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="sm:justify-center">
+                <AlertDialogCancel onClick={handleDismissBiometricSetup}>Maybe Later</AlertDialogCancel>
+                <AlertDialogAction onClick={handleBiometricSetup}>Yes, Set Up</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
