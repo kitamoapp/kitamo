@@ -74,6 +74,7 @@ export function ReferralNetworkVisualizer() {
 
   const directEarning = directReferralRevenue * tierForDemonstration.directReferralPercent;
   const indirectEarning = indirectReferralRevenue * tierForDemonstration.indirectReferralPercent;
+  const totalEarning = directEarning + indirectEarning;
 
   return (
     <Card>
@@ -92,6 +93,7 @@ export function ReferralNetworkVisualizer() {
           imageUrl="https://picsum.photos/100/100?random=0"
           aiHint="person portrait"
           planName={currentTier.name}
+          earnings={totalEarning > 0 ? `+ ${convertAndFormatCurrency(totalEarning)}/mo` : undefined}
         />
 
         {/* Connector */}
