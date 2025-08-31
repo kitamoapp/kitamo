@@ -143,9 +143,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
       <Sidebar collapsible="icon">
         <SidebarHeader>
            <Link href="/dashboard" className="flex items-center gap-2 p-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <span className="font-bold text-lg">K</span>
-            </div>
             <span className="font-bold text-lg text-primary">KitaMo</span>
           </Link>
         </SidebarHeader>
