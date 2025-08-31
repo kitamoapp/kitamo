@@ -21,7 +21,7 @@ const TransactionSchema = z.object({
   description: z.string(),
 });
 
-export const FinancialInsightsInputSchema = z.object({
+const FinancialInsightsInputSchema = z.object({
   transactions: z.array(TransactionSchema),
   currency: z.string(),
 });
@@ -29,7 +29,7 @@ export type FinancialInsightsInput = z.infer<
   typeof FinancialInsightsInputSchema
 >;
 
-export const FinancialInsightsOutputSchema = z.object({
+const FinancialInsightsOutputSchema = z.object({
   insights: z.array(
     z.object({
       insight: z.string().describe('The single, concise financial insight or tip.'),
