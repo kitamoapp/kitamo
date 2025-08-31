@@ -52,7 +52,6 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 flex flex-col items-center">
             <div className="mb-4 text-4xl font-bold text-primary">KitaMo</div>
-            <h1 className="text-3xl font-bold">Welcome to KitaMo</h1>
             <p className="text-muted-foreground">
               Sign in to manage your finances
             </p>
