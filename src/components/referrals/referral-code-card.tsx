@@ -89,7 +89,7 @@ export function ReferralCodeCard() {
   };
   
   const referralLink = `${typeof window !== 'undefined' ? window.location.origin : ''}/signup?ref=${referralCode}`;
-  const referralMessage = `Hey! I'm using KitaMo to manage my finances. Sign up with my code to get a bonus: ${referralCode}. Link: ${referralLink}`;
+  const referralMessage = `Hey! I'm using KitaMo to manage my finances. You can sign up using my referral code: ${referralCode}. Link: ${referralLink}`;
 
   const shareActions = [
     { name: 'WhatsApp', icon: WhatsAppIcon, url: `https://wa.me/?text=${encodeURIComponent(referralMessage)}`},
@@ -108,8 +108,7 @@ export function ReferralCodeCard() {
       <CardHeader>
         <CardTitle>Your Referral Code</CardTitle>
         <CardDescription>
-          Share this code with your friends. They get a discount, and you get a
-          bonus!
+          Share this code with your friends so you can earn from their subscriptions.
         </CardDescription>
       </CardHeader>
       <CardContent>
