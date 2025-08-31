@@ -143,7 +143,6 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       'All Bronze features',
       'Advanced analytics',
-      'Higher referral bonus',
       { text: 'Earning cap of {cap}', earningCap: 500 },
     ],
     requiredReferrals: 5,
@@ -158,7 +157,6 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 20,
     features: [
       'All Silver features',
-      'Export reports to PDF & CSV',
       { text: 'Earning cap of {cap}', earningCap: 2500 },
     ],
     requiredReferrals: 20,
@@ -174,7 +172,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       'All Gold features',
       'Exclusive partner offers',
-      'Unlimited earning potential',
+      { text: 'Earning cap of {cap}', earningCap: 10000 },
     ],
     requiredReferrals: 50,
     earningCap: 10000,
