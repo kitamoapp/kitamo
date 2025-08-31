@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { TransactionsTable } from '@/components/transactions/transactions-table';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -121,11 +122,7 @@ export default function DashboardPage() {
                     id="expense-breakdown-toggle"
                     checked={visibleComponents.expenseBreakdown}
                     onCheckedChange={(checked) => handleVisibilityChange('expenseBreakdown', checked)}
-                    disabled={!canViewAdvancedAnalytics}
                   />
-                    {!canViewAdvancedAnalytics && (
-                      <p className="text-xs text-muted-foreground mt-1">Upgrade to Silver to enable.</p>
-                    )}
                 </div>
               </div>
               <DialogFooter>
@@ -194,6 +191,7 @@ export default function DashboardPage() {
             </>
           )}
         </div>
+        <TransactionsTable />
       </div>
     </AppLayout>
   );
