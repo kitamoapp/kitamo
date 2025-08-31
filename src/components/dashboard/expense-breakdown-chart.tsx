@@ -21,6 +21,35 @@ const chartConfig = {
   Other: { label: 'Other', color: 'hsl(var(--chart-3))' },
 } satisfies ChartConfig;
 
+const RADIAN = Math.PI / 180;
+const CustomLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+  name,
+}: any) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.25;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="hsl(var(--foreground))"
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+      className="text-xs"
+    >
+      {`${name} (${(percent * 100).toFixed(0)}%)`}
+    </text>
+  );
+};
+
+
 export function ExpenseBreakdownChart() {
   const { formatCurrency } = useCurrency();
   const { transactions } = useTransactions();
@@ -41,16 +70,17 @@ export function ExpenseBreakdownChart() {
     )
     .map((item) => ({
       ...item,
+      name: item.category,
       fill: chartConfig[item.category as keyof typeof chartConfig]?.color || '#8884d8',
     }));
 
   return (
     <ChartContainer
       config={chartConfig}
-      className="min-h-[250px] w-full"
+      className="min-h-[300px] w-full"
     >
-      <ResponsiveContainer width="100%" height={250}>
-        <PieChart>
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
           <Tooltip
             content={
               <ChartTooltipContent
@@ -71,36 +101,8 @@ export function ExpenseBreakdownChart() {
             cx="50%"
             cy="50%"
             outerRadius={80}
-            labelLine={false}
-            label={({
-              cx,
-              cy,
-              midAngle,
-              innerRadius,
-              outerRadius,
-              percent,
-              index,
-            }) => {
-              const RADIAN = Math.PI / 180;
-              const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-              const x = cx + radius * Math.cos(-midAngle * RADIAN);
-              const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-              if (percent < 0.05) return null;
-
-              return (
-                <text
-                  x={x}
-                  y={y}
-                  fill="white"
-                  textAnchor={x > cx ? 'start' : 'end'}
-                  dominantBaseline="central"
-                  className="text-xs font-medium"
-                >
-                  {expenseData[index].category}
-                </text>
-              );
-            }}
+            labelLine={true}
+            label={<CustomLabel />}
           />
         </PieChart>
       </ResponsiveContainer>
