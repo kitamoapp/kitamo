@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from 'react';
 import {
   Card,
   CardContent,
@@ -17,13 +18,21 @@ import { useSubscription } from '@/hooks/use-subscription';
 import { Button } from '../ui/button';
 
 interface SubscriptionPlanCardProps {
-    tier: SubscriptionTier;
-    onChoosePlan: (tier: SubscriptionTier) => void;
+  tier: SubscriptionTier;
+  onChoosePlan: (tier: SubscriptionTier) => void;
 }
 
-export function SubscriptionPlanCard({ tier, onChoosePlan }: SubscriptionPlanCardProps) {
+export function SubscriptionPlanCard({
+  tier,
+  onChoosePlan,
+}: SubscriptionPlanCardProps) {
   const { convertAndFormatCurrency } = useCurrency();
   const { currentTier } = useSubscription();
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <Card
@@ -36,15 +45,21 @@ export function SubscriptionPlanCard({ tier, onChoosePlan }: SubscriptionPlanCar
       <CardHeader>
         <CardTitle>{tier.name}</CardTitle>
         <CardDescription>
-          {tier.price > 0
-            ? `${convertAndFormatCurrency(tier.price)} / month`
-            : 'Free'}
+          {isClient ? (
+            tier.price > 0 ? (
+              `${convertAndFormatCurrency(tier.price)} / month`
+            ) : (
+              'Free'
+            )
+          ) : (
+            <>&nbsp;</>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 space-y-4">
         <ul className="space-y-2">
-          {tier.features.map((feature) => (
-            <li key={feature} className="flex items-start gap-2">
+          {tier.features.map((feature, index) => (
+            <li key={index} className="flex items-start gap-2">
               <Check className="h-4 w-4 text-green-500 mt-1" />
               <span className="text-sm flex-1">{feature}</span>
             </li>
@@ -57,9 +72,7 @@ export function SubscriptionPlanCard({ tier, onChoosePlan }: SubscriptionPlanCar
           disabled={tier.name === currentTier.name}
           onClick={() => onChoosePlan(tier)}
         >
-          {tier.name === currentTier.name
-            ? 'Current Plan'
-            : 'Choose Plan'}
+          {tier.name === currentTier.name ? 'Current Plan' : 'Choose Plan'}
         </Button>
       </CardFooter>
     </Card>
