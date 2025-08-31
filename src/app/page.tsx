@@ -56,6 +56,10 @@ export default function LoginPage() {
     const authProvider = provider === 'google' 
         ? new GoogleAuthProvider() 
         : new FacebookAuthProvider();
+    
+    authProvider.setCustomParameters({
+        'auth_domain': auth.config.authDomain
+    });
 
     try {
         await signInWithPopup(auth, authProvider);
@@ -115,7 +119,7 @@ export default function LoginPage() {
                     <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                    <span className="bg-card px-2 text-muted-foreground">
+                    <span className="bg-card px-2 text-muted-foreground lowercase">
                     or continue with
                     </span>
                 </div>
@@ -143,4 +147,5 @@ export default function LoginPage() {
       </div>
     </>
   );
-}
+
+    
