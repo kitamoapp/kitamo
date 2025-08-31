@@ -76,13 +76,13 @@ export function ReferralFaq() {
             <AccordionItem value={`item-${index}`} key={index}>
               <AccordionTrigger>{faq.question}</AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-4">
+                <div className="space-y-4 text-left">
                   <p>{faq.answer}</p>
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-dashed">
+                  <div className="mt-4 pt-4 border-t border-dashed">
                     {feedback[index] ? (
-                       <p className="text-sm text-muted-foreground w-full text-left">Thank you for your feedback!</p>
+                       <p className="text-sm text-muted-foreground">Thank you for your feedback!</p>
                     ) : (
-                      <>
+                      <div className="flex items-center gap-4">
                         <p className="text-sm text-muted-foreground">
                           Was this helpful?
                         </p>
@@ -102,7 +102,7 @@ export function ReferralFaq() {
                             <ThumbsDown className="h-4 w-4" />
                           </Button>
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
