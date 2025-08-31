@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { RecruitUserDialog } from '@/components/referrals/recruit-user-dialog';
 import { useSettings } from '@/hooks/use-settings';
 import { useToast } from '@/hooks/use-toast';
 import type { Setting } from '@/hooks/use-settings';
@@ -107,25 +106,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Developer</CardTitle>
-            <CardDescription>
-              These settings are for demonstration purposes.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label>Simulate New User</Label>
-                <p className="text-sm text-muted-foreground">
-                  Add a new user to your referral network to see how your earnings change.
-                </p>
-              </div>
-              <RecruitUserDialog />
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </AppLayout>
   );
