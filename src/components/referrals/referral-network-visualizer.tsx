@@ -10,13 +10,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Users, ArrowDown, Award, DollarSign, User, Briefcase, Gem } from 'lucide-react';
-import { useSubscription } from '@/hooks/use-subscription';
-import { useCurrency } from '@/context/currency-context';
+import { Users, ArrowDown, Award, Briefcase, Gem, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useReferredUsers } from '@/context/referred-user-context';
 import type { ReferredUser } from '@/lib/types';
-import { Badge } from '../ui/badge';
 
 
 const PlanIcon = ({ plan }: { plan: ReferredUser['plan']}) => {
@@ -35,8 +32,8 @@ const DownlineNode = ({ user, allUsers, level = 0 }: { user: ReferredUser, allUs
 
     return (
         <div className={cn("relative pl-6 before:absolute before:left-0 before:top-4 before:h-full before:w-px before:bg-border", level > 0 && 'pt-4')}>
-            <div className="relative flex items-center gap-3 rounded-lg border bg-card p-3 shadow-sm">
-                 <div className="absolute -left-3.5 top-4 h-px w-3 bg-border"></div>
+            <div className="relative flex items-center gap-3 rounded-lg border bg-card p-3 shadow-sm min-w-max">
+                 <div className="absolute -left-3 top-4 h-px w-3 bg-border"></div>
                  <Avatar className="h-10 w-10">
                     <AvatarImage src={`https://picsum.photos/100/100?random=${user.id}`} alt={user.name} data-ai-hint="person portrait" />
                     <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -53,6 +50,39 @@ const DownlineNode = ({ user, allUsers, level = 0 }: { user: ReferredUser, allUs
                 <div className="mt-4 space-y-4">
                     {children.map(child => <DownlineNode key={child.id} user={child} allUsers={allUsers} level={level + 1} />)}
                 </div>
+            )}
+        </div>
+    )
+}
+
+const DirectReferralColumn = ({ user, allUsers }: { user: ReferredUser, allUsers: ReferredUser[] }) => {
+    const children = allUsers.filter(u => u.referredBy === user.id);
+    return (
+        <div className="relative flex flex-col items-center gap-4">
+            {/* Connector from top */}
+            <div className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border"></div>
+            
+            <div className="relative flex items-center gap-3 rounded-lg border bg-card p-3 shadow-sm min-w-max z-10">
+                <Avatar className="h-10 w-10">
+                    <AvatarImage src={`https://picsum.photos/100/100?random=${user.id}`} alt={user.name} data-ai-hint="person portrait" />
+                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className='flex-1'>
+                    <p className="font-semibold">{user.name}</p>
+                    <div className='flex items-center gap-2'>
+                        <PlanIcon plan={user.plan} />
+                        <p className="text-sm text-muted-foreground">{user.plan} Plan</p>
+                    </div>
+                </div>
+            </div>
+
+            {children.length > 0 && (
+                <>
+                    <div className="absolute left-1/2 top-16 h-4 w-px -translate-x-1/2 bg-border"></div>
+                    <div className="pt-4 space-y-4">
+                        {children.map(child => <DownlineNode key={child.id} user={child} allUsers={allUsers} level={1} />)}
+                    </div>
+                </>
             )}
         </div>
     )
@@ -91,7 +121,7 @@ export function ReferralNetworkVisualizer() {
           Here's a visual representation of your downline.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col items-start gap-6 py-4">
+      <CardContent className="flex flex-col items-center gap-6 py-4 overflow-x-auto">
         <div className="flex items-center gap-3">
              <Avatar className="h-12 w-12 border-2 border-primary">
                 <AvatarImage src={"https://picsum.photos/100/100?random=0"} alt="You" data-ai-hint="person portrait" />
@@ -102,9 +132,16 @@ export function ReferralNetworkVisualizer() {
                 <p className='text-sm text-muted-foreground'>Network Root</p>
             </div>
         </div>
-        <div className="w-full space-y-4">
+        
+        {/* Horizontal Connector Line */}
+        <div className="relative h-px w-full max-w-lg bg-border">
+          {/* Vertical line down from 'You' */}
+          <div className="absolute bottom-0 left-1/2 h-4 w-px -translate-x-1/2 bg-border"></div>
+        </div>
+
+        <div className="flex gap-8 lg:gap-16 items-start pt-4">
            {directReferrals.map(user => (
-              <DownlineNode key={user.id} user={user} allUsers={referredUsers} />
+              <DirectReferralColumn key={user.id} user={user} allUsers={referredUsers} />
             ))}
         </div>
       </CardContent>
