@@ -14,22 +14,19 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import { useCurrency } from '@/context/currency-context';
-import { REFERRAL_BONUS } from '@/lib/data';
+import { REFERRAL_PERCENTAGES } from '@/lib/data';
 
 
 export function ReferralFaq() {
-  const { convertAndFormatCurrency } = useCurrency();
-
   const faqs = [
     {
       question: 'How do I refer a friend?',
       answer:
-        "Simply share your unique referral code with them. When they sign up using your code, you'll both receive a bonus.",
+        "Simply share your unique referral code with them. When they sign up using your code and subscribe to a paid plan, you'll start earning.",
     },
     {
       question: 'What do I get for a successful referral?',
-      answer: `For each friend that signs up and becomes an active user, you will receive a ${convertAndFormatCurrency(REFERRAL_BONUS)} credit to your account. Your friend will also receive a ${convertAndFormatCurrency(REFERRAL_BONUS)} credit.`,
+      answer: `For each friend that signs up and becomes an active user on a paid plan, you will receive ${REFERRAL_PERCENTAGES.direct * 100}% of the revenue they generate. If they refer others, you'll earn ${REFERRAL_PERCENTAGES.indirect * 100}% from those indirect referrals as well.`,
     },
     {
       question: 'How many people can I refer?',
@@ -43,12 +40,12 @@ export function ReferralFaq() {
     {
       question: 'What are referral milestones?',
       answer:
-        'Milestones are goals based on the number of active users you have referred. Reaching a milestone unlocks a one-time bonus reward.',
+        'Milestones are goals based on the number of active users you have referred. Reaching a milestone unlocks a new subscription tier with a higher earning potential.',
     },
     {
       question: 'When will I see my bonus?',
       answer:
-        "Your referral bonus will be credited to your account as soon as your referred friend's status becomes 'Active'. Milestone bonuses are credited instantly upon reaching the milestone.",
+        "Your referral earnings will be credited to your account as your referrals generate revenue.",
     },
   ];
 
