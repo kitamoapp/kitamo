@@ -185,16 +185,13 @@ export const referralMilestones: ReferralMilestone[] = [
   {
     name: 'Unlock a {cap} earning cap',
     requiredReferrals: 5,
-    reward: 25,
   },
   {
     name: 'Unlock a {cap} earning cap',
     requiredReferrals: 20,
-    reward: 100,
   },
   {
     name: 'Unlock an unlimited earning cap',
     requiredReferrals: 50,
-    reward: 250,
   },
 ];

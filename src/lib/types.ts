@@ -44,5 +44,4 @@ export type SubscriptionTier = {
 export type ReferralMilestone = {
     name: string;
     requiredReferrals: number;
-    reward: number;
 }

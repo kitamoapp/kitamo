@@ -66,9 +66,6 @@ export function ReferralMilestones() {
                   >
                     {renderMilestoneName(milestone, tier)} ({milestone.requiredReferrals} Referrals)
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    Bonus Reward: {convertAndFormatCurrency(milestone.reward)}
-                  </p>
                 </div>
               </li>
             );
