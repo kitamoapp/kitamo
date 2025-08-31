@@ -58,11 +58,7 @@ export function RecruitUserDialog() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     addReferredUser({
-      id: crypto.randomUUID(),
       name: values.name,
-      signupDate: new Date(),
-      status: 'Active',
-      referredBy: 'currentUser',
       leg: values.leg,
       plan: values.plan,
     });

@@ -15,10 +15,6 @@ const serializeReminders = (reminders: Reminder[]) => {
   return JSON.stringify(reminders.map(r => ({...r, date: r.date.toString()})));
 };
 
-const deserializeReminders = (serialized: string): Reminder[] => {
-    return JSON.parse(serialized).map((r: any) => ({...r, date: new Date(r.date)}));
-}
-
 
 interface ReminderContextType {
   reminders: Reminder[];
@@ -46,7 +42,8 @@ export const ReminderProvider = ({ children }: { children: ReactNode }) => {
     try {
       const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
       if (item) {
-        setReminders(JSON.parse(item));
+        const storedReminders = JSON.parse(item).map((r: any) => ({...r, date: new Date(r.date)}));
+        setReminders(storedReminders);
       }
     } catch (error) {
       console.error('Error reading reminders from localStorage', error);

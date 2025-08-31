@@ -10,10 +10,11 @@ import {
 } from 'react';
 import type { ReferredUser } from '@/lib/types';
 import { referredUsers as initialReferredUsers } from '@/lib/data';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ReferredUserContextType {
   referredUsers: ReferredUser[];
-  addReferredUser: (user: ReferredUser) => void;
+  addReferredUser: (user: Omit<ReferredUser, 'id' | 'signupDate' | 'status' | 'referredBy'>) => void;
 }
 
 const ReferredUserContext = createContext<ReferredUserContextType | undefined>(
@@ -56,8 +57,15 @@ export const ReferredUserProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [referredUsers, isLoaded]);
 
-  const addReferredUser = (user: ReferredUser) => {
-    setReferredUsers((prev) => [{...user, signupDate: new Date().toISOString()}, ...prev]);
+  const addReferredUser = (user: Omit<ReferredUser, 'id' | 'signupDate'| 'status' | 'referredBy'>) => {
+    const newUser: ReferredUser = {
+        ...user,
+        id: uuidv4(),
+        signupDate: new Date().toISOString(),
+        status: 'Active',
+        referredBy: 'currentUser'
+    }
+    setReferredUsers((prev) => [newUser, ...prev]);
   };
 
   return (
