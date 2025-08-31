@@ -25,9 +25,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  devIndicators: {
-    buildActivity: false,
-  },
 };
 
 if (process.env.NODE_ENV === 'development') {
