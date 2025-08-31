@@ -65,10 +65,16 @@ export default function LoginPage() {
         await signInWithPopup(auth, authProvider);
         router.push('/dashboard');
     } catch(error: any) {
+        // Don't show an error toast if the user simply closes the pop-up.
+        if (error.code === 'auth/user-cancelled') {
+            console.log("Authentication cancelled by user.");
+            return;
+        }
+        
         console.error("Authentication Error:", error);
         toast({
             title: 'Authentication Failed',
-            description: error.message,
+            description: 'Could not log in. Please try again.',
             variant: 'destructive'
         });
     }
@@ -147,5 +153,4 @@ export default function LoginPage() {
       </div>
     </>
   );
-
-    
+}
