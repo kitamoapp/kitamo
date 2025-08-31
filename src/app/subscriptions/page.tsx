@@ -22,8 +22,9 @@ import { useToast } from '@/hooks/use-toast';
 import { usePaymentMethods } from '@/context/payment-method-context';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Landmark, Wallet, CreditCard } from 'lucide-react';
+import { Landmark, Wallet, CreditCard, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export default function SubscriptionsPage() {
   const { setCurrentTier } = useSubscription();
@@ -32,6 +33,7 @@ export default function SubscriptionsPage() {
   
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
+  const [showPaymentProcessing, setShowPaymentProcessing] = useState(false);
   const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(
     null
   );
@@ -54,18 +56,25 @@ export default function SubscriptionsPage() {
     }
   };
 
-  const handleConfirmPurchase = () => {
+  const handleInitiatePurchase = () => {
     if (selectedTier && selectedPaymentMethodId) {
+        setShowConfirmation(false);
+        setShowPaymentProcessing(true);
+    }
+  };
+  
+  const handleConfirmPurchase = () => {
+     if (selectedTier) {
       setCurrentTier(selectedTier);
        toast({
         title: 'Subscription Updated!',
         description: `You are now subscribed to the ${selectedTier.name} plan.`,
       });
     }
-    setShowConfirmation(false);
+    setShowPaymentProcessing(false);
     setSelectedTier(null);
     setSelectedPaymentMethodId(null);
-  };
+  }
 
   const handleAddPaymentMethod = (values: PaymentMethodValues) => {
     addPaymentMethod(values);
@@ -169,12 +178,29 @@ export default function SubscriptionsPage() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button onClick={handleConfirmPurchase} disabled={!selectedPaymentMethodId}>
+            <Button onClick={handleInitiatePurchase} disabled={!selectedPaymentMethodId}>
               Confirm Purchase
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+       <AlertDialog open={showPaymentProcessing} onOpenChange={setShowPaymentProcessing}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 mb-4'>
+                <ShieldCheck className="h-6 w-6 text-primary" />
+            </div>
+            <AlertDialogTitle className="text-center">Confirm Payment</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              You are being redirected to our secure payment partner to complete your purchase. This is a simulation.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={handleConfirmPurchase} className="w-full">Simulate Successful Payment</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
