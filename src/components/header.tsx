@@ -20,6 +20,7 @@ export function Header() {
   const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/referrals', label: 'Referrals' },
+    { href: '/subscriptions', label: 'Subscriptions' },
   ];
 
   return (

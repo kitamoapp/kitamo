@@ -123,6 +123,12 @@ export const REFERRAL_BONUS = 10;
 export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Bronze',
+    price: 0,
+    features: [
+      'Basic financial tracking',
+      'Standard referral bonus',
+      'Limited earning potential',
+    ],
     requiredReferrals: 0,
     earningCap: 100,
     borderColor: 'border-yellow-700',
@@ -132,6 +138,13 @@ export const subscriptionTiers: SubscriptionTier[] = [
   },
   {
     name: 'Silver',
+    price: 10,
+    features: [
+      'All Bronze features',
+      'Increased earning cap',
+      'Priority support',
+      'Advanced analytics',
+    ],
     requiredReferrals: 5,
     earningCap: 500,
     borderColor: 'border-slate-400',
@@ -141,6 +154,13 @@ export const subscriptionTiers: SubscriptionTier[] = [
   },
   {
     name: 'Gold',
+    price: 20,
+    features: [
+      'All Silver features',
+      'Highest earning cap',
+      'Dedicated account manager',
+      'Early access to new features',
+    ],
     requiredReferrals: 20,
     earningCap: 2500,
     borderColor: 'border-amber-500',
@@ -150,6 +170,13 @@ export const subscriptionTiers: SubscriptionTier[] = [
   },
   {
     name: 'Platinum',
+    price: 50,
+    features: [
+      'All Gold features',
+      'Unlimited earning potential',
+      'Customizable rewards',
+      'Exclusive partner offers',
+    ],
     requiredReferrals: 50,
     earningCap: 10000,
     borderColor: 'border-sky-500',

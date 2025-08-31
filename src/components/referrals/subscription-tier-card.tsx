@@ -3,6 +3,7 @@
 
 import { useMemo, useState } from 'react';
 import { Star, TrendingUp, Zap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import {
   subscriptionTiers,
@@ -21,20 +22,10 @@ import {
 } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { rates } from '@/lib/currency-rates';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../ui/alert-dialog';
 
 export function SubscriptionTierCard() {
   const { currency, convertAndFormatCurrency } = useCurrency();
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const router = useRouter();
 
   const activeReferrals = referredUsers.filter(
     (u) => u.status === 'Active'
@@ -79,7 +70,7 @@ export function SubscriptionTierCard() {
             Your current subscription level.
           </CardDescription>
         </div>
-        <Button size="sm" variant="secondary" onClick={() => setShowUpgradeDialog(true)}>
+        <Button size="sm" variant="secondary" onClick={() => router.push('/subscriptions')}>
           <Zap className="mr-2" /> Upgrade
         </Button>
       </CardHeader>
@@ -124,22 +115,6 @@ export function SubscriptionTierCard() {
         )}
       </CardContent>
     </Card>
-      <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Upgrade Your Plan</AlertDialogTitle>
-            <AlertDialogDescription>
-              This is where a real application would present different subscription plans and payment options. For this demo, this is just a placeholder.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => setShowUpgradeDialog(false)}>
-              Got It!
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }

@@ -26,6 +26,8 @@ export type Category = {
 
 export type SubscriptionTier = {
   name: string;
+  price: number;
+  features: string[];
   requiredReferrals: number;
   earningCap: number;
   borderColor: string;
