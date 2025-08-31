@@ -141,3 +141,10 @@ export const subscriptionTiers: SubscriptionTier[] = [
     commissionRate: 0.2,
   },
 ];
+
+export const referralMilestones: ReferralMilestone[] = [
+    { name: 'Apprentice', requiredReferrals: 5 },
+    { name: 'Builder', requiredReferrals: 10 },
+    { name: 'Leader', requiredReferrals: 25 },
+    { name: 'Visionary', requiredReferrals: 50 },
+]
