@@ -10,6 +10,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { RecruitUserDialog } from '@/components/referrals/recruit-user-dialog';
 
 export default function SettingsPage() {
   return (
@@ -76,6 +77,26 @@ export default function SettingsPage() {
                 id="push-notifications"
                 aria-label="Toggle push notifications"
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Developer</CardTitle>
+            <CardDescription>
+              These settings are for demonstration purposes.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <Label>Simulate New User</Label>
+                <p className="text-sm text-muted-foreground">
+                  Add a new user to your referral network to see how your earnings change.
+                </p>
+              </div>
+              <RecruitUserDialog />
             </div>
           </CardContent>
         </Card>
