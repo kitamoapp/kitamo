@@ -42,7 +42,7 @@ export const ReminderProvider = ({ children }: { children: ReactNode }) => {
     try {
       const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
       if (item) {
-        const storedReminders = JSON.parse(item).map((r: any) => ({...r, date: r.date }));
+        const storedReminders = JSON.parse(item).map((r: any) => ({...r, date: new Date(r.date) }));
         setReminders(storedReminders);
       }
     } catch (error) {
