@@ -14,7 +14,7 @@ import { referralMilestones, referredUsers } from '@/lib/data';
 import { useCurrency } from '@/context/currency-context';
 
 export function ReferralMilestones() {
-  const { formatCurrency } = useCurrency();
+  const { convertAndFormatCurrency } = useCurrency();
   const activeReferrals = referredUsers.filter(
     (user) => user.status === 'Active'
   ).length;
@@ -59,7 +59,7 @@ export function ReferralMilestones() {
                     {milestone.name} ({milestone.requiredReferrals} Referrals)
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Reward: {formatCurrency(milestone.reward)}
+                    Reward: {convertAndFormatCurrency(milestone.reward)}
                   </p>
                 </div>
               </li>

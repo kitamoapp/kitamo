@@ -19,7 +19,7 @@ import { REFERRAL_BONUS } from '@/lib/data';
 
 
 export function ReferralFaq() {
-  const { formatCurrency } = useCurrency();
+  const { convertAndFormatCurrency } = useCurrency();
 
   const faqs = [
     {
@@ -29,7 +29,7 @@ export function ReferralFaq() {
     },
     {
       question: 'What do I get for a successful referral?',
-      answer: `For each friend that signs up and becomes an active user, you will receive a ${formatCurrency(REFERRAL_BONUS)} credit to your account. Your friend will also receive a ${formatCurrency(REFERRAL_BONUS)} credit.`,
+      answer: `For each friend that signs up and becomes an active user, you will receive a ${convertAndFormatCurrency(REFERRAL_BONUS)} credit to your account. Your friend will also receive a ${convertAndFormatCurrency(REFERRAL_BONUS)} credit.`,
     },
     {
       question: 'How many people can I refer?',

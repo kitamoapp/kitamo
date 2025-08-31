@@ -20,9 +20,10 @@ import {
   CardTitle,
 } from '../ui/card';
 import { Progress } from '../ui/progress';
+import { rates } from '@/lib/currency-rates';
 
 export function SubscriptionTierCard() {
-  const { formatCurrency } = useCurrency();
+  const { currency, convertAndFormatCurrency } = useCurrency();
 
   const activeReferrals = referredUsers.filter(
     (u) => u.status === 'Active'
@@ -39,8 +40,13 @@ export function SubscriptionTierCard() {
 
   const nextTier =
     subscriptionTiers[subscriptionTiers.indexOf(currentTier) + 1];
+  
+  const currentRate = rates[currency];
+  const convertedEarningCap = currentTier.earningCap * currentRate;
+  const convertedReferralBonus = REFERRAL_BONUS * currentRate;
+  const currentEarnings = activeReferrals * convertedReferralBonus;
 
-  const currentEarnings = activeReferrals * REFERRAL_BONUS;
+
   const progressToNextTier = nextTier
     ? (activeReferrals / nextTier.requiredReferrals) * 100
     : 100;
@@ -72,16 +78,16 @@ export function SubscriptionTierCard() {
           >
             <span>Current Earnings</span>
             <span>
-              {formatCurrency(currentEarnings)} /{' '}
-              {formatCurrency(currentTier.earningCap)}
+              {convertAndFormatCurrency(currentEarnings, currency)} /{' '}
+              {convertAndFormatCurrency(currentTier.earningCap)}
             </span>
           </div>
           <Progress
-            value={(currentEarnings / currentTier.earningCap) * 100}
+            value={(currentEarnings / convertedEarningCap) * 100}
             className="h-2"
           />
           <p className={`text-sm ${currentTier.textColor}/80`}>
-            You have earned {formatCurrency(currentEarnings)} from{' '}
+            You have earned {convertAndFormatCurrency(currentEarnings, currency)} from{' '}
             {activeReferrals} active referrals.
           </p>
         </div>
@@ -99,7 +105,7 @@ export function SubscriptionTierCard() {
             <Progress value={progressToNextTier} className="h-2" />
             <p className="text-sm text-muted-foreground">
               Refer {nextTier.requiredReferrals - activeReferrals} more friends
-              to unlock an earning cap of {formatCurrency(nextTier.earningCap)}
+              to unlock an earning cap of {convertAndFormatCurrency(nextTier.earningCap)}
               .
             </p>
           </div>
