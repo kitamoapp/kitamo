@@ -10,12 +10,6 @@ import React, {
 } from 'react';
 import type { Reminder } from '@/lib/types';
 
-// Helper to handle serialization of Date objects
-const serializeReminders = (reminders: Reminder[]) => {
-  return JSON.stringify(reminders.map(r => ({...r, date: r.date.toString()})));
-};
-
-
 interface ReminderContextType {
   reminders: Reminder[];
   addReminder: (reminder: Reminder) => void;
@@ -33,7 +27,6 @@ const initialReminders: Reminder[] = [
    { id: 'rem-2', title: 'Gym Membership', amount: 40, category: 'Health', date: new Date(new Date().setDate(new Date().getDate() + 10)).toISOString(), recurrence: 'monthly' },
 ];
 
-
 export const ReminderProvider = ({ children }: { children: ReactNode }) => {
   const [reminders, setReminders] = useState<Reminder[]>(initialReminders);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -42,7 +35,7 @@ export const ReminderProvider = ({ children }: { children: ReactNode }) => {
     try {
       const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
       if (item) {
-        const storedReminders = JSON.parse(item).map((r: any) => ({...r, date: new Date(r.date) }));
+        const storedReminders = JSON.parse(item).map((r: any) => ({...r, date: r.date }));
         setReminders(storedReminders);
       }
     } catch (error) {
