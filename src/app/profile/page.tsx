@@ -19,10 +19,33 @@ import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera } from 'lucide-react';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ProfilePage() {
   const { currentTier } = useSubscription();
   const router = useRouter();
+  const [referralCode, setReferralCode] = useState('');
+  const [hasReferralCode, setHasReferralCode] = useState(false);
+  const { toast } = useToast();
+
+
+  const handleSaveReferralCode = () => {
+    if (referralCode.trim() === '') {
+        toast({
+            title: 'Error',
+            description: 'Please enter a valid referral code.',
+            variant: 'destructive'
+        })
+        return;
+    }
+    // In a real app, you would validate the code and link the user.
+    setHasReferralCode(true);
+    toast({
+        title: 'Success!',
+        description: 'Your referral code has been applied.'
+    })
+  }
 
   return (
     <AppLayout>
@@ -85,7 +108,7 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
           </div>
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 space-y-8">
             <Card>
               <CardHeader>
                 <CardTitle>Account Information</CardTitle>
@@ -106,7 +129,31 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            <Card className="mt-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Referral Code</CardTitle>
+                <CardDescription>
+                  If you received a referral code after signing up, you can enter it here.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                 <div className="space-y-2">
+                  <Label htmlFor="referral-code">Your Upline's Code</Label>
+                  <Input 
+                    id="referral-code"
+                    placeholder="Enter referral code"
+                    value={referralCode}
+                    onChange={(e) => setReferralCode(e.target.value)}
+                    disabled={hasReferralCode} 
+                  />
+                </div>
+                <Button onClick={handleSaveReferralCode} disabled={hasReferralCode}>
+                    {hasReferralCode ? 'Code Applied' : 'Save Code'}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
               <CardHeader>
                 <CardTitle>Change Password</CardTitle>
                 <CardDescription>
