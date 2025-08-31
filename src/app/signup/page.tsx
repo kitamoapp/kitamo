@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -21,8 +22,8 @@ export default function SignupPage() {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle user creation
-    // For this demo, we'll just redirect to the dashboard
+    // Here you would typically handle user creation and referral code validation.
+    // For this demo, we'll just redirect to the dashboard.
     router.push('/dashboard');
   };
 
@@ -65,6 +66,10 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <Label htmlFor="confirm-password">Confirm Password</Label>
                 <Input id="confirm-password" type="password" required />
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="referral-code">Referral Code (Optional)</Label>
+                <Input id="referral-code" type="text" placeholder="Enter referral code" />
               </div>
               <Button type="submit" className="w-full">
                 Create Account
