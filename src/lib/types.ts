@@ -4,7 +4,7 @@ export type Transaction = {
   type: 'income' | 'expense';
   category: string;
   amount: number;
-  date: string; // Changed to string to be serializable
+  date: Date | string;
   description: string;
 };
 
@@ -32,7 +32,7 @@ export type SubscriptionFeature = {
 export type SubscriptionTier = {
   name: string;
   price: number;
-  features: (string | SubscriptionFeature)[];
+  features: SubscriptionFeature[];
   requiredReferrals: number;
   earningCap: number;
   borderColor: string;

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { CheckCircle, Award } from 'lucide-react';
+import { CheckCircle, Award, Star } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { referralMilestones, referredUsers } from '@/lib/data';
+import { referralMilestones, referredUsers, subscriptionTiers } from '@/lib/data';
 import { useCurrency } from '@/context/currency-context';
 
 export function ReferralMilestones() {
@@ -24,26 +24,28 @@ export function ReferralMilestones() {
       <CardHeader>
         <CardTitle>Referral Milestones</CardTitle>
         <CardDescription>
-          Earn bonuses as you refer more friends.
+          Unlock new tiers and earn bonuses as you refer more friends.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
           {referralMilestones.map((milestone, index) => {
             const isCompleted = activeReferrals >= milestone.requiredReferrals;
+            const tier = subscriptionTiers.find(t => t.requiredReferrals === milestone.requiredReferrals);
+
             return (
               <li key={index} className="flex items-start">
                 <div className="flex-shrink-0">
                   {isCompleted ? (
                     <CheckCircle className="h-6 w-6 text-green-500" />
                   ) : (
-                    <Award
+                    <Star
                       className={cn(
                         'h-6 w-6',
                         activeReferrals >=
                           (referralMilestones[index - 1]?.requiredReferrals ||
                             0)
-                          ? 'text-primary'
+                          ? tier?.textColor || 'text-primary'
                           : 'text-muted-foreground'
                       )}
                     />
@@ -59,7 +61,7 @@ export function ReferralMilestones() {
                     {milestone.name} ({milestone.requiredReferrals} Referrals)
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Reward: {convertAndFormatCurrency(milestone.reward)}
+                    Bonus Reward: {convertAndFormatCurrency(milestone.reward)}
                   </p>
                 </div>
               </li>
