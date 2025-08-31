@@ -105,9 +105,9 @@ export function ReferralNetworkVisualizer() {
   const levelPercentages = [
     tierForDemonstration.directReferralPercent, // L1
     tierForDemonstration.indirectReferralPercent, // L2
-    tierForDemonstration.indirectReferralPercent * 0.5, // L3 demo
-    tierForDemonstration.indirectReferralPercent * 0.25, // L4 demo
-    tierForDemonstration.indirectReferralPercent * 0.1, // L5 demo
+    tierForDemonstration.indirectReferralPercent, // L3
+    tierForDemonstration.indirectReferralPercent, // L4
+    tierForDemonstration.indirectReferralPercent, // L5
   ];
   
   const levelEarnings = levelRevenues.map((revenue, index) => revenue * levelPercentages[index]);
