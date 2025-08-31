@@ -21,6 +21,7 @@ import {
   TrendingUp,
   Settings2,
   Target,
+  Lightbulb,
 } from 'lucide-react';
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
 import { useCurrency } from '@/context/currency-context';
@@ -28,7 +29,7 @@ import type { Currency } from '@/lib/types';
 import { ExpenseBreakdownChart } from '@/components/dashboard/expense-breakdown-chart';
 import { useSubscription } from '@/hooks/use-subscription';
 import { UpgradeCard } from '@/components/upgrade-card';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -48,6 +49,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { SetBudgetDialog } from '@/components/budgets/set-budget-dialog';
 import { BudgetSummaryCard } from '@/components/dashboard/budget-summary-card';
 import { UpcomingBillsCard } from '@/components/dashboard/upcoming-bills-card';
+import { useTransactions } from '@/context/transaction-context';
+import { FinancialInsightsCard } from '@/components/dashboard/financial-insights-card';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -61,6 +64,7 @@ export type Period = 'day' | 'week' | 'month' | 'year';
 
 export default function DashboardPage() {
   const { currency, formatCurrency } = useCurrency();
+  const { transactions } = useTransactions();
   const { currentTier } = useSubscription();
   const [showCustomizeDialog, setShowCustomizeDialog] = useState(false);
   const [period, setPeriod] = useState<Period>('month');
@@ -73,21 +77,32 @@ export default function DashboardPage() {
     transactionHistory: true,
     budgetSummary: true,
     upcomingBills: true,
+    financialInsights: true,
   });
 
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income')
-    .reduce((acc, t) => acc + t.amount, 0);
-  const totalExpenses = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((acc, t) => acc + t.amount, 0);
-  const balance = totalIncome - totalExpenses;
+  const { totalIncome, totalExpenses, balance } = useMemo(() => {
+    const income = transactions
+      .filter((t) => t.type === 'income')
+      .reduce((acc, t) => acc + t.amount, 0);
+    const expenses = transactions
+      .filter((t) => t.type === 'expense')
+      .reduce((acc, t) => acc + t.amount, 0);
+    return {
+      totalIncome: income,
+      totalExpenses: expenses,
+      balance: income - expenses,
+    };
+  }, [transactions]);
+
+
   const BalanceIcon = currencyIcons[currency] || DollarSign;
 
   const canViewAdvancedAnalytics =
     currentTier.name === 'Silver' ||
     currentTier.name === 'Gold' ||
     currentTier.name === 'Platinum';
+    
+  const canViewInsights = currentTier.name !== 'Bronze';
 
   const handleVisibilityChange = (component: keyof typeof visibleComponents, checked: boolean) => {
     setVisibleComponents(prev => ({ ...prev, [component]: checked }));
@@ -136,6 +151,14 @@ export default function DashboardPage() {
                       id="upcoming-bills-toggle"
                       checked={visibleComponents.upcomingBills}
                       onCheckedChange={(checked) => handleVisibilityChange('upcomingBills', checked)}
+                    />
+                  </div>
+                   <div className="flex items-center justify-between rounded-lg border p-4">
+                    <Label htmlFor="financial-insights-toggle" className="font-normal">Show Financial Insights</Label>
+                    <Switch
+                      id="financial-insights-toggle"
+                      checked={visibleComponents.financialInsights}
+                      onCheckedChange={(checked) => handleVisibilityChange('financialInsights', checked)}
                     />
                   </div>
                   <div className="flex items-center justify-between rounded-lg border p-4">
@@ -202,6 +225,20 @@ export default function DashboardPage() {
              <UpcomingBillsCard />
            )}
         </div>
+        
+        {visibleComponents.financialInsights && (
+          <>
+            {canViewInsights ? (
+              <FinancialInsightsCard />
+            ) : (
+               <UpgradeCard
+                  title="Unlock AI-Powered Insights"
+                  description="Upgrade your plan to get personalized financial advice and identify savings opportunities automatically."
+                  buttonText="Upgrade to Unlock"
+                />
+            )}
+          </>
+        )}
 
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
