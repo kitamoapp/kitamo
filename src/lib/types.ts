@@ -56,4 +56,48 @@ export type Reminder = {
     category: string;
     date: string;
     recurrence: 'none' | 'daily' | 'weekly' | 'monthly';
+};
+
+
+interface BasePaymentMethod {
+    id: string;
+    type: 'Card' | 'Bank' | 'Wallet';
 }
+
+interface CardPaymentMethod extends BasePaymentMethod {
+    type: 'Card';
+    last4: string;
+    expiry: string;
+    brand: string;
+    cardNumber?: string;
+}
+
+interface BankPaymentMethod extends BasePaymentMethod {
+    type: 'Bank';
+    last4: string;
+    bankName: string;
+    accountNumber?: string;
+    routingNumber?: string;
+}
+
+interface WalletPaymentMethod extends BasePaymentMethod {
+    type: 'Wallet';
+    provider: string;
+    email: string;
+}
+
+export type PaymentMethod = CardPaymentMethod | BankPaymentMethod | WalletPaymentMethod;
+
+export type PaymentMethodValues = {
+  type: 'Card' | 'Bank' | 'Wallet';
+  cardNumber: string;
+  expiry: string;
+  cvc: string;
+  accountNumber: string;
+  routingNumber: string;
+  bankName: string;
+  provider: string;
+  email: string;
+}
+
+    

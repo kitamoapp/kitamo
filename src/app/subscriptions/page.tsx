@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { AppLayout } from '@/components/app-layout';
 import { subscriptionTiers } from '@/lib/data';
-import type { SubscriptionTier } from '@/lib/types';
+import type { PaymentMethod, PaymentMethodValues, SubscriptionTier } from '@/lib/types';
 import { useSubscription } from '@/hooks/use-subscription';
 import {
   AlertDialog,
@@ -18,20 +18,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { SubscriptionPlanCard } from '@/components/subscriptions/subscription-plan-card';
+import { PaymentMethodForm } from '@/components/payment-method-form';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SubscriptionsPage() {
   const { setCurrentTier } = useSubscription();
+  const { toast } = useToast();
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
   const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(
@@ -52,15 +48,23 @@ export default function SubscriptionsPage() {
   const handleConfirmPurchase = () => {
     if (selectedTier) {
       setCurrentTier(selectedTier);
+       toast({
+        title: 'Subscription Updated!',
+        description: `You are now subscribed to the ${selectedTier.name} plan.`,
+      });
     }
     setShowConfirmation(false);
     setSelectedTier(null);
   };
 
-  const handleAddPaymentMethod = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddPaymentMethod = (values: PaymentMethodValues) => {
     // In a real app, you'd save the payment info to a secure service.
     // For this demo, we'll just simulate it.
+    console.log('New payment method added:', values);
+    toast({
+      title: 'Payment Method Added',
+      description: 'Your new payment method has been saved.',
+    });
     setHasPaymentMethod(true);
     setShowAddPaymentDialog(false);
     // After adding a payment method, show the confirmation dialog.
@@ -98,37 +102,11 @@ export default function SubscriptionsPage() {
         onOpenChange={setShowAddPaymentDialog}
       >
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Payment Method</DialogTitle>
-            <DialogDescription>
-              You don&apos;t have a payment method on file. Please add one to
-              continue. This is a simulation.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleAddPaymentMethod} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="card-number">Card Number</Label>
-              <Input id="card-number" placeholder="1234 5678 9101 1121" />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2 col-span-2">
-                <Label htmlFor="expiry">Expiration</Label>
-                <Input id="expiry" placeholder="MM / YY" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cvc">CVC</Label>
-                <Input id="cvc" placeholder="123" />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type="submit">Save and Continue</Button>
-            </DialogFooter>
-          </form>
+          <PaymentMethodForm 
+            onSubmit={handleAddPaymentMethod}
+            onCancel={() => setShowAddPaymentDialog(false)}
+            isSubscriptionContext={true}
+          />
         </DialogContent>
       </Dialog>
 
@@ -155,3 +133,5 @@ export default function SubscriptionsPage() {
     </>
   );
 }
+
+    
