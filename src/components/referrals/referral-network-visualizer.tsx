@@ -93,7 +93,7 @@ export function ReferralNetworkVisualizer() {
           imageUrl="https://picsum.photos/100/100?random=0"
           aiHint="person portrait"
           planName={currentTier.name}
-          earnings={totalEarning > 0 ? `+ ${convertAndFormatCurrency(totalEarning)}/mo Total` : undefined}
+          earnings={totalEarning > 0 ? `+ ${convertAndFormatCurrency(totalEarning, 'USD')}/mo Total` : undefined}
         />
 
         {/* Connector */}
@@ -111,7 +111,7 @@ export function ReferralNetworkVisualizer() {
           </div>
            {directEarning > 0 && (
             <div className="text-xs font-semibold text-green-600">
-              (+ {convertAndFormatCurrency(directEarning)}/mo from Alice)
+              (+ {convertAndFormatCurrency(directEarning, 'USD')}/mo from Alice)
             </div>
           )}
           <div className="flex w-full justify-center gap-8 md:gap-16">
@@ -143,7 +143,7 @@ export function ReferralNetworkVisualizer() {
           </div>
           {indirectEarning > 0 && (
             <div className="text-xs font-semibold text-green-600">
-              (+ {convertAndFormatCurrency(indirectEarning)}/mo from Diana)
+              (+ {convertAndFormatCurrency(indirectEarning, 'USD')}/mo from Diana)
             </div>
           )}
           <div className="mt-2 flex justify-center gap-8">
@@ -160,7 +160,9 @@ export function ReferralNetworkVisualizer() {
 
         <div className="mt-4 w-full rounded-lg border border-dashed bg-muted/50 p-4 text-center text-sm text-muted-foreground">
           This is a visual representation to help you understand the referral
-          structure. Your network can have unlimited levels and users.
+          structure. The earnings shown are for demonstration purposes only and
+          do not represent your actual earnings. Your network can have
+          unlimited levels and users.
         </div>
       </CardContent>
     </Card>
