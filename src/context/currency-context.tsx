@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import type { Currency } from '@/lib/types';
 import { rates } from '@/lib/currency-rates';
 
@@ -25,17 +25,17 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     return amountInUsd * toRate;
   };
   
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = useCallback((amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency,
     }).format(amount);
-  };
+  }, [currency]);
 
-  const convertAndFormatCurrency = (amount: number, from: Currency = 'USD') => {
+  const convertAndFormatCurrency = useCallback((amount: number, from: Currency = 'USD') => {
     const convertedAmount = convertCurrency(amount, from, currency);
     return formatCurrency(convertedAmount);
-  };
+  }, [currency, formatCurrency]);
 
   return (
     <CurrencyContext.Provider value={{ currency, setCurrency, formatCurrency, convertAndFormatCurrency }}>
