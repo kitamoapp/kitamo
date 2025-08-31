@@ -27,7 +27,6 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
-import { AiTipCard } from '@/components/dashboard/ai-tip-card';
 import { useCurrency } from '@/context/currency-context';
 import type { Currency } from '@/lib/types';
 import { TransactionsTable } from '@/components/transactions/transactions-table';
@@ -73,10 +72,6 @@ export default function DashboardPage() {
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <div className="mt-6 grid grid-cols-1 gap-6">
-            <AiTipCard />
-          </div>
-
           <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <SummaryCard
               title="Total Income"
