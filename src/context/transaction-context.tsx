@@ -1,17 +1,14 @@
 
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import type { Transaction } from '@/lib/types';
 import { transactions as initialTransactions } from '@/lib/data';
 
-// For the purpose of this demo, we're converting Date objects to ISO strings
-// because they are not serializable and can cause issues with React state.
 const transactionsWithSerializableDates = initialTransactions.map(t => ({
   ...t,
   date: t.date.toISOString(),
 }));
-
 
 interface TransactionContextType {
   transactions: Transaction[];
@@ -22,8 +19,35 @@ interface TransactionContextType {
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
 
+const LOCAL_STORAGE_KEY = 'kitamo-transactions';
+
+
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const [transactions, setTransactions] = useState<Transaction[]>(transactionsWithSerializableDates);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (item) {
+        setTransactions(JSON.parse(item));
+      }
+    } catch (error) {
+      console.error('Error reading transactions from localStorage', error);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(transactions));
+      } catch (error) {
+        console.error('Error saving transactions to localStorage', error);
+      }
+    }
+  }, [transactions, isLoaded]);
+
 
   const addTransaction = (transaction: Transaction) => {
     setTransactions(prev => [transaction, ...prev]);
