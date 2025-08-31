@@ -74,12 +74,15 @@ export const transactions: Transaction[] = [
 ];
 
 export const referredUsers: ReferredUser[] = [
+  // Direct Referrals (Tier 1)
   {
     id: '1',
     name: 'Alice Johnson',
     email: 'alice@example.com',
     signupDate: new Date('2024-06-15'),
     status: 'Active',
+    referredBy: 'currentUser', // Main user
+    earnings: 100, // e.g., from subscription
   },
   {
     id: '2',
@@ -87,6 +90,8 @@ export const referredUsers: ReferredUser[] = [
     email: 'bob@example.com',
     signupDate: new Date('2024-06-20'),
     status: 'Active',
+    referredBy: 'currentUser',
+    earnings: 150,
   },
   {
     id: '3',
@@ -94,20 +99,28 @@ export const referredUsers: ReferredUser[] = [
     email: 'charlie@example.com',
     signupDate: new Date('2024-07-01'),
     status: 'Pending',
+    referredBy: 'currentUser',
+    earnings: 0,
   },
+  // Indirect Referrals (Tier 2) - Referred by Alice
   {
     id: '4',
     name: 'Diana Prince',
     email: 'diana@example.com',
     signupDate: new Date('2024-07-05'),
     status: 'Active',
+    referredBy: '1', // Referred by Alice
+    earnings: 80,
   },
+  // Indirect Referrals (Tier 2) - Referred by Bob
   {
     id: '5',
     name: 'Ethan Hunt',
     email: 'ethan@example.com',
     signupDate: new Date('2024-07-06'),
     status: 'Active',
+    referredBy: '2', // Referred by Bob
+    earnings: 120,
   },
   {
     id: '6',
@@ -115,10 +128,15 @@ export const referredUsers: ReferredUser[] = [
     email: 'fiona@example.com',
     signupDate: new Date('2024-07-08'),
     status: 'Pending',
+    referredBy: '2', // Referred by Bob
+    earnings: 0,
   },
 ];
 
-export const REFERRAL_BONUS = 10;
+export const REFERRAL_PERCENTAGES = {
+  direct: 0.1, // 10% for direct referrals
+  indirect: 0.05, // 5% for indirect referrals
+};
 
 export const subscriptionTiers: SubscriptionTier[] = [
   {
@@ -142,6 +160,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       { text: 'All Bronze features' },
       { text: 'Earning cap of {cap}', earningCap: 500 },
+      { text: '10% from direct referrals' },
+      { text: '5% from indirect referrals' },
     ],
     requiredReferrals: 5,
     earningCap: 500,

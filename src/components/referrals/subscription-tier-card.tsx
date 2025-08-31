@@ -5,11 +5,7 @@ import { useMemo, useState } from 'react';
 import { Star, TrendingUp, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import {
-  subscriptionTiers,
-  referredUsers,
-  REFERRAL_BONUS,
-} from '@/lib/data';
+import { subscriptionTiers, REFERRAL_PERCENTAGES } from '@/lib/data';
 import { useCurrency } from '@/context/currency-context';
 import { Button } from '../ui/button';
 import {
@@ -21,18 +17,19 @@ import {
   CardTitle,
 } from '../ui/card';
 import { Progress } from '../ui/progress';
-import { rates } from '@/lib/currency-rates';
 import { useSubscription } from '@/hooks/use-subscription';
 
 export function SubscriptionTierCard() {
-  const { currency, convertAndFormatCurrency } = useCurrency();
-  const { activeReferrals, currentTier, nextTier } = useSubscription();
+  const { convertAndFormatCurrency } = useCurrency();
+  const {
+    activeReferrals,
+    currentTier,
+    nextTier,
+    totalEarnings,
+    directEarnings,
+    indirectEarnings,
+  } = useSubscription();
   const router = useRouter();
-
-  const currentRate = rates[currency];
-  const convertedEarningCap = currentTier.earningCap * currentRate;
-  const convertedReferralBonus = REFERRAL_BONUS * currentRate;
-  const currentEarnings = activeReferrals * convertedReferralBonus;
 
   const progressToNextTier = nextTier
     ? (activeReferrals / nextTier.requiredReferrals) * 100
@@ -41,6 +38,9 @@ export function SubscriptionTierCard() {
   const canEarn = currentTier.earningCap > 0;
   const isUnlimited = currentTier.earningCap === Infinity;
 
+  const earningsProgress = isUnlimited
+    ? 100
+    : (totalEarnings / currentTier.earningCap) * 100;
 
   return (
     <>
@@ -75,19 +75,30 @@ export function SubscriptionTierCard() {
               >
                 <span>Current Earnings</span>
                 <span>
-                  {convertAndFormatCurrency(currentEarnings, currency)} /{' '}
-                  {isUnlimited ? 'Unlimited' : convertAndFormatCurrency(currentTier.earningCap)}
+                  {convertAndFormatCurrency(totalEarnings)} /{' '}
+                  {isUnlimited
+                    ? 'Unlimited'
+                    : convertAndFormatCurrency(currentTier.earningCap)}
                 </span>
               </div>
-              <Progress
-                value={isUnlimited ? 100 : (currentEarnings / convertedEarningCap) * 100}
-                className="h-2"
-              />
-              <p className={`text-sm ${currentTier.textColor}/80`}>
-                You have earned{' '}
-                {convertAndFormatCurrency(currentEarnings, currency)} from{' '}
-                {activeReferrals} active referrals.
-              </p>
+              <Progress value={earningsProgress} className="h-2" />
+              <div
+                className={`text-sm ${currentTier.textColor}/80 space-y-1`}
+              >
+                <p>
+                  You have earned a total of{' '}
+                  {convertAndFormatCurrency(totalEarnings)} from{' '}
+                  {activeReferrals} active referrals in your network.
+                </p>
+                <p>
+                  - Direct ({REFERRAL_PERCENTAGES.direct * 100}%):{' '}
+                  {convertAndFormatCurrency(directEarnings)}
+                </p>
+                <p>
+                  - Indirect ({REFERRAL_PERCENTAGES.indirect * 100}%):{' '}
+                  {convertAndFormatCurrency(indirectEarnings)}
+                </p>
+              </div>
             </div>
           ) : (
             <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
@@ -121,7 +132,10 @@ export function SubscriptionTierCard() {
               <p className="text-sm text-muted-foreground">
                 Refer {nextTier.requiredReferrals - activeReferrals} more
                 friends to unlock an earning cap of{' '}
-                {nextTier.earningCap === Infinity ? 'Unlimited' : convertAndFormatCurrency(nextTier.earningCap)}.
+                {nextTier.earningCap === Infinity
+                  ? 'Unlimited'
+                  : convertAndFormatCurrency(nextTier.earningCap)}
+                .
               </p>
             </div>
           )}

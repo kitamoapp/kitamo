@@ -1,4 +1,6 @@
 
+'use client';
+
 import { referredUsers } from '@/lib/data';
 import {
   Table,
@@ -18,15 +20,31 @@ import {
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useMemo } from 'react';
 
 export function ReferredUsersTable() {
-    
+  const allUserReferrals = useMemo(() => {
+    const direct = referredUsers
+      .filter((u) => u.referredBy === 'currentUser')
+      .map((u) => ({ ...u, tier: 1 }));
+
+    const indirect = direct
+      .map((directReferral) =>
+        referredUsers
+          .filter((u) => u.referredBy === directReferral.id)
+          .map((u) => ({ ...u, tier: 2 }))
+      )
+      .flat();
+
+    return [...direct, ...indirect];
+  }, []);
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Referred Users</CardTitle>
         <CardDescription>
-          Here's a list of users who signed up with your code.
+          Here's a list of users in your referral network.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -36,10 +54,11 @@ export function ReferredUsersTable() {
               <TableHead>User</TableHead>
               <TableHead>Sign-up Date</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Tier</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {referredUsers.map((user) => (
+            {allUserReferrals.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-3">
@@ -49,19 +68,17 @@ export function ReferredUsersTable() {
                         alt={user.name}
                         data-ai-hint="person portrait"
                       />
-                      <AvatarFallback>
-                        {user.name.charAt(0)}
-                      </AvatarFallback>
+                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className='font-semibold'>{user.name}</div>
-                      <div className="text-sm text-muted-foreground">{user.email}</div>
+                      <div className="font-semibold">{user.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {user.email}
+                      </div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
-                  {user.signupDate.toLocaleDateString()}
-                </TableCell>
+                <TableCell>{user.signupDate.toLocaleDateString()}</TableCell>
                 <TableCell>
                   <Badge
                     className={cn(
@@ -71,6 +88,11 @@ export function ReferredUsersTable() {
                     )}
                   >
                     {user.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline">
+                    {user.tier === 1 ? 'Direct' : 'Indirect'}
                   </Badge>
                 </TableCell>
               </TableRow>
