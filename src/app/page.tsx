@@ -66,7 +66,7 @@ export default function LoginPage() {
         router.push('/dashboard');
     } catch(error: any) {
         // Don't show an error toast if the user simply closes the pop-up.
-        if (error.code === 'auth/user-cancelled') {
+        if (error.code === 'auth/user-cancelled' || error.code === 'auth/cancelled-popup-request') {
             console.log("Authentication cancelled by user.");
             return;
         }
