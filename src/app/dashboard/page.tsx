@@ -61,8 +61,7 @@ import { useTransactions } from '@/context/transaction-context';
 import { FinancialInsightsCard } from '@/components/dashboard/financial-insights-card';
 import { useDashboardComponents } from '@/hooks/use-dashboard-components';
 import type { DashboardComponent } from '@/hooks/use-dashboard-components';
-import { useToast } from '@/hooks/use-toast';
-import { v4 as uuidv4 } from 'uuid';
+import { useSettings } from '@/hooks/use-settings';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -78,10 +77,10 @@ export default function DashboardPage() {
   const { currency, formatCurrency } = useCurrency();
   const { transactions } = useTransactions();
   const { currentTier } = useSubscription();
+  const { setupBiometrics } = useSettings();
   const [showCustomizeDialog, setShowCustomizeDialog] = useState(false);
   const [showBiometricSetup, setShowBiometricSetup] = useState(false);
   const [period, setPeriod] = useState<Period>('month');
-  const { toast } = useToast();
 
   useEffect(() => {
     const hasSeenBiometricPrompt = localStorage.getItem('hasSeenBiometricPrompt');
@@ -90,50 +89,10 @@ export default function DashboardPage() {
     }
   }, []);
   
-  const handleBiometricSetup = async () => {
+  const handleEnableBiometrics = async () => {
     localStorage.setItem('hasSeenBiometricPrompt', 'true');
     setShowBiometricSetup(false);
-
-    try {
-        // This is a simplified example. In a real app, the challenge would
-        // come from your server to prevent replay attacks.
-        const challenge = new Uint8Array(32);
-        window.crypto.getRandomValues(challenge);
-
-        const credential = await navigator.credentials.create({
-            publicKey: {
-                challenge,
-                rp: { name: 'KitaMo', id: window.location.hostname },
-                user: {
-                    id: uuidv4 as any,
-                    name: 'user@example.com', // In a real app, use the actual user's email
-                    displayName: 'User', // In a real app, use the actual user's name
-                },
-                pubKeyCredParams: [{ type: 'public-key', alg: -7 }], // ES256 algorithm
-                authenticatorSelection: {
-                    authenticatorAttachment: 'platform', // Use platform authenticators like Face ID, Touch ID, Windows Hello
-                    userVerification: 'required',
-                },
-                timeout: 60000,
-            }
-        });
-        
-        // In a real app, you would send `credential` to your server to be stored.
-        console.log('Credential created:', credential);
-        
-        toast({
-            title: 'Biometric Login Enabled',
-            description: 'You can now use biometrics to sign in next time.',
-        });
-
-    } catch (error) {
-        console.error('WebAuthn Error:', error);
-        toast({
-            variant: 'destructive',
-            title: 'Biometric Setup Failed',
-            description: 'Could not set up biometric login. Your device may not support it or you may have cancelled the request.',
-        });
-    }
+    await setupBiometrics();
   };
 
   const handleDismissBiometricSetup = () => {
@@ -370,11 +329,10 @@ export default function DashboardPage() {
             </AlertDialogHeader>
             <AlertDialogFooter className="sm:justify-center">
                 <AlertDialogCancel onClick={handleDismissBiometricSetup}>Maybe Later</AlertDialogCancel>
-                <AlertDialogAction onClick={handleBiometricSetup}>Yes, Enable</AlertDialogAction>
+                <AlertDialogAction onClick={handleEnableBiometrics}>Yes, Enable</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
     </>
   );
 }
-

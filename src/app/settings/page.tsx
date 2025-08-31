@@ -12,19 +12,13 @@ import {
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useSettings } from '@/hooks/use-settings';
-import { useToast } from '@/hooks/use-toast';
 import type { Setting } from '@/hooks/use-settings';
 
 export default function SettingsPage() {
   const { settings, updateSetting, isLoaded } = useSettings();
-  const { toast } = useToast();
 
-  const handleSettingChange = (setting: Setting, checked: boolean) => {
-    updateSetting(setting, checked);
-    toast({
-      title: 'Settings Updated',
-      description: `Your preferences have been saved.`,
-    });
+  const handleSettingChange = async (setting: Setting, checked: boolean) => {
+    await updateSetting(setting, checked);
   };
 
   if (!isLoaded) {
