@@ -32,13 +32,27 @@ export default function ProfilePage() {
   const { toast } = useToast();
 
   // State for forms
-  const [fullName, setFullName] = useState('User');
-  const [email, setEmail] = useState('user@example.com');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [accountInfo, setAccountInfo] = useState({
+    fullName: 'User',
+    email: 'user@example.com',
+  });
+  const [passwordInfo, setPasswordInfo] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
   const [referralCode, setReferralCode] = useState('');
   const [hasReferralCode, setHasReferralCode] = useState(false);
+
+  const handleAccountInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setAccountInfo(prev => ({ ...prev, [id]: value }));
+  }
+  
+  const handlePasswordInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setPasswordInfo(prev => ({ ...prev, [id]: value }));
+  }
 
 
   const handleSaveReferralCode = () => {
@@ -77,7 +91,7 @@ export default function ProfilePage() {
   }
 
   const handleUpdatePassword = () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    if (!passwordInfo.currentPassword || !passwordInfo.newPassword || !passwordInfo.confirmPassword) {
       toast({
         title: 'Error',
         description: 'Please fill in all password fields.',
@@ -85,7 +99,7 @@ export default function ProfilePage() {
       });
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (passwordInfo.newPassword !== passwordInfo.confirmPassword) {
       toast({
         title: 'Error',
         description: 'New passwords do not match.',
@@ -99,9 +113,11 @@ export default function ProfilePage() {
       description: 'Your password has been changed successfully.',
     });
     // Clear fields after successful update
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
+    setPasswordInfo({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
   }
 
   return (
@@ -125,7 +141,7 @@ export default function ProfilePage() {
                       alt="User avatar"
                       data-ai-hint="person portrait"
                     />
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarFallback>{accountInfo.fullName.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <Button
                     size="icon"
@@ -136,8 +152,8 @@ export default function ProfilePage() {
                     <span className="sr-only">Change photo</span>
                   </Button>
                 </div>
-                <CardTitle className="text-2xl">User</CardTitle>
-                <CardDescription>user@example.com</CardDescription>
+                <CardTitle className="text-2xl">{accountInfo.fullName}</CardTitle>
+                <CardDescription>{accountInfo.email}</CardDescription>
               </CardHeader>
               <CardContent className="text-center">
                 <Separator className="my-4" />
@@ -175,12 +191,12 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input id="fullName" value={accountInfo.fullName} onChange={handleAccountInfoChange} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <Input id="email" type="email" value={accountInfo.email} onChange={handleAccountInfoChange} />
                 </div>
                 <Button onClick={handleSaveChanges}>Save Changes</Button>
               </CardContent>
@@ -219,16 +235,16 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input id="current-password" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Input id="currentPassword" type="password" value={passwordInfo.currentPassword} onChange={handlePasswordInfoChange} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="new-password">New Password</Label>
-                  <Input id="new-password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input id="newPassword" type="password" value={passwordInfo.newPassword} onChange={handlePasswordInfoChange} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input id="confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input id="confirmPassword" type="password" value={passwordInfo.confirmPassword} onChange={handlePasswordInfoChange} />
                 </div>
                 <Button onClick={handleUpdatePassword}>Update Password</Button>
               </CardContent>
