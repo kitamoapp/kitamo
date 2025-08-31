@@ -19,6 +19,9 @@ import {
   ChartLegendContent,
 } from '../ui/chart';
 import { useCurrency } from '@/context/currency-context';
+import { useMemo } from 'react';
+import type { Period } from '@/app/dashboard/page';
+import { subDays, format, getWeek, getMonth, getYear } from 'date-fns';
 
 const barChartConfig = {
   income: {
@@ -31,37 +34,77 @@ const barChartConfig = {
   },
 } satisfies ChartConfig;
 
-
-export function FinancialSummaryChart() {
+export function FinancialSummaryChart({ period }: { period: Period }) {
   const { formatCurrency } = useCurrency();
   const { transactions } = useTransactions();
 
-  const barChartData = transactions
-    .reduce(
-      (acc, t) => {
-        const day = new Date(t.date).toLocaleDateString('en-US', {
-          day: 'numeric',
-          month: 'short',
+  const barChartData = useMemo(() => {
+    const now = new Date();
+    let filteredTransactions = transactions;
+
+    if (period === 'day') {
+        const sevenDaysAgo = subDays(now, 6);
+        filteredTransactions = transactions.filter(t => new Date(t.date) >= sevenDaysAgo && new Date(t.date) <= now);
+    }
+
+    const dataMap = new Map<string, { income: number; expenses: number }>();
+
+    filteredTransactions.forEach(t => {
+      const date = new Date(t.date);
+      let key = '';
+
+      switch (period) {
+        case 'day':
+          key = format(date, 'MMM d');
+          break;
+        case 'week':
+          key = `Week ${getWeek(date)}`;
+          break;
+        case 'month':
+          key = format(date, 'MMM');
+          break;
+        case 'year':
+          key = format(date, 'yyyy');
+          break;
+      }
+
+      if (!dataMap.has(key)) {
+        dataMap.set(key, { income: 0, expenses: 0 });
+      }
+
+      const entry = dataMap.get(key)!;
+      if (t.type === 'income') {
+        entry.income += t.amount;
+      } else {
+        entry.expenses += t.amount;
+      }
+    });
+
+    const result = Array.from(dataMap.entries()).map(([key, value]) => ({
+      day: key,
+      ...value,
+    }));
+
+    // Consistent sorting logic needed here for chronological display
+    if (period === 'day' || period === 'month' || period === 'year') {
+        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        result.sort((a, b) => {
+            if (period === 'year') {
+                return parseInt(a.day) - parseInt(b.day);
+            }
+            if (period === 'month') {
+                return monthOrder.indexOf(a.day) - monthOrder.indexOf(b.day);
+            }
+            // For day view, we can rely on string sort if format is `MMM d` and within same year
+            return new Date(a.day + ', ' + getYear(now)).getTime() - new Date(b.day + ', ' + getYear(now)).getTime();
         });
-        let entry = acc.find((e) => e.day === day);
-        if (!entry) {
-          entry = { day, income: 0, expenses: 0 };
-          acc.push(entry);
-        }
-        if (t.type === 'income') {
-          entry.income += t.amount;
-        } else {
-          entry.expenses += t.amount;
-        }
-        return acc;
-      },
-      [] as { day: string; income: number; expenses: number }[]
-    )
-    .sort(
-      (a, b) =>
-        new Date(a.day + ', 2024').getTime() -
-        new Date(b.day + ', 2024').getTime()
-    );
+    } else if (period === 'week') {
+        result.sort((a,b) => parseInt(a.day.split(' ')[1]) - parseInt(b.day.split(' ')[1]));
+    }
+    
+    return result;
+
+  }, [transactions, period]);
 
   return (
       <ChartContainer

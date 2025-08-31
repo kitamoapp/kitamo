@@ -43,6 +43,7 @@ import { Label } from '@/components/ui/label';
 import { TransactionsTable } from '@/components/transactions/transactions-table';
 import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
 import { SetReminderDialog } from '@/components/transactions/set-reminder-dialog';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -52,10 +53,13 @@ const currencyIcons: Record<Currency, React.ElementType> = {
   PHP: PhilippinePeso,
 };
 
+export type Period = 'day' | 'week' | 'month' | 'year';
+
 export default function DashboardPage() {
   const { currency, formatCurrency } = useCurrency();
   const { currentTier } = useSubscription();
   const [showCustomizeDialog, setShowCustomizeDialog] = useState(false);
+  const [period, setPeriod] = useState<Period>('month');
 
   // State for dashboard component visibility
   const [visibleComponents, setVisibleComponents] = useState({
@@ -170,14 +174,24 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {visibleComponents.financialSummary && (
             <Card>
-              <CardHeader>
-                <CardTitle>Financial Summary</CardTitle>
-                <CardDescription>
-                  Your income and expenses over time.
-                </CardDescription>
+              <CardHeader className='flex-row items-center justify-between pb-2 space-y-0'>
+                <div>
+                  <CardTitle>Financial Summary</CardTitle>
+                  <CardDescription>
+                    Your income and expenses over time.
+                  </CardDescription>
+                </div>
+                <Tabs value={period} onValueChange={(value) => setPeriod(value as Period)} className="space-y-4">
+                  <TabsList>
+                    <TabsTrigger value="day">Day</TabsTrigger>
+                    <TabsTrigger value="week">Week</TabsTrigger>
+                    <TabsTrigger value="month">Month</TabsTrigger>
+                    <TabsTrigger value="year">Year</TabsTrigger>
+                  </TabsList>
+                </Tabs>
               </CardHeader>
               <CardContent className="pl-2">
-                <FinancialSummaryChart />
+                <FinancialSummaryChart period={period} />
               </CardContent>
             </Card>
           )}
