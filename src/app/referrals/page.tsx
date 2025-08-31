@@ -2,7 +2,6 @@
 import { AppLayout } from '@/components/app-layout';
 import { ReferralCodeCard } from '@/components/referrals/referral-code-card';
 import { ReferralFaq } from '@/components/referrals/referral-faq';
-import { ReferredUsersTable } from '@/components/referrals/referred-users-table';
 import { MilestoneProgressCard } from '@/components/referrals/milestone-progress-card';
 import { ReferralNetworkVisualizer } from '@/components/referrals/referral-network-visualizer';
 
@@ -23,7 +22,6 @@ export default function ReferralsPage() {
           <div className="lg:col-span-2 space-y-8">
             <MilestoneProgressCard />
             <ReferralNetworkVisualizer />
-            <ReferredUsersTable />
           </div>
           <div className="lg:col-span-1 space-y-8">
             <ReferralCodeCard />
