@@ -159,7 +159,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     features: [
       'All Silver features',
       'Highest earning cap',
-      'Priority Support',
+      'Export reports to PDF & CSV',
       'Early access to new features',
     ],
     requiredReferrals: 20,
@@ -174,7 +174,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 50,
     features: [
       'All Gold features',
-      'Dedicated Account Manager',
+      'Customizable dashboard views',
       'Unlimited earning potential',
       'Exclusive partner offers',
     ],
