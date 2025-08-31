@@ -24,21 +24,22 @@ import { Button } from '@/components/ui/button';
 import { SubscriptionPlanCard } from '@/components/subscriptions/subscription-plan-card';
 import { PaymentMethodForm } from '@/components/payment-method-form';
 import { useToast } from '@/hooks/use-toast';
+import { usePaymentMethods } from '@/context/payment-method-context';
 
 export default function SubscriptionsPage() {
   const { setCurrentTier } = useSubscription();
   const { toast } = useToast();
+  const { paymentMethods, addPaymentMethod } = usePaymentMethods();
+  
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
   const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(
     null
   );
-  // Simulate if the user has a payment method. Default to false for demo.
-  const [hasPaymentMethod, setHasPaymentMethod] = useState(false);
 
   const handleChoosePlan = (tier: SubscriptionTier) => {
     setSelectedTier(tier);
-    if (hasPaymentMethod) {
+    if (paymentMethods.length > 0) {
       setShowConfirmation(true);
     } else {
       setShowAddPaymentDialog(true);
@@ -58,14 +59,11 @@ export default function SubscriptionsPage() {
   };
 
   const handleAddPaymentMethod = (values: PaymentMethodValues) => {
-    // In a real app, you'd save the payment info to a secure service.
-    // For this demo, we'll just simulate it.
-    console.log('New payment method added:', values);
+    addPaymentMethod(values);
     toast({
       title: 'Payment Method Added',
       description: 'Your new payment method has been saved.',
     });
-    setHasPaymentMethod(true);
     setShowAddPaymentDialog(false);
     // After adding a payment method, show the confirmation dialog.
     setShowConfirmation(true);
@@ -133,5 +131,3 @@ export default function SubscriptionsPage() {
     </>
   );
 }
-
-    

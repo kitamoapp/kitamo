@@ -10,6 +10,7 @@ import { SubscriptionProvider } from '@/context/subscription-context';
 import { ReferredUserProvider } from '@/context/referred-user-context';
 import { BudgetProvider } from '@/context/budget-context';
 import { ReminderProvider } from '@/context/reminder-context';
+import { PaymentMethodProvider } from '@/context/payment-method-context';
 
 export const metadata: Metadata = {
   title: 'KitaMo',
@@ -56,7 +57,9 @@ export default function RootLayout({
                 <SubscriptionProvider>
                   <BudgetProvider>
                     <ReminderProvider>
-                      {children}
+                      <PaymentMethodProvider>
+                        {children}
+                      </PaymentMethodProvider>
                     </ReminderProvider>
                   </BudgetProvider>
                 </SubscriptionProvider>

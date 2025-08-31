@@ -24,11 +24,6 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -42,6 +37,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { PaymentMethodForm, baseDefaultValues } from '@/components/payment-method-form';
 import type { PaymentMethod, PaymentMethodValues } from '@/lib/types';
+import { usePaymentMethods } from '@/context/payment-method-context';
 
 
 // For demonstration, we'll have a list of valid codes.
@@ -53,6 +49,12 @@ export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { 
+    paymentMethods, 
+    addPaymentMethod, 
+    updatePaymentMethod, 
+    deletePaymentMethod 
+  } = usePaymentMethods();
 
   // State for forms
   const [accountInfo, setAccountInfo] = useState({
@@ -68,10 +70,7 @@ export default function ProfilePage() {
   const [hasReferralCode, setHasReferralCode] = useState(false);
   const [avatarSrc, setAvatarSrc] = useState<string | null>(`https://picsum.photos/100/100`);
 
-  // State for payment methods
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-      { id: 'card-1', type: 'Card', last4: '4242', expiry: '12/26', brand: 'Visa', cardNumber: '4242424242424242' }
-  ]);
+  // State for payment methods dialog
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [editingPaymentMethod, setEditingPaymentMethod] = useState<PaymentMethod | null>(null);
   const [showDeletePaymentAlert, setShowDeletePaymentAlert] = useState(false);
@@ -182,54 +181,17 @@ export default function ProfilePage() {
   }
 
   const handlePaymentFormSubmit = (values: PaymentMethodValues) => {
-    let newOrUpdatedMethod: PaymentMethod;
-    const id = editingPaymentMethod ? editingPaymentMethod.id : `payment-${Date.now()}`;
-
-    switch (values.type) {
-        case 'Card':
-            newOrUpdatedMethod = {
-                id,
-                type: 'Card',
-                last4: values.cardNumber.slice(-4),
-                expiry: values.expiry,
-                brand: values.cardNumber.startsWith('4') ? 'Visa' : 'Mastercard',
-                cardNumber: values.cardNumber,
-            };
-            break;
-        case 'Bank':
-            newOrUpdatedMethod = {
-                id,
-                type: 'Bank',
-                last4: values.accountNumber.slice(-4),
-                bankName: values.bankName,
-                accountNumber: values.accountNumber,
-                routingNumber: values.routingNumber
-            };
-            break;
-        case 'Wallet':
-            newOrUpdatedMethod = {
-                id,
-                type: 'Wallet',
-                provider: values.provider,
-                email: values.email,
-            };
-            break;
-        default:
-            toast({ title: 'Error', description: 'Invalid payment type.', variant: 'destructive'});
-            return;
-    }
-    
     if (editingPaymentMethod) {
-      setPaymentMethods(prev => prev.map(p => p.id === id ? newOrUpdatedMethod : p));
-       toast({
+      updatePaymentMethod(editingPaymentMethod.id, values);
+      toast({
           title: 'Payment Method Updated',
-          description: `Your ${newOrUpdatedMethod.type} details have been updated.`
+          description: `Your ${values.type} details have been updated.`
       });
     } else {
-      setPaymentMethods(prev => [...prev, newOrUpdatedMethod]);
-       toast({
+      addPaymentMethod(values);
+      toast({
           title: 'Payment Method Added',
-          description: `Your ${newOrUpdatedMethod.type} has been successfully added.`
+          description: `Your ${values.type} has been successfully added.`
       });
     }
 
@@ -244,7 +206,7 @@ export default function ProfilePage() {
 
   const handleDeletePaymentConfirm = () => {
     if (paymentMethodToDelete) {
-        setPaymentMethods(prev => prev.filter(p => p.id !== paymentMethodToDelete));
+        deletePaymentMethod(paymentMethodToDelete);
         toast({
             title: 'Payment Method Removed',
             description: 'The selected payment method has been deleted.'
@@ -399,6 +361,11 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     ))}
+                     {paymentMethods.length === 0 && (
+                      <div className="text-center text-muted-foreground py-6">
+                        You have no saved payment methods.
+                      </div>
+                    )}
                     <Button variant="outline" className="w-full" onClick={() => handleOpenPaymentDialog(null)}>
                         <PlusCircle className="h-4 w-4 mr-2" />
                         Add New Payment Method
@@ -496,5 +463,3 @@ export default function ProfilePage() {
     </>
   );
 }
-
-    
