@@ -56,14 +56,10 @@ const MessengerIcon = (props: React.SVGProps<SVGSVGElement>) => (
     width="24"
     height="24"
     viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    fill="currentColor"
     {...props}
   >
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.438 8.632v4.257l3.465-2.053c1.34.42 2.766.653 4.257.653C18.627 22.222 24 17.248 24 11.111S18.627 0 12 0zm1.242 16.485l-2.35-2.73L6 16.485l6.758-7.53-1.92 2.656 2.35 2.73 4.81-2.73L13.242 16.485z" />
   </svg>
 );
 
@@ -92,16 +88,19 @@ export function ReferralCodeCard() {
     }, 2000);
   };
   
-  const referralMessage = `Hey! I'm using KitaMo to manage my finances. Sign up with my code to get a bonus: ${referralCode}. Link: ${typeof window !== 'undefined' ? window.location.origin : ''}/signup?ref=${referralCode}`;
+  const referralLink = `${typeof window !== 'undefined' ? window.location.origin : ''}/signup?ref=${referralCode}`;
+  const referralMessage = `Hey! I'm using KitaMo to manage my finances. Sign up with my code to get a bonus: ${referralCode}. Link: ${referralLink}`;
 
   const shareActions = [
     { name: 'WhatsApp', icon: WhatsAppIcon, url: `https://wa.me/?text=${encodeURIComponent(referralMessage)}`},
-    { name: 'Telegram', icon: TelegramIcon, url: `https://t.me/share/url?url=${encodeURIComponent(referralMessage)}` },
-    { name: 'Messenger', icon: MessengerIcon, url: `fb-messenger://share/?link=${encodeURIComponent(referralMessage)}` }
+    { name: 'Telegram', icon: TelegramIcon, url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(referralMessage)}` },
+    { name: 'Messenger', icon: MessengerIcon, url: `https://www.facebook.com/dialog/send?app_id=YOUR_APP_ID&link=${encodeURIComponent(referralLink)}&redirect_uri=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}` }
   ];
   
   const handleShare = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    // A placeholder app_id is used. For a real app, this should be a valid Facebook App ID.
+    const finalUrl = url.replace('YOUR_APP_ID', '1234567890');
+    window.open(finalUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
   }
 
   return (
