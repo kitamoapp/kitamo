@@ -13,6 +13,56 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useSettings } from '@/hooks/use-settings';
 import type { Setting } from '@/hooks/use-settings';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function SettingsSkeleton() {
+  return (
+    <div className="space-y-8">
+       <div>
+          <Skeleton className="h-9 w-48" />
+          <Skeleton className="h-5 w-80 mt-2" />
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle><Skeleton className="h-6 w-32" /></CardTitle>
+            <CardDescription><Skeleton className="h-4 w-64" /></CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-4 w-48" />
+              </div>
+              <Skeleton className="h-6 w-11 rounded-full" />
+            </div>
+          </CardContent>
+        </Card>
+         <Card>
+          <CardHeader>
+            <CardTitle><Skeleton className="h-6 w-32" /></CardTitle>
+            <CardDescription><Skeleton className="h-4 w-64" /></CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
+              <div className="space-y-1">
+                 <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-4 w-48" />
+              </div>
+              <Skeleton className="h-6 w-11 rounded-full" />
+            </div>
+            <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
+              <div className="space-y-1">
+                 <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-4 w-48" />
+              </div>
+              <Skeleton className="h-6 w-11 rounded-full" />
+            </div>
+          </CardContent>
+        </Card>
+    </div>
+  )
+}
+
 
 export default function SettingsPage() {
   const { settings, updateSetting, isLoaded } = useSettings();
@@ -22,8 +72,11 @@ export default function SettingsPage() {
   };
 
   if (!isLoaded) {
-    // You can return a loading skeleton here if you want
-    return null;
+    return (
+      <AppLayout>
+        <SettingsSkeleton />
+      </AppLayout>
+    );
   }
 
   return (
@@ -46,7 +99,7 @@ export default function SettingsPage() {
           <CardContent>
             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
               <div className="space-y-0.5">
-                <Label htmlFor="biometric-login">Biometric Login</Label>
+                <Label htmlFor="biometric-login" className="text-base">Biometric Login</Label>
                 <p className="text-sm text-muted-foreground">
                   Use your fingerprint or face to log in to your account.
                 </p>
@@ -71,7 +124,7 @@ export default function SettingsPage() {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
               <div className="space-y-0.5">
-                <Label htmlFor="email-notifications">Email Notifications</Label>
+                <Label htmlFor="email-notifications" className="text-base">Email Notifications</Label>
                 <p className="text-sm text-muted-foreground">
                   Receive emails about your account activity and reminders.
                 </p>
@@ -85,7 +138,7 @@ export default function SettingsPage() {
             </div>
             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
               <div className="space-y-0.5">
-                <Label htmlFor="push-notifications">Push Notifications</Label>
+                <Label htmlFor="push-notifications" className="text-base">Push Notifications</Label>
                 <p className="text-sm text-muted-foreground">
                   Get push notifications on your devices for instant updates.
                 </p>

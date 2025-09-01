@@ -22,8 +22,14 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 
 const getMessagingInstance = () => {
+    // Check for browser environment and service worker support
     if (typeof window !== 'undefined' && "serviceWorker" in navigator) {
-        return getMessaging(app);
+        try {
+            return getMessaging(app);
+        } catch (error) {
+            console.error("Firebase Messaging not supported in this browser:", error);
+            return null;
+        }
     }
     return null;
 }
@@ -34,30 +40,33 @@ const requestNotificationPermission = async () => {
         return null;
     }
 
+    const messaging = getMessagingInstance();
+    if (!messaging) {
+        return null;
+    }
+
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
         console.log('Notification permission granted.');
-        const messaging = getMessagingInstance();
-        if (messaging) {
-            try {
-                const token = await getToken(messaging, { vapidKey: 'B...' }); // VAPID key is managed by Firebase App Hosting
-                console.log('FCM Token:', token);
-                
-                // Listen for foreground messages
-                onMessage(messaging, (payload) => {
-                    console.log('Message received. ', payload);
-                    // Customize notification here
-                    new Notification(payload.notification?.title || 'New Notification', {
-                        body: payload.notification?.body,
-                        icon: '/icons/icon-192x192.png'
-                    });
+        try {
+            // The VAPID key is managed by Firebase App Hosting, so it's not needed here.
+            const token = await getToken(messaging);
+            console.log('FCM Token:', token);
+            
+            // Listen for foreground messages
+            onMessage(messaging, (payload) => {
+                console.log('Message received. ', payload);
+                // Customize notification here
+                new Notification(payload.notification?.title || 'New Notification', {
+                    body: payload.notification?.body,
+                    icon: '/icons/icon-192x192.png'
                 });
+            });
 
-                return token;
-            } catch (err) {
-                console.error('An error occurred while retrieving token. ', err);
-                return null;
-            }
+            return token;
+        } catch (err) {
+            console.error('An error occurred while retrieving token. ', err);
+            return null;
         }
     } else {
         console.log('Unable to get permission to notify.');
@@ -67,5 +76,3 @@ const requestNotificationPermission = async () => {
 
 
 export { app, auth, requestNotificationPermission, getMessagingInstance };
-
-

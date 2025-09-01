@@ -33,25 +33,19 @@ export function useSettings() {
     try {
       const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
       const promptSeen = window.localStorage.getItem(BIOMETRIC_PROMPT_SEEN_KEY);
+      const initialSettings = item ? { ...defaultSettings, ...JSON.parse(item) } : defaultSettings;
 
-      if (item) {
-        const storedSettings = JSON.parse(item);
-        setSettings({ ...defaultSettings, ...storedSettings });
-        if (!storedSettings.biometricLogin && !promptSeen) {
-            setShowBiometricPrompt(true);
-        }
-      } else {
-        setSettings(defaultSettings);
-         if (!promptSeen) {
-            setShowBiometricPrompt(true);
-        }
+      setSettings(initialSettings);
+      
+      if (!initialSettings.biometricLogin && !promptSeen) {
+        setShowBiometricPrompt(true);
       }
-
     } catch (error) {
       console.error('Error reading settings from localStorage', error);
       setSettings(defaultSettings);
+    } finally {
+        setIsLoaded(true);
     }
-    setIsLoaded(true);
   }, []);
 
   const setBiometricPromptSeen = () => {
@@ -75,6 +69,7 @@ export function useSettings() {
 
   const setupBiometrics = useCallback(async (): Promise<boolean> => {
     try {
+        // This is a mock challenge. In a real app, this should come from the server.
         const challenge = new Uint8Array(32);
         window.crypto.getRandomValues(challenge);
 
@@ -91,7 +86,7 @@ export function useSettings() {
                     name: 'user@example.com',
                     displayName: 'User',
                 },
-                pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+                pubKeyCredParams: [{ type: 'public-key', alg: -7 }], // ES256
                 authenticatorSelection: {
                     authenticatorAttachment: 'platform',
                     userVerification: 'required',
@@ -100,7 +95,7 @@ export function useSettings() {
             }
         });
         
-        console.log('Credential created:', credential);
+        console.log('Biometric credential created:', credential);
         
         toast({
             title: 'Biometric Login Enabled',
@@ -116,18 +111,28 @@ export function useSettings() {
             title: 'Biometric Setup Failed',
             description: 'Could not set up biometric login. Your device may not support it or you may have cancelled the request.',
         });
+        setSettings(prev => ({...prev, biometricLogin: false}));
         return false;
     }
   }, [toast]);
 
 
   const updateSetting = useCallback(async (setting: Setting, value: boolean): Promise<void> => {
-    if (setting === 'biometricLogin' && value === true) {
+    if (setting === 'biometricLogin') {
+      if (value) {
         await setupBiometrics();
-    } else if (setting === 'pushNotifications' && value === true) {
+      } else {
+        setSettings(prev => ({...prev, biometricLogin: false}));
+        toast({
+            title: 'Biometric Login Disabled',
+            description: 'You will need to use your password to sign in.',
+        });
+      }
+    } else if (setting === 'pushNotifications') {
+      if (value) {
         const token = await requestNotificationPermission();
         if (token) {
-            setSettings(prev => ({ ...prev, [setting]: true }));
+            setSettings(prev => ({ ...prev, pushNotifications: true }));
             toast({
                 title: 'Notifications Enabled',
                 description: 'You will now receive push notifications.',
@@ -139,25 +144,20 @@ export function useSettings() {
                 description: 'Please enable notifications in your browser settings.',
             });
         }
+      } else {
+        setSettings(prev => ({...prev, pushNotifications: false}));
+        toast({
+            title: 'Notifications Disabled',
+            description: 'You will no longer receive push notifications.',
+        });
+      }
     }
     else {
         setSettings(prev => ({ ...prev, [setting]: value }));
-        if (setting === 'emailNotifications') {
-            toast({
-                title: 'Settings Updated',
-                description: 'Your preferences have been saved.',
-            });
-        } else if (setting === 'biometricLogin' && value === false) {
-             toast({
-                title: 'Biometric Login Disabled',
-                description: 'You will need to use your password to sign in.',
-            });
-        } else if (setting === 'pushNotifications' && value === false) {
-            toast({
-                title: 'Notifications Disabled',
-                description: 'You will no longer receive push notifications.',
-            });
-        }
+        toast({
+            title: 'Settings Updated',
+            description: 'Your preferences have been saved.',
+        });
     }
   }, [setupBiometrics, toast]);
 
