@@ -26,11 +26,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  // Initialize auth as null and set it in useEffect to ensure it's client-side
   const [auth, setAuth] = useState<Auth | null>(null);
 
   useEffect(() => {
-    // getAuth() is now called from our dedicated function which is client-side safe
     const authInstance = getFirebaseAuth();
     setAuth(authInstance);
 
@@ -52,7 +50,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
-        // Manually trigger a state update for the current user
         setUser({ ...userCredential.user, displayName });
     }
   };
