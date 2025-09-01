@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
