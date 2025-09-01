@@ -112,9 +112,12 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
         if (foundTier) {
           setCurrentTierState(foundTier);
         }
+      } else {
+        setCurrentTierState(subscriptionTiers[0]);
       }
     } catch (error) {
       console.error('Error reading subscription tier from localStorage', error);
+      setCurrentTierState(subscriptionTiers[0]);
     }
     setIsLoaded(true);
   }, []);

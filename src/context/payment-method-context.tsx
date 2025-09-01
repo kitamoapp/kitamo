@@ -24,9 +24,7 @@ const PaymentMethodContext = createContext<PaymentMethodContextType | undefined>
 
 const LOCAL_STORAGE_KEY = 'kitamo-payment-methods';
 
-const initialPaymentMethods: PaymentMethod[] = [
-    { id: 'card-1', type: 'Card', last4: '4242', expiry: '12/26', brand: 'Visa' }
-];
+const initialPaymentMethods: PaymentMethod[] = [];
 
 export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);

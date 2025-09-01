@@ -61,6 +61,10 @@ export function useSettings() {
     if (isLoaded) {
       try {
         window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(settings));
+        // Also remove the prompt seen key if biometrics is enabled.
+        if (settings.biometricLogin) {
+            window.localStorage.removeItem(BIOMETRIC_PROMPT_SEEN_KEY);
+        }
       } catch (error) {
         console.error('Error saving settings to localStorage', error);
       }
