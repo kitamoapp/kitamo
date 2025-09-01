@@ -3,7 +3,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { 
-    getAuth, 
     onAuthStateChanged, 
     User, 
     createUserWithEmailAndPassword, 
@@ -12,7 +11,7 @@ import {
     updateProfile,
     type Auth
 } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { getFirebaseAuth } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -31,8 +30,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [auth, setAuth] = useState<Auth | null>(null);
 
   useEffect(() => {
-    // getAuth() is client-side only
-    const authInstance = getAuth(app);
+    // getAuth() is now called from our dedicated function which is client-side safe
+    const authInstance = getFirebaseAuth();
     setAuth(authInstance);
 
     const unsubscribe = onAuthStateChanged(authInstance, (user) => {
@@ -53,10 +52,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
-    }
-    // Manually set user after signup to update the context state immediately
-    if (auth.currentUser) {
-        setUser(auth.currentUser);
+        // Manually trigger a state update for the current user
+        setUser({ ...userCredential.user, displayName });
     }
   };
 
