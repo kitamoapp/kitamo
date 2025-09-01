@@ -25,6 +25,7 @@ interface SubscriptionContextType extends ReferralEarnings {
   currentTier: SubscriptionTier;
   setCurrentTier: (tier: SubscriptionTier) => void;
   nextTier: SubscriptionTier | undefined;
+  isLoaded: boolean;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
@@ -91,7 +92,7 @@ const calculateEarnings = (
   }
 
   const payableVolume = Math.min(leftLegVolume, rightLegVolume);
-  const totalEarnings = payableVolume * tier.commissionRate;
+  const totalEarnings = Math.min(payableVolume * tier.commissionRate, tier.earningCap ?? Infinity);
 
   return { totalEarnings, leftLegVolume, rightLegVolume, payableVolume };
 };
@@ -158,6 +159,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     leftLegVolume,
     rightLegVolume,
     payableVolume,
+    isLoaded,
   };
 
   return (

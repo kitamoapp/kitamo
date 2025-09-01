@@ -24,42 +24,42 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Landmark, Wallet, CreditCard, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from '@/components/ui/alert-dialog';
+
+type DialogState = 'closed' | 'confirming' | 'addingPayment' | 'processingPayment';
 
 export default function SubscriptionsPage() {
   const { setCurrentTier } = useSubscription();
   const { toast } = useToast();
   const { paymentMethods, addPaymentMethod } = usePaymentMethods();
   
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
-  const [showPaymentProcessing, setShowPaymentProcessing] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(
-    null
-  );
+  const [dialogState, setDialogState] = useState<DialogState>('closed');
+  const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (paymentMethods.length > 0) {
+    if (paymentMethods.length > 0 && !selectedPaymentMethodId) {
       setSelectedPaymentMethodId(paymentMethods[0].id);
     }
-  }, [paymentMethods]);
-
+  }, [paymentMethods, selectedPaymentMethodId]);
 
   const handleChoosePlan = (tier: SubscriptionTier) => {
     setSelectedTier(tier);
     if (paymentMethods.length > 0) {
-      setSelectedPaymentMethodId(paymentMethods[0].id); // Pre-select first payment method
-      setShowConfirmation(true);
+      setDialogState('confirming');
     } else {
-      setShowAddPaymentDialog(true);
+      setDialogState('addingPayment');
     }
   };
+  
+  const handleDialogClose = () => {
+    setDialogState('closed');
+    setSelectedTier(null);
+  }
 
   const handleInitiatePurchase = () => {
     if (selectedTier && selectedPaymentMethodId) {
-        setShowConfirmation(false);
-        setShowPaymentProcessing(true);
+        setDialogState('processingPayment');
     }
   };
   
@@ -71,20 +71,18 @@ export default function SubscriptionsPage() {
         description: `You are now subscribed to the ${selectedTier.name} plan.`,
       });
     }
-    setShowPaymentProcessing(false);
-    setSelectedTier(null);
+    handleDialogClose();
     setSelectedPaymentMethodId(null);
   }
 
   const handleAddPaymentMethod = (values: PaymentMethodValues) => {
-    addPaymentMethod(values);
+    const newMethod = addPaymentMethod(values);
     toast({
       title: 'Payment Method Added',
       description: 'Your new payment method has been saved.',
     });
-    setShowAddPaymentDialog(false);
-    // After adding a payment method, show the confirmation dialog.
-    setShowConfirmation(true);
+    setSelectedPaymentMethodId(newMethod.id);
+    setDialogState('confirming');
   };
   
   const getPaymentMethodIcon = (type: PaymentMethod['type']) => {
@@ -124,19 +122,19 @@ export default function SubscriptionsPage() {
       </AppLayout>
 
       <Dialog
-        open={showAddPaymentDialog}
-        onOpenChange={setShowAddPaymentDialog}
+        open={dialogState === 'addingPayment'}
+        onOpenChange={(open) => !open && handleDialogClose()}
       >
         <DialogContent>
           <PaymentMethodForm 
             onSubmit={handleAddPaymentMethod}
-            onCancel={() => setShowAddPaymentDialog(false)}
+            onCancel={handleDialogClose}
             isSubscriptionContext={true}
           />
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+      <Dialog open={dialogState === 'confirming'} onOpenChange={(open) => !open && handleDialogClose()}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Your Subscription</DialogTitle>
@@ -173,11 +171,9 @@ export default function SubscriptionsPage() {
             </RadioGroup>
           </div>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" onClick={() => setSelectedTier(null)}>
+            <Button variant="outline" onClick={handleDialogClose}>
                 Cancel
-              </Button>
-            </DialogClose>
+            </Button>
             <Button onClick={handleInitiatePurchase} disabled={!selectedPaymentMethodId}>
               Confirm Purchase
             </Button>
@@ -185,7 +181,7 @@ export default function SubscriptionsPage() {
         </DialogContent>
       </Dialog>
       
-       <AlertDialog open={showPaymentProcessing} onOpenChange={setShowPaymentProcessing}>
+       <AlertDialog open={dialogState === 'processingPayment'} onOpenChange={(open) => !open && handleDialogClose()}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 mb-4'>

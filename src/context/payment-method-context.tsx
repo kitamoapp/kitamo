@@ -14,7 +14,7 @@ import type { PaymentMethod, PaymentMethodValues } from '@/lib/types';
 
 interface PaymentMethodContextType {
   paymentMethods: PaymentMethod[];
-  addPaymentMethod: (values: PaymentMethodValues) => void;
+  addPaymentMethod: (values: PaymentMethodValues) => PaymentMethod;
   updatePaymentMethod: (id: string, values: PaymentMethodValues) => void;
   deletePaymentMethod: (id: string) => void;
   isLoaded: boolean;
@@ -61,6 +61,11 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
   const createPaymentMethodFromValues = (id: string, values: PaymentMethodValues): PaymentMethod => {
      switch (values.type) {
         case 'Card':
+            // In a real app, you would send the full card number to a PSP, not store it.
+            // We only store non-sensitive parts.
+            if (!/^\d{16}$/.test(values.cardNumber)) {
+                throw new Error("Invalid card number for brand detection");
+            }
             return {
                 id,
                 type: 'Card',
@@ -85,9 +90,10 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
     }
   }
 
-  const addPaymentMethod = useCallback((values: PaymentMethodValues) => {
+  const addPaymentMethod = useCallback((values: PaymentMethodValues): PaymentMethod => {
     const newMethod = createPaymentMethodFromValues(uuidv4(), values);
     setPaymentMethods(prev => [...prev, newMethod]);
+    return newMethod;
   }, []);
 
   const updatePaymentMethod = useCallback((id: string, values: PaymentMethodValues) => {
