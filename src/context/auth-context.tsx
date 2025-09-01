@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
+        // Manually update the user object to include the displayName immediately
         setUser({ ...userCredential.user, displayName });
     }
   };
