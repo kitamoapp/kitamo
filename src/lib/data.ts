@@ -101,6 +101,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Silver',
     price: 10,
+    annualPrice: 96, // 20% discount
     features: [
       { text: 'All Bronze features' },
       { text: 'Earn through referral system' },
@@ -116,6 +117,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Gold',
     price: 25,
+    annualPrice: 240, // 20% discount
     features: [
       { text: 'All Silver features' },
       { text: '{commissionRate}% commission on matched volume' },
@@ -131,6 +133,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Platinum',
     price: 40,
+    annualPrice: 384, // 20% discount
     features: [
       { text: 'All Gold features' },
       { text: '{commissionRate}% commission on matched volume' },

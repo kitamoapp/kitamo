@@ -51,6 +51,7 @@ const walletSchema = z.object({
 
 const paymentMethodSchema = z.object({
   type: z.enum(['Card', 'Bank', 'Wallet']),
+  autoPay: z.boolean(),
 }).and(z.union([
     cardSchema.extend({ type: z.literal('Card') }),
     bankSchema.extend({ type: z.literal('Bank') }),
@@ -67,6 +68,7 @@ export const baseDefaultValues: PaymentMethodValues = {
   bankName: '',
   provider: '',
   email: '',
+  autoPay: true,
 };
 
 interface PaymentMethodFormProps {
@@ -80,9 +82,10 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
   const form = useForm<PaymentMethodValues>({
     resolver: (data, context, options) => {
         const type = data.type;
-        if (type === 'Card') return zodResolver(cardSchema.extend({ type: z.literal('Card') }))(data, context, options);
-        if (type === 'Bank') return zodResolver(bankSchema.extend({ type: z.literal('Bank') }))(data, context, options);
-        if (type === 'Wallet') return zodResolver(walletSchema.extend({ type: z.literal('Wallet') }))(data, context, options);
+        const baseSchema = z.object({ type: z.enum(['Card', 'Bank', 'Wallet']), autoPay: z.boolean() });
+        if (type === 'Card') return zodResolver(baseSchema.extend(cardSchema.shape).extend({ type: z.literal('Card') }))(data, context, options);
+        if (type === 'Bank') return zodResolver(baseSchema.extend(bankSchema.shape).extend({ type: z.literal('Bank') }))(data, context, options);
+        if (type === 'Wallet') return zodResolver(baseSchema.extend(walletSchema.shape).extend({ type: z.literal('Wallet') }))(data, context, options);
         return zodResolver(paymentMethodSchema)(data, context, options);
     },
     defaultValues: baseDefaultValues,
@@ -95,6 +98,7 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
 
     if (editingMethod) {
       defaultValues.type = editingMethod.type;
+      defaultValues.autoPay = editingMethod.autoPay;
       
       switch (editingMethod.type) {
         case 'Card':

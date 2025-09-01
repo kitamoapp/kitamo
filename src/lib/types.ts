@@ -36,6 +36,7 @@ export type SubscriptionFeature = {
 export type SubscriptionTier = {
   name: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
   price: number;
+  annualPrice?: number;
   earningCap?: number;
   features: SubscriptionFeature[];
   borderColor: string;
@@ -63,6 +64,7 @@ export type Reminder = {
 interface BasePaymentMethod {
     id: string;
     type: 'Card' | 'Bank' | 'Wallet';
+    autoPay: boolean;
 }
 
 interface CardPaymentMethod extends BasePaymentMethod {
@@ -96,6 +98,7 @@ export type PaymentMethodValues = {
   bankName: string;
   provider: string;
   email: string;
+  autoPay: boolean;
 };
 
 export type NewReferredUser = {

@@ -17,15 +17,18 @@ import { Check } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
+import type { BillingCycle } from '@/app/subscriptions/page';
 
 interface SubscriptionPlanCardProps {
   tier: SubscriptionTier;
   onChoosePlan: (tier: SubscriptionTier) => void;
+  billingCycle: BillingCycle;
 }
 
 export function SubscriptionPlanCard({
   tier,
   onChoosePlan,
+  billingCycle
 }: SubscriptionPlanCardProps) {
   const { convertAndFormatCurrency } = useCurrency();
   const { currentTier, isLoaded } = useSubscription();
@@ -75,6 +78,8 @@ export function SubscriptionPlanCard({
         </Card>
     );
   }
+  
+  const price = billingCycle === 'annually' ? tier.annualPrice : tier.price;
 
   return (
     <Card
@@ -87,8 +92,18 @@ export function SubscriptionPlanCard({
       <CardHeader>
         <CardTitle>{tier.name}</CardTitle>
         <CardDescription>
-          {tier.price > 0 ? (
-            `${convertAndFormatCurrency(tier.price)} / month`
+          {price != null && price > 0 ? (
+            <>
+              <span className="text-2xl font-bold">{convertAndFormatCurrency(price)}</span>
+              <span className="text-muted-foreground">
+                {billingCycle === 'annually' ? '/year' : '/month'}
+              </span>
+              {billingCycle === 'annually' && tier.price > 0 && (
+                 <p className="text-sm text-muted-foreground">
+                   Originally {convertAndFormatCurrency(tier.price * 12)}/year
+                 </p>
+              )}
+            </>
           ) : (
             'Free'
           )}

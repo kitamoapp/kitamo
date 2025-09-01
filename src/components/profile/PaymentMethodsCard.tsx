@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PlusCircle, Edit, Trash2, CreditCard, Landmark, Wallet, Loader2 } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, CreditCard, Landmark, Wallet, Loader2, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { usePaymentMethods } from '@/context/payment-method-context';
 import type { PaymentMethod, PaymentMethodValues } from '@/lib/types';
@@ -12,10 +12,13 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { PaymentMethodForm } from '@/components/payment-method-form';
 import { Skeleton } from '../ui/skeleton';
+import { Label } from '../ui/label';
+import { Switch } from '../ui/switch';
+import { cn } from '@/lib/utils';
 
 export function PaymentMethodsCard() {
   const { toast } = useToast();
-  const { paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, isLoaded } = usePaymentMethods();
+  const { paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, isLoaded, toggleAutoPay } = usePaymentMethods();
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingPaymentMethod, setEditingPaymentMethod] = useState<PaymentMethod | null>(null);
@@ -63,6 +66,14 @@ export function PaymentMethodsCard() {
     setShowDeletePaymentAlert(false);
     setPaymentMethodToDelete(null);
   }
+  
+  const handleToggleAutoPay = (id: string, enabled: boolean) => {
+    toggleAutoPay(id, enabled);
+    toast({
+        title: 'Auto-Pay Updated',
+        description: `Auto-pay for this method has been ${enabled ? 'enabled' : 'disabled'}.`
+    });
+  }
 
   const getPaymentMethodIcon = (type: PaymentMethod['type']) => {
       switch (type) {
@@ -85,32 +96,43 @@ export function PaymentMethodsCard() {
         <CardContent className="space-y-4">
           {!isLoaded && (
             <div className="space-y-4">
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-28 w-full" />
+              <Skeleton className="h-28 w-full" />
             </div>
           )}
           {isLoaded && paymentMethods.map(method => (
-            <div key={method.id} className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4 rounded-lg border p-4">
-              <div className="flex items-center gap-4">
-                {getPaymentMethodIcon(method.type)}
-                <div>
-                  {method.type === 'Card' && <p className="font-semibold">{method.brand} ending in {method.last4}</p>}
-                  {method.type === 'Card' && <p className="text-sm text-muted-foreground">Expires {method.expiry}</p>}
-                  {method.type === 'Bank' && <p className="font-semibold">{method.bankName} ending in {method.last4}</p>}
-                  {method.type === 'Bank' && <p className="text-sm text-muted-foreground">Bank Account</p>}
-                  {method.type === 'Wallet' && <p className="font-semibold">{method.provider}</p>}
-                  {method.type === 'Wallet' && <p className="text-sm text-muted-foreground">{method.email}</p>}
+            <div key={method.id} className="flex flex-col gap-4 rounded-lg border p-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  {getPaymentMethodIcon(method.type)}
+                  <div>
+                    {method.type === 'Card' && <p className="font-semibold">{method.brand} ending in {method.last4}</p>}
+                    {method.type === 'Card' && <p className="text-sm text-muted-foreground">Expires {method.expiry}</p>}
+                    {method.type === 'Bank' && <p className="font-semibold">{method.bankName} ending in {method.last4}</p>}
+                    {method.type === 'Bank' && <p className="text-sm text-muted-foreground">Bank Account</p>}
+                    {method.type === 'Wallet' && <p className="font-semibold">{method.provider}</p>}
+                    {method.type === 'Wallet' && <p className="text-sm text-muted-foreground">{method.email}</p>}
+                  </div>
+                </div>
+                <div className='flex items-center gap-2 flex-shrink-0 self-end sm:self-center'>
+                  <Button variant="ghost" size="icon" onClick={() => handleOpenPaymentDialog(method)}>
+                    <Edit className="h-4 w-4" />
+                    <span className='sr-only'>Edit Card</span>
+                  </Button>
+                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDeletePaymentInitiate(method.id)}>
+                    <Trash2 className="h-4 w-4" />
+                    <span className='sr-only'>Remove Card</span>
+                  </Button>
                 </div>
               </div>
-              <div className='flex items-center gap-2 flex-shrink-0'>
-                <Button variant="ghost" size="icon" onClick={() => handleOpenPaymentDialog(method)}>
-                  <Edit className="h-4 w-4" />
-                  <span className='sr-only'>Edit Card</span>
-                </Button>
-                <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDeletePaymentInitiate(method.id)}>
-                  <Trash2 className="h-4 w-4" />
-                  <span className='sr-only'>Remove Card</span>
-                </Button>
+              <div className="flex items-center justify-between rounded-md bg-muted/50 p-3">
+                 <div className='flex items-center gap-2'>
+                    <RefreshCw className={cn("h-4 w-4", method.autoPay ? "text-primary" : "text-muted-foreground")} />
+                    <Label htmlFor={`autopay-${method.id}`} className="text-sm font-medium">
+                      Auto-Pay
+                    </Label>
+                 </div>
+                 <Switch id={`autopay-${method.id}`} checked={method.autoPay} onCheckedChange={(checked) => handleToggleAutoPay(method.id, checked)} />
               </div>
             </div>
           ))}

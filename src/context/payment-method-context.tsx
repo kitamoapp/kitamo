@@ -17,6 +17,7 @@ interface PaymentMethodContextType {
   addPaymentMethod: (values: PaymentMethodValues) => PaymentMethod;
   updatePaymentMethod: (id: string, values: PaymentMethodValues) => void;
   deletePaymentMethod: (id: string) => void;
+  toggleAutoPay: (id: string, enabled: boolean) => void;
   isLoaded: boolean;
 }
 
@@ -61,7 +62,7 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
         case 'Card':
             // In a real app, you would send the full card number to a PSP, not store it.
             // We only store non-sensitive parts.
-            if (!/^\d{16}$/.test(values.cardNumber)) {
+            if (!/^\d{16}$/.test(values.cardNumber) && !values.cardNumber.includes('•')) {
                 throw new Error("Invalid card number for brand detection");
             }
             return {
@@ -70,6 +71,7 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
                 last4: values.cardNumber.slice(-4),
                 expiry: values.expiry,
                 brand: values.cardNumber.startsWith('4') ? 'Visa' : 'Mastercard',
+                autoPay: values.autoPay,
             };
         case 'Bank':
             return {
@@ -77,6 +79,7 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
                 type: 'Bank',
                 last4: values.accountNumber.slice(-4),
                 bankName: values.bankName,
+                autoPay: values.autoPay,
             };
         case 'Wallet':
             return {
@@ -84,6 +87,7 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
                 type: 'Wallet',
                 provider: values.provider,
                 email: values.email,
+                autoPay: values.autoPay,
             };
     }
   }
@@ -102,9 +106,13 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
   const deletePaymentMethod = useCallback((id: string) => {
     setPaymentMethods(prev => prev.filter(p => p.id !== id));
   }, []);
+  
+  const toggleAutoPay = useCallback((id: string, enabled: boolean) => {
+    setPaymentMethods(prev => prev.map(p => p.id === id ? { ...p, autoPay: enabled } : p));
+  }, []);
 
   return (
-    <PaymentMethodContext.Provider value={{ paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, isLoaded }}>
+    <PaymentMethodContext.Provider value={{ paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, toggleAutoPay, isLoaded }}>
       {children}
     </PaymentMethodContext.Provider>
   );

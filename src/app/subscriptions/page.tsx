@@ -25,8 +25,10 @@ import { Label } from '@/components/ui/label';
 import { Landmark, Wallet, CreditCard, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from '@/components/ui/alert-dialog';
+import { Switch } from '@/components/ui/switch';
 
 type DialogState = 'closed' | 'confirming' | 'addingPayment' | 'processingPayment';
+export type BillingCycle = 'monthly' | 'annually';
 
 export default function SubscriptionsPage() {
   const { setCurrentTier } = useSubscription();
@@ -36,6 +38,7 @@ export default function SubscriptionsPage() {
   const [dialogState, setDialogState] = useState<DialogState>('closed');
   const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
 
   useEffect(() => {
     if (paymentMethods.length > 0 && !selectedPaymentMethodId) {
@@ -109,12 +112,26 @@ export default function SubscriptionsPage() {
             </p>
           </div>
 
+          <div className="flex items-center justify-center space-x-2">
+            <Label htmlFor="billing-cycle-switch">Monthly</Label>
+            <Switch
+                id="billing-cycle-switch"
+                checked={billingCycle === 'annually'}
+                onCheckedChange={(checked) => setBillingCycle(checked ? 'annually' : 'monthly')}
+            />
+            <Label htmlFor="billing-cycle-switch">Annually</Label>
+            <div className="ml-2 rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">
+                Save 20%
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {subscriptionTiers.map((tier) => (
               <SubscriptionPlanCard 
                 key={tier.name}
                 tier={tier}
                 onChoosePlan={handleChoosePlan}
+                billingCycle={billingCycle}
               />
             ))}
           </div>
@@ -140,7 +157,7 @@ export default function SubscriptionsPage() {
             <DialogTitle>Confirm Your Subscription</DialogTitle>
             <DialogDescription>
               You are upgrading to the{' '}
-              <span className="font-bold">{selectedTier?.name}</span> plan. The selected payment method below will be charged.
+              <span className="font-bold">{selectedTier?.name} ({billingCycle})</span> plan. The selected payment method below will be charged.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">

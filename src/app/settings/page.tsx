@@ -27,7 +27,14 @@ function SettingsSkeleton() {
             <CardTitle><Skeleton className="h-6 w-32" /></CardTitle>
             <CardDescription><Skeleton className="h-4 w-64" /></CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
+             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-4 w-48" />
+              </div>
+              <Skeleton className="h-6 w-11 rounded-full" />
+            </div>
             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
               <div className="space-y-1">
                 <Skeleton className="h-5 w-24" />
@@ -91,12 +98,12 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Security</CardTitle>
+            <CardTitle>Account</CardTitle>
             <CardDescription>
-              Manage your account security settings.
+              Manage your account and subscription settings.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
               <div className="space-y-0.5">
                 <Label htmlFor="biometric-login" className="text-base">Biometric Login</Label>
@@ -109,6 +116,20 @@ export default function SettingsPage() {
                 aria-label="Toggle biometric login"
                 checked={settings.biometricLogin}
                 onCheckedChange={(checked) => handleSettingChange('biometricLogin', checked)}
+              />
+            </div>
+             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <Label htmlFor="auto-renew" className="text-base">Auto-renew Subscription</Label>
+                <p className="text-sm text-muted-foreground">
+                  Automatically renew your subscription at the end of the billing cycle.
+                </p>
+              </div>
+              <Switch
+                id="auto-renew"
+                aria-label="Toggle auto-renew subscription"
+                checked={settings.autoRenewSubscription}
+                onCheckedChange={(checked) => handleSettingChange('autoRenewSubscription', checked)}
               />
             </div>
           </CardContent>

@@ -9,7 +9,8 @@ import { requestNotificationPermission } from '@/lib/firebase';
 export type Setting = 
   | 'biometricLogin'
   | 'emailNotifications'
-  | 'pushNotifications';
+  | 'pushNotifications'
+  | 'autoRenewSubscription';
 
 export type Settings = Record<Setting, boolean>;
 
@@ -20,6 +21,7 @@ const defaultSettings: Settings = {
   biometricLogin: false,
   emailNotifications: true,
   pushNotifications: false, // Default to false until user enables it
+  autoRenewSubscription: true,
 };
 
 export function useSettings() {
