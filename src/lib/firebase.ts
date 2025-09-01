@@ -18,19 +18,17 @@ const firebaseConfig = {
 
 
 // Initialize Firebase on the client side
-const getFirebaseApp = (): FirebaseApp => {
+const getFirebaseApp = (): FirebaseApp | null => {
     if (typeof window === 'undefined') {
-        // This is a server-side check to avoid errors during SSR.
-        // The app will be properly initialized on the client.
-        return null as any; 
+        return null; 
     }
     return !getApps().length ? initializeApp(firebaseConfig) : getApp();
 };
 
 const app = getFirebaseApp();
 
-const getFirebaseAuth = (): Auth => {
-    if (!app) return null as any;
+const getFirebaseAuth = (): Auth | null => {
+    if (!app) return null;
     return getAuth(app);
 }
 

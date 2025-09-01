@@ -46,12 +46,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    if (!auth) return;
+    if (!auth) throw new Error("Auth service is not available.");
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const signup = async (email: string, password: string, displayName: string) => {
-    if (!auth) return;
+    if (!auth) throw new Error("Auth service is not available.");
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    if (!auth) return;
+    if (!auth) throw new Error("Auth service is not available.");
     await signOut(auth);
   };
 
