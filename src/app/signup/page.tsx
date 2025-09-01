@@ -1,150 +1,47 @@
 
-'use client';
-
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState, Suspense } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useReferredUsers } from '@/context/referred-user-context';
-import type { NewReferredUser } from '@/lib/types';
-import { subscriptionTiers } from '@/lib/data';
-import { useToast } from '@/hooks/use-toast';
+import React, { Suspense } from 'react';
+import { SignupForm } from '@/components/signup/signup-form';
 import { Skeleton } from '@/components/ui/skeleton';
 
-function SignupForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { addReferredUser } = useReferredUsers();
-  const { toast } = useToast();
-
-  const [referralCode, setReferralCode] = useState('');
-
-  useEffect(() => {
-    const refCode = searchParams.get('ref') || '';
-    setReferralCode(refCode);
-  }, [searchParams]);
-
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const name = (form.elements.namedItem('name') as HTMLInputElement).value;
-
-    const randomPlan = subscriptionTiers.filter((t) => t.price > 0)[
-      Math.floor(Math.random() * (subscriptionTiers.length - 1))
-    ];
-    const leg = Math.random() > 0.5 ? 'left' : 'right';
-
-    const newUser: NewReferredUser = {
-      name,
-      plan: randomPlan.name,
-      leg,
-      referredBy: referralCode.trim().toUpperCase() || undefined,
-    };
-
-    addReferredUser(newUser);
-
-    toast({
-      title: 'Welcome!',
-      description: 'Your account has been created successfully.',
-    });
-
-    router.push('/dashboard');
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Sign Up</CardTitle>
-        <CardDescription>
-          Enter your information to create an account.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSignup} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" type="text" placeholder="Your Name" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirm Password</Label>
-            <Input id="confirm-password" type="password" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="referral-code">Referral Code (Optional)</Label>
-            <Input
-              id="referral-code"
-              type="text"
-              placeholder="Enter referral code"
-              value={referralCode}
-              onChange={(e) => setReferralCode(e.target.value)}
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            Create Account
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
-  );
-}
-
-
 function SignupSkeleton() {
-    return (
-        <div className="w-full max-w-md space-y-8">
-            <div className="flex flex-col items-center">
-            <Skeleton className="h-10 w-32 mb-4" />
-            <Skeleton className="h-5 w-64" />
-            </div>
-            <div className="space-y-6 rounded-lg border bg-card p-6 shadow-sm">
-                <div className="space-y-2 text-center">
-                    <Skeleton className="h-7 w-24 mx-auto" />
-                    <Skeleton className="h-4 w-64 mx-auto" />
-                </div>
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-10 w-full" />
-                    </div>
-                    <div className="space-y-2">
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-10 w-full" />
-                    </div>
-                    <div className="space-y-2">
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-10 w-full" />
-                    </div>
-                     <div className="space-y-2">
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-10 w-full" />
-                    </div>
-                    <Skeleton className="h-10 w-full mt-4" />
-                </div>
-            </div>
+  return (
+    <div className="w-full max-w-md space-y-8">
+      <div className="flex flex-col items-center">
+        <Skeleton className="mb-4 h-10 w-32" />
+        <Skeleton className="h-5 w-64" />
+      </div>
+      <div className="space-y-6 rounded-lg border bg-card p-6 shadow-sm">
+        <div className="space-y-2 text-center">
+          <Skeleton className="mx-auto h-7 w-24" />
+          <Skeleton className="mx-auto h-4 w-64" />
         </div>
-    )
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <Skeleton className="mt-4 h-10 w-full" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function SignupPage() {
@@ -159,7 +56,7 @@ export default function SignupPage() {
           </p>
         </div>
         <Suspense fallback={<SignupSkeleton />}>
-            <SignupForm />
+          <SignupForm />
         </Suspense>
         <div className="mt-4 text-center text-sm">
           Already have an account?{' '}
