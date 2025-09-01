@@ -125,7 +125,7 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
         <DialogTitle>{editingMethod ? 'Edit' : 'Add'} Payment Method</DialogTitle>
         <DialogDescription>
           { isSubscriptionContext 
-            ? "You don't have a payment method on file. Please add one to continue."
+            ? "To continue, please add a payment method to your account."
             : (editingMethod ? 'Update your payment details.' : 'Select a payment type and enter the details.')
           }
         </DialogDescription>

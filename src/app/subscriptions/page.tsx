@@ -139,8 +139,8 @@ export default function SubscriptionsPage() {
           <DialogHeader>
             <DialogTitle>Confirm Your Subscription</DialogTitle>
             <DialogDescription>
-              Select a payment method to upgrade your plan to{' '}
-              <span className="font-bold">{selectedTier?.name}</span>. The selected method will be charged.
+              You are upgrading to the{' '}
+              <span className="font-bold">{selectedTier?.name}</span> plan. The selected payment method below will be charged.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -189,7 +189,7 @@ export default function SubscriptionsPage() {
             </div>
             <AlertDialogTitle className="text-center">Confirm Payment</AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-              You are being redirected to our secure payment partner to complete your purchase. This is a simulation.
+             This is a simulation. In a real application, you would be redirected to a secure payment partner to complete your purchase.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

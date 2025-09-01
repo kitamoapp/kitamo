@@ -17,6 +17,7 @@ export function PaymentMethodsCard() {
   const { toast } = useToast();
   const { paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, isLoaded } = usePaymentMethods();
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingPaymentMethod, setEditingPaymentMethod] = useState<PaymentMethod | null>(null);
   const [showDeletePaymentAlert, setShowDeletePaymentAlert] = useState(false);
   const [paymentMethodToDelete, setPaymentMethodToDelete] = useState<string | null>(null);
@@ -27,6 +28,7 @@ export function PaymentMethodsCard() {
   }
 
   const handlePaymentFormSubmit = (values: PaymentMethodValues) => {
+    setIsSubmitting(true);
     if (editingPaymentMethod) {
       updatePaymentMethod(editingPaymentMethod.id, values);
       toast({
@@ -42,6 +44,7 @@ export function PaymentMethodsCard() {
     }
     setShowPaymentDialog(false);
     setEditingPaymentMethod(null);
+    setIsSubmitting(false);
   }
 
   const handleDeletePaymentInitiate = (id: string) => {
@@ -116,9 +119,8 @@ export function PaymentMethodsCard() {
               You have no saved payment methods.
             </div>
           )}
-          <Button variant="outline" className="w-full" onClick={() => handleOpenPaymentDialog(null)} disabled={!isLoaded || showPaymentDialog}>
-            {showPaymentDialog && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            <PlusCircle className="h-4 w-4 mr-2" />
+          <Button variant="outline" className="w-full" onClick={() => handleOpenPaymentDialog(null)} disabled={!isLoaded || isSubmitting}>
+            {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="h-4 w-4 mr-2" />}
             Add New Payment Method
           </Button>
         </CardContent>
