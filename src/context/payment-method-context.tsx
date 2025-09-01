@@ -11,13 +11,13 @@ import React, {
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { PaymentMethod, PaymentMethodValues } from '@/lib/types';
-import { baseDefaultValues } from '@/components/payment-method-form';
 
 interface PaymentMethodContextType {
   paymentMethods: PaymentMethod[];
   addPaymentMethod: (values: PaymentMethodValues) => void;
   updatePaymentMethod: (id: string, values: PaymentMethodValues) => void;
   deletePaymentMethod: (id: string) => void;
+  isLoaded: boolean;
 }
 
 const PaymentMethodContext = createContext<PaymentMethodContextType | undefined>(undefined);
@@ -25,7 +25,7 @@ const PaymentMethodContext = createContext<PaymentMethodContextType | undefined>
 const LOCAL_STORAGE_KEY = 'kitamo-payment-methods';
 
 const initialPaymentMethods: PaymentMethod[] = [
-    { id: 'card-1', type: 'Card', last4: '4242', expiry: '12/26', brand: 'Visa', cardNumber: '4242424242424242' }
+    { id: 'card-1', type: 'Card', last4: '4242', expiry: '12/26', brand: 'Visa' }
 ];
 
 export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => {
@@ -67,7 +67,6 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
                 last4: values.cardNumber.slice(-4),
                 expiry: values.expiry,
                 brand: values.cardNumber.startsWith('4') ? 'Visa' : 'Mastercard',
-                cardNumber: values.cardNumber,
             };
         case 'Bank':
             return {
@@ -75,8 +74,6 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
                 type: 'Bank',
                 last4: values.accountNumber.slice(-4),
                 bankName: values.bankName,
-                accountNumber: values.accountNumber,
-                routingNumber: values.routingNumber
             };
         case 'Wallet':
             return {
@@ -103,7 +100,7 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
   }, []);
 
   return (
-    <PaymentMethodContext.Provider value={{ paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod }}>
+    <PaymentMethodContext.Provider value={{ paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, isLoaded }}>
       {children}
     </PaymentMethodContext.Provider>
   );

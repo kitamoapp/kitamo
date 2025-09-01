@@ -70,15 +70,12 @@ interface CardPaymentMethod extends BasePaymentMethod {
     last4: string;
     expiry: string;
     brand: string;
-    cardNumber?: string;
 }
 
 interface BankPaymentMethod extends BasePaymentMethod {
     type: 'Bank';
     last4: string;
     bankName: string;
-    accountNumber?: string;
-    routingNumber?: string;
 }
 
 interface WalletPaymentMethod extends BasePaymentMethod {

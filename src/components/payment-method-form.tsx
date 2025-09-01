@@ -98,12 +98,11 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
       
       switch (editingMethod.type) {
         case 'Card':
-          defaultValues.cardNumber = editingMethod.cardNumber || '';
+          // For security, we don't repopulate the full card number, only non-sensitive details
           defaultValues.expiry = editingMethod.expiry || '';
           break;
         case 'Bank':
-          defaultValues.accountNumber = editingMethod.accountNumber || '';
-          defaultValues.routingNumber = editingMethod.routingNumber || '';
+          defaultValues.accountNumber = `••••••••${editingMethod.last4}`;
           defaultValues.bankName = editingMethod.bankName || '';
           break;
         case 'Wallet':
@@ -172,7 +171,7 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
                   <FormItem>
                     <FormLabel>Card Number</FormLabel>
                     <FormControl>
-                      <Input placeholder="1234 5678 9101 1121" {...field} />
+                      <Input placeholder="1234 5678 9101 1121" {...field} autoComplete="cc-number" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -187,7 +186,7 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
                       <FormItem>
                         <FormLabel>Expiration</FormLabel>
                         <FormControl>
-                          <Input placeholder="MM/YY" {...field} />
+                          <Input placeholder="MM/YY" {...field} autoComplete="cc-exp" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -202,7 +201,7 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
                         <FormItem>
                         <FormLabel>CVC</FormLabel>
                         <FormControl>
-                            <Input placeholder="123" {...field} />
+                            <Input placeholder="123" {...field} autoComplete="cc-csc" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -295,7 +294,7 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
                 Cancel
                 </Button>
             </DialogClose>
-            <Button type="submit">
+            <Button type="submit" disabled={form.formState.isSubmitting}>
                 {isSubscriptionContext ? 'Save and Continue' : (editingMethod ? 'Save Changes' : 'Add Method')}
             </Button>
           </DialogFooter>
@@ -304,5 +303,3 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
     </>
   );
 }
-
-    

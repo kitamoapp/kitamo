@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PlusCircle, Edit, Trash2, CreditCard, Landmark, Wallet } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, CreditCard, Landmark, Wallet, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { usePaymentMethods } from '@/context/payment-method-context';
 import type { PaymentMethod, PaymentMethodValues } from '@/lib/types';
@@ -11,10 +11,11 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { PaymentMethodForm } from '@/components/payment-method-form';
+import { Skeleton } from '../ui/skeleton';
 
 export function PaymentMethodsCard() {
   const { toast } = useToast();
-  const { paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod } = usePaymentMethods();
+  const { paymentMethods, addPaymentMethod, updatePaymentMethod, deletePaymentMethod, isLoaded } = usePaymentMethods();
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [editingPaymentMethod, setEditingPaymentMethod] = useState<PaymentMethod | null>(null);
   const [showDeletePaymentAlert, setShowDeletePaymentAlert] = useState(false);
@@ -79,7 +80,13 @@ export function PaymentMethodsCard() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {paymentMethods.map(method => (
+          {!isLoaded && (
+            <div className="space-y-4">
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+          )}
+          {isLoaded && paymentMethods.map(method => (
             <div key={method.id} className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4 rounded-lg border p-4">
               <div className="flex items-center gap-4">
                 {getPaymentMethodIcon(method.type)}
@@ -104,12 +111,13 @@ export function PaymentMethodsCard() {
               </div>
             </div>
           ))}
-          {paymentMethods.length === 0 && (
+          {isLoaded && paymentMethods.length === 0 && (
             <div className="text-center text-muted-foreground py-6">
               You have no saved payment methods.
             </div>
           )}
-          <Button variant="outline" className="w-full" onClick={() => handleOpenPaymentDialog(null)}>
+          <Button variant="outline" className="w-full" onClick={() => handleOpenPaymentDialog(null)} disabled={!isLoaded || showPaymentDialog}>
+            {showPaymentDialog && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <PlusCircle className="h-4 w-4 mr-2" />
             Add New Payment Method
           </Button>
