@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [auth, setAuth] = useState<Auth | null>(null);
 
   useEffect(() => {
+    // getFirebaseAuth() must be called on the client side.
     const authInstance = getFirebaseAuth();
     setAuth(authInstance);
 
