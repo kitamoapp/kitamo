@@ -33,10 +33,6 @@ function SignupSkeleton() {
             <Skeleton className="h-4 w-16" />
             <Skeleton className="h-10 w-full" />
           </div>
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-16" />
-            <Skeleton className="h-10 w-full" />
-          </div>
           <Skeleton className="mt-4 h-10 w-full" />
         </div>
       </div>

@@ -20,16 +20,8 @@ import { useToast } from '@/hooks/use-toast';
 
 export function SignupForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { addReferredUser } = useReferredUsers();
   const { toast } = useToast();
-
-  const [referralCode, setReferralCode] = useState('');
-
-  useEffect(() => {
-    const refCode = searchParams.get('ref') || '';
-    setReferralCode(refCode);
-  }, [searchParams]);
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +37,6 @@ export function SignupForm() {
       name,
       plan: randomPlan.name,
       leg,
-      referredBy: referralCode.trim().toUpperCase() || undefined,
     };
 
     addReferredUser(newUser);
@@ -88,16 +79,6 @@ export function SignupForm() {
           <div className="space-y-2">
             <Label htmlFor="confirm-password">Confirm Password</Label>
             <Input id="confirm-password" type="password" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="referral-code">Referral Code (Optional)</Label>
-            <Input
-              id="referral-code"
-              type="text"
-              placeholder="Enter referral code"
-              value={referralCode}
-              onChange={(e) => setReferralCode(e.target.value)}
-            />
           </div>
           <Button type="submit" className="w-full">
             Create Account
