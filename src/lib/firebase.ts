@@ -2,7 +2,7 @@
 'use client';
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, type Auth } from 'firebase/auth';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 // Your web app's Firebase configuration
@@ -20,7 +20,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-const getFirebaseAuth = () => getAuth(app);
+const getFirebaseAuth = (): Auth => {
+    return getAuth(app);
+}
 
 
 const getMessagingInstance = () => {
