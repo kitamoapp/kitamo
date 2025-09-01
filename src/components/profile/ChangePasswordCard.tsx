@@ -30,6 +30,14 @@ export function ChangePasswordCard() {
       });
       return;
     }
+     if (passwordInfo.newPassword.length < 8) {
+      toast({
+        title: 'Error',
+        description: 'New password must be at least 8 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
     if (passwordInfo.newPassword !== passwordInfo.confirmPassword) {
       toast({
         title: 'Error',

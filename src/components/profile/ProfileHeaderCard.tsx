@@ -36,6 +36,14 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        toast({
+            title: 'Invalid File Type',
+            description: 'Please select an image file.',
+            variant: 'destructive'
+        });
+        return;
+      }
       const newAvatarSrc = URL.createObjectURL(file);
       setAvatarSrc(newAvatarSrc);
       toast({
@@ -65,6 +73,7 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
       }
       return count;
     }
+    // In a real app, the current user's ID would come from an auth context.
     return countDescendants('currentUser');
   }, [referredUsers]);
 
@@ -78,7 +87,7 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
               alt="User avatar"
               data-ai-hint="person portrait"
             />
-            <AvatarFallback>{fullName.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{fullName.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           <input
             type="file"
