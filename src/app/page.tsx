@@ -3,12 +3,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/lib/firebase';
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-} from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth';
+import { app as firebaseApp } from '@/lib/firebase';
 import { Suspense } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -53,22 +49,17 @@ function LoginForm() {
     router.push('/dashboard');
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-    const authProvider = provider === 'google' 
+  const handleSocialLogin = async (providerName: 'google' | 'facebook') => {
+    const auth = getAuth(firebaseApp);
+    const provider = providerName === 'google' 
         ? new GoogleAuthProvider() 
         : new FacebookAuthProvider();
     
-    authProvider.setCustomParameters({
-        'auth_domain': auth.config.authDomain
-    });
-
     try {
-        await signInWithPopup(auth, authProvider);
+        await signInWithPopup(auth, provider);
         router.push('/dashboard');
     } catch(error: any) {
-        // Don't show an error toast if the user simply closes the pop-up.
-        if (error.code === 'auth/user-cancelled' || error.code === 'auth/cancelled-popup-request') {
-            console.log("Authentication cancelled by user.");
+        if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
             return;
         }
         

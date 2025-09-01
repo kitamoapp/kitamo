@@ -45,10 +45,10 @@ const requestNotificationPermission = async () => {
         return null;
     }
 
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-        console.log('Notification permission granted.');
-        try {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            console.log('Notification permission granted.');
             // The VAPID key is managed by Firebase App Hosting, so it's not needed here.
             const token = await getToken(messaging);
             console.log('FCM Token:', token);
@@ -64,12 +64,11 @@ const requestNotificationPermission = async () => {
             });
 
             return token;
-        } catch (err) {
-            console.error('An error occurred while retrieving token. ', err);
-            return null;
+        } else {
+            console.log('Unable to get permission to notify.');
         }
-    } else {
-        console.log('Unable to get permission to notify.');
+    } catch (err) {
+        console.error('An error occurred while retrieving token. ', err);
     }
     return null;
 };
