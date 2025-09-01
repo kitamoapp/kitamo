@@ -92,7 +92,22 @@ const calculateEarnings = (
   }
 
   const payableVolume = Math.min(leftLegVolume, rightLegVolume);
-  const totalEarnings = Math.min(payableVolume * tier.commissionRate, tier.earningCap ?? Infinity);
+  let totalEarnings = payableVolume * tier.commissionRate;
+  
+  // New logic: Cover subscription if direct referrals' payments are sufficient
+  const payingLeftReferrals = directReferrals.filter(u => u.leg === 'left' && getPlanPrice(u.plan) > 0);
+  const payingRightReferrals = directReferrals.filter(u => u.leg === 'right' && getPlanPrice(u.plan) > 0);
+
+  if (payingLeftReferrals.length > 0 && payingRightReferrals.length > 0) {
+      const directReferralPayments = directReferrals.reduce((sum, user) => sum + getPlanPrice(user.plan), 0);
+      if (directReferralPayments >= tier.price) {
+          totalEarnings += tier.price;
+      }
+  }
+
+
+  // Cap the total earnings at the tier's limit
+  totalEarnings = Math.min(totalEarnings, tier.earningCap ?? Infinity);
 
   return { totalEarnings, leftLegVolume, rightLegVolume, payableVolume };
 };
