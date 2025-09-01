@@ -102,6 +102,41 @@ const DirectReferralColumn = ({ user, allUsers, expandedNodes, toggleNode }: { u
     )
 }
 
+const VisualizerSkeleton = () => (
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-6 w-1/2" />
+        <Skeleton className="h-4 w-3/4" />
+      </CardHeader>
+      <CardContent className="flex flex-col items-center gap-6 py-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-4 w-28" />
+          </div>
+        </div>
+        <div className="relative h-px w-full max-w-lg">
+          <Skeleton className="h-full w-full" />
+        </div>
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 justify-center items-start pt-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="relative flex flex-col items-center gap-4">
+              <div className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border"></div>
+              <div className="relative flex items-center gap-3 rounded-lg border bg-card p-3 shadow-sm min-w-max z-10">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="flex-1 space-y-1">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+
 
 export function ReferralNetworkVisualizer() {
   const { referredUsers, isLoaded } = useReferredUsers();
@@ -124,18 +159,7 @@ export function ReferralNetworkVisualizer() {
   }, [referredUsers]);
 
   if (!isLoaded) {
-      return (
-        <Card>
-            <CardHeader>
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-4 w-3/4" />
-            </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center gap-4 text-center py-10">
-                <Users className="h-16 w-16 text-muted-foreground/50" />
-                <p className="text-muted-foreground">Loading your network...</p>
-            </CardContent>
-        </Card>
-      )
+      return <VisualizerSkeleton />;
   }
 
   if (directReferrals.length === 0) {

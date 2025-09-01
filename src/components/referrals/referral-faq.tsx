@@ -54,11 +54,11 @@ export function ReferralFaq() {
     },
   ];
 
-  const handleFeedback = (index: number) => {
+  const handleFeedback = (index: number, helpful: boolean) => {
     setFeedback((prev) => ({ ...prev, [index]: true }));
     toast({
       title: 'Feedback Received',
-      description: 'Thank you for your input!',
+      description: "Thank you for helping us improve!",
     });
   };
 
@@ -90,14 +90,14 @@ export function ReferralFaq() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handleFeedback(index)}
+                            onClick={() => handleFeedback(index, true)}
                           >
                             <ThumbsUp className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handleFeedback(index)}
+                            onClick={() => handleFeedback(index, false)}
                           >
                             <ThumbsDown className="h-4 w-4" />
                           </Button>

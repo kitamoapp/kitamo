@@ -68,9 +68,11 @@ const MessengerIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export function ReferralCodeCard() {
   const [referralCode, setReferralCode] = useState('');
   const [hasCopied, setHasCopied] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
+    setIsClient(true);
     // In a real app, you'd fetch this from your backend
     const generateCode = () =>
       Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -89,13 +91,13 @@ export function ReferralCodeCard() {
     }, 2000);
   };
   
-  const referralLink = `${typeof window !== 'undefined' ? window.location.origin : ''}/signup?ref=${referralCode}`;
+  const referralLink = isClient ? `${window.location.origin}/signup?ref=${referralCode}` : '';
   const referralMessage = `Hey! I'm using KitaMo to manage my finances and it's been great. You should check it out! Sign up using my referral link: ${referralLink}`;
 
   const shareActions = [
     { name: 'WhatsApp', icon: WhatsAppIcon, url: `https://wa.me/?text=${encodeURIComponent(referralMessage)}`},
     { name: 'Telegram', icon: TelegramIcon, url: `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(referralMessage)}` },
-    { name: 'Messenger', icon: MessengerIcon, url: `https://www.facebook.com/dialog/send?app_id=YOUR_FACEBOOK_APP_ID&link=${encodeURIComponent(referralLink)}&redirect_uri=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}` }
+    { name: 'Messenger', icon: MessengerIcon, url: `https://www.facebook.com/dialog/send?app_id=YOUR_FACEBOOK_APP_ID&link=${encodeURIComponent(referralLink)}&redirect_uri=${encodeURIComponent(isClient ? window.location.href : '')}` }
   ];
   
   const handleShare = (url: string) => {
@@ -137,7 +139,7 @@ export function ReferralCodeCard() {
         </div>
         <div className="grid grid-cols-3 gap-2 w-full">
             {shareActions.map(action => (
-                 <Button key={action.name} variant="outline" onClick={() => handleShare(action.url)} aria-label={`Share on ${action.name}`}>
+                 <Button key={action.name} variant="outline" onClick={() => handleShare(action.url)} aria-label={`Share on ${action.name}`} disabled={!isClient}>
                     <action.icon className="h-5 w-5" />
                 </Button>
             ))}
