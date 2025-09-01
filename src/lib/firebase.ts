@@ -30,6 +30,7 @@ const getFirebaseApp = (): FirebaseApp => {
 const app = getFirebaseApp();
 
 const getFirebaseAuth = (): Auth => {
+    if (!app) return null as any;
     return getAuth(app);
 }
 
@@ -38,6 +39,7 @@ const getMessagingInstance = () => {
     // Check for browser environment and service worker support
     if (typeof window !== 'undefined' && "serviceWorker" in navigator) {
         try {
+            if (!app) return null;
             return getMessaging(app);
         } catch (error) {
             console.error("Firebase Messaging not supported in this browser:", error);

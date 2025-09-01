@@ -33,12 +33,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const authInstance = getFirebaseAuth();
     setAuth(authInstance);
 
-    const unsubscribe = onAuthStateChanged(authInstance, (user) => {
-      setUser(user);
+    if (authInstance) {
+      const unsubscribe = onAuthStateChanged(authInstance, (user) => {
+        setUser(user);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    } else {
       setLoading(false);
-    });
+    }
 
-    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
