@@ -24,12 +24,6 @@ export function FinancialInsightsCard() {
     const fetchInsights = async () => {
       setIsLoading(true);
       setError(null);
-      // Only fetch if there are a reasonable number of transactions
-      if (transactions.length < 3) {
-        setInsights("You don't have enough transactions yet for an analysis. Keep tracking your finances to unlock insights!");
-        setIsLoading(false);
-        return;
-      }
       try {
         const result = await getFinancialInsights({ transactions });
         setInsights(result.insights);

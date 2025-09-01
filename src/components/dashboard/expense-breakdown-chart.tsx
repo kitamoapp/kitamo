@@ -2,7 +2,7 @@
 'use client';
 
 import * as React from 'react';
-import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Pie, PieChart, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { useTransactions } from '@/context/transaction-context';
 import {
   ChartContainer,
@@ -22,35 +22,6 @@ const chartConfig = {
   Other: { label: 'Other', color: 'hsl(var(--chart-3))' },
 } satisfies ChartConfig;
 
-const RADIAN = Math.PI / 180;
-const CustomLabel = ({
-  cx,
-  cy,
-  midAngle,
-  innerRadius,
-  outerRadius,
-  percent,
-  name,
-}: any) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 1.25;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-  return (
-    <text
-      x={x}
-      y={y}
-      fill="hsl(var(--foreground))"
-      textAnchor={x > cx ? 'start' : 'end'}
-      dominantBaseline="central"
-      className="text-xs"
-    >
-      {`${name} (${(percent * 100).toFixed(0)}%)`}
-    </text>
-  );
-};
-
-
 export function ExpenseBreakdownChart() {
   const { formatCurrency } = useCurrency();
   const { transactions } = useTransactions();
@@ -68,27 +39,23 @@ export function ExpenseBreakdownChart() {
         return acc;
     }, {} as Record<string, number>);
 
-    const chartData = [];
-    let otherTotal = 0;
+    const sortedCategories = Object.entries(categoryTotals).sort(([, a], [, b]) => b - a);
+    
+    const topCategories = sortedCategories.slice(0, 4);
+    const otherCategories = sortedCategories.slice(4);
 
-    for (const category in categoryTotals) {
-        const percentage = (categoryTotals[category] / totalExpense);
-        if (percentage < 0.05) { // Group categories making up less than 5%
-            otherTotal += categoryTotals[category];
-        } else {
-            chartData.push({
-                name: category,
-                total: categoryTotals[category],
-                fill: chartConfig[category as keyof typeof chartConfig]?.color || 'hsl(var(--chart-3))',
-            });
-        }
-    }
-
-    if (otherTotal > 0) {
+    const chartData = topCategories.map(([name, total]) => ({
+      name,
+      total,
+      fill: chartConfig[name as keyof typeof chartConfig]?.color || chartConfig.Other.color,
+    }));
+    
+    if (otherCategories.length > 0) {
+        const otherTotal = otherCategories.reduce((sum, [, total]) => sum + total, 0);
         chartData.push({
             name: 'Other',
             total: otherTotal,
-            fill: chartConfig['Other']?.color || 'hsl(var(--chart-3))',
+            fill: chartConfig.Other.color,
         });
     }
 
@@ -110,7 +77,7 @@ export function ExpenseBreakdownChart() {
       className="min-h-[300px] w-full"
     >
       <ResponsiveContainer width="100%" height={300}>
-        <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <PieChart>
           <Tooltip
             content={
               <ChartTooltipContent
@@ -125,10 +92,43 @@ export function ExpenseBreakdownChart() {
             nameKey="name"
             cx="50%"
             cy="50%"
-            outerRadius={80}
-            labelLine={true}
-            label={<CustomLabel />}
-          />
+            outerRadius={100}
+            innerRadius={60}
+            labelLine={false}
+            paddingAngle={5}
+            label={({
+              cx,
+              cy,
+              midAngle,
+              innerRadius,
+              outerRadius,
+              percent,
+              index,
+            }) => {
+              const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+              const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
+              const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
+
+              if ((percent * 100) < 5) return null; // Don't render label for small slices
+
+              return (
+                <text
+                  x={x}
+                  y={y}
+                  fill="white"
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  className="text-xs font-medium"
+                >
+                  {`${(percent * 100).toFixed(0)}%`}
+                </text>
+              );
+            }}
+          >
+            {expenseData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.fill} />
+            ))}
+          </Pie>
         </PieChart>
       </ResponsiveContainer>
     </ChartContainer>

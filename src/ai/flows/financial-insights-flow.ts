@@ -75,7 +75,7 @@ const financialInsightsFlow = ai.defineFlow(
     const recentTransactions = input.transactions.filter(t => new Date(t.date) > oneMonthAgo);
 
     if (recentTransactions.length < 3) {
-      return { insights: "You don't have enough recent transaction data to analyze. Keep tracking to get your insights!" };
+      return { insights: "You don't have enough recent transaction data for an analysis. Keep tracking your finances to unlock AI-powered insights!" };
     }
 
     const { output } = await prompt({ transactions: recentTransactions });

@@ -27,7 +27,7 @@ import type { Currency } from '@/lib/types';
 import { ExpenseBreakdownChart } from '@/components/dashboard/expense-breakdown-chart';
 import { useSubscription } from '@/hooks/use-subscription';
 import { UpgradeCard } from '@/components/upgrade-card';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -77,27 +77,24 @@ export default function DashboardPage() {
   const { currency, formatCurrency } = useCurrency();
   const { transactions } = useTransactions();
   const { currentTier } = useSubscription();
-  const { setupBiometrics } = useSettings();
+  const {
+    setupBiometrics,
+    showBiometricPrompt,
+    setShowBiometricPrompt,
+    setBiometricPromptSeen,
+  } = useSettings();
   const [showCustomizeDialog, setShowCustomizeDialog] = useState(false);
-  const [showBiometricSetup, setShowBiometricSetup] = useState(false);
   const [period, setPeriod] = useState<Period>('month');
 
-  useEffect(() => {
-    const hasSeenBiometricPrompt = localStorage.getItem('hasSeenBiometricPrompt');
-    if (!hasSeenBiometricPrompt) {
-      setShowBiometricSetup(true);
-    }
-  }, []);
-  
   const handleEnableBiometrics = async () => {
-    localStorage.setItem('hasSeenBiometricPrompt', 'true');
-    setShowBiometricSetup(false);
+    setBiometricPromptSeen();
+    setShowBiometricPrompt(false);
     await setupBiometrics();
   };
 
   const handleDismissBiometricSetup = () => {
-      localStorage.setItem('hasSeenBiometricPrompt', 'true');
-      setShowBiometricSetup(false);
+    setBiometricPromptSeen();
+    setShowBiometricPrompt(false);
   };
 
 
@@ -316,7 +313,7 @@ export default function DashboardPage() {
       </div>
     </AppLayout>
 
-    <AlertDialog open={showBiometricSetup} onOpenChange={setShowBiometricSetup}>
+    <AlertDialog open={showBiometricPrompt} onOpenChange={setShowBiometricPrompt}>
         <AlertDialogContent>
             <AlertDialogHeader>
                  <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 mb-4'>

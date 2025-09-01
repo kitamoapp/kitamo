@@ -14,6 +14,7 @@ export type Setting =
 export type Settings = Record<Setting, boolean>;
 
 const LOCAL_STORAGE_KEY = 'kitamo-settings';
+const BIOMETRIC_PROMPT_SEEN_KEY = 'hasSeenBiometricPrompt';
 
 const defaultSettings: Settings = {
   biometricLogin: false,
@@ -25,22 +26,42 @@ export function useSettings() {
   const { toast } = useToast();
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showBiometricPrompt, setShowBiometricPrompt] = useState(false);
+
 
   useEffect(() => {
     try {
       const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+      const promptSeen = window.localStorage.getItem(BIOMETRIC_PROMPT_SEEN_KEY);
+
       if (item) {
         const storedSettings = JSON.parse(item);
         setSettings({ ...defaultSettings, ...storedSettings });
+        if (!storedSettings.biometricLogin && !promptSeen) {
+            setShowBiometricPrompt(true);
+        }
       } else {
         setSettings(defaultSettings);
+         if (!promptSeen) {
+            setShowBiometricPrompt(true);
+        }
       }
+
     } catch (error) {
       console.error('Error reading settings from localStorage', error);
       setSettings(defaultSettings);
     }
     setIsLoaded(true);
   }, []);
+
+  const setBiometricPromptSeen = () => {
+    try {
+        window.localStorage.setItem(BIOMETRIC_PROMPT_SEEN_KEY, 'true');
+    } catch(error) {
+        console.error('Error saving to localStorage', error);
+    }
+  }
+
 
   useEffect(() => {
     if (isLoaded) {
@@ -85,6 +106,7 @@ export function useSettings() {
             title: 'Biometric Login Enabled',
             description: 'You can now use biometrics to sign in next time.',
         });
+        setSettings(prev => ({...prev, biometricLogin: true}));
         return true;
 
     } catch (error) {
@@ -101,10 +123,7 @@ export function useSettings() {
 
   const updateSetting = useCallback(async (setting: Setting, value: boolean): Promise<void> => {
     if (setting === 'biometricLogin' && value === true) {
-        const success = await setupBiometrics();
-        if (success) {
-            setSettings(prev => ({ ...prev, [setting]: true }));
-        }
+        await setupBiometrics();
     } else if (setting === 'pushNotifications' && value === true) {
         const token = await requestNotificationPermission();
         if (token) {
@@ -142,5 +161,5 @@ export function useSettings() {
     }
   }, [setupBiometrics, toast]);
 
-  return { settings, updateSetting, isLoaded, setupBiometrics };
+  return { settings, updateSetting, isLoaded, setupBiometrics, showBiometricPrompt, setShowBiometricPrompt, setBiometricPromptSeen };
 }
