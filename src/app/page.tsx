@@ -9,6 +9,7 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
 } from 'firebase/auth';
+import { Suspense } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -21,6 +22,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const GmailIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg 
@@ -42,8 +44,7 @@ const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
-
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -79,12 +80,10 @@ export default function LoginPage() {
         });
     }
   }
-
-  return (
-    <>
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <div className="w-full max-w-md">
-          <div className="mb-8 flex flex-col items-center">
+  
+    return (
+        <>
+         <div className="mb-8 flex flex-col items-center">
             <div className="mb-4 text-4xl font-bold text-primary">KitaMo</div>
             <p className="text-muted-foreground">
               Sign in to manage your finances
@@ -149,8 +148,57 @@ export default function LoginPage() {
               Sign up
             </Link>
           </div>
+        </>
+    )
+
+}
+
+function LoginSkeleton() {
+    return (
+        <div className="w-full max-w-md space-y-8">
+            <div className="flex flex-col items-center">
+                <Skeleton className="h-10 w-32 mb-4" />
+                <Skeleton className="h-5 w-64" />
+            </div>
+            <div className="space-y-6 rounded-lg border bg-card p-6 shadow-sm">
+                <div className="space-y-2">
+                    <Skeleton className="h-7 w-24" />
+                    <Skeleton className="h-4 w-64" />
+                </div>
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+                    <Skeleton className="h-10 w-full mt-4" />
+                    <div className="relative my-4">
+                        <Skeleton className="h-px w-full" />
+                        <Skeleton className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-4 w-24" />
+                    </div>
+                     <div className="grid grid-cols-2 gap-4">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+                </div>
+            </div>
+             <Skeleton className="h-5 w-48 mx-auto" />
         </div>
+    )
+}
+
+
+export default function LoginPage() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md">
+         <Suspense fallback={<LoginSkeleton />}>
+            <LoginForm />
+        </Suspense>
       </div>
-    </>
+    </div>
   );
 }
