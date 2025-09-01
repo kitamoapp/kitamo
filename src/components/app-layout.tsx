@@ -3,7 +3,7 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -45,6 +45,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CurrencySwitcher } from './currency-switcher';
+import { useAuth } from '@/context/auth-context';
+import { Skeleton } from './ui/skeleton';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -54,7 +56,26 @@ const navItems = [
 
 function UserMenu() {
   const { setTheme } = useTheme();
-  const { open, setOpen, state } = useSidebar();
+  const { user, loading, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2 p-2">
+        <Skeleton className="h-9 w-9 rounded-full" />
+        <div className='flex flex-col gap-1 w-full'>
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-3 w-32" />
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <DropdownMenu>
@@ -62,16 +83,16 @@ function UserMenu() {
         <button className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground">
           <Avatar className="h-9 w-9">
             <AvatarImage
-              src={`https://picsum.photos/100/100`}
+              src={user?.photoURL || `https://picsum.photos/100/100`}
               alt="User avatar"
               data-ai-hint="person portrait"
             />
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarFallback>{user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col overflow-hidden">
-            <p className="truncate font-medium">User</p>
+            <p className="truncate font-medium">{user?.displayName || 'User'}</p>
             <p className="truncate text-xs text-sidebar-foreground/70">
-              user@example.com
+              {user?.email}
             </p>
           </div>
         </button>
@@ -79,9 +100,9 @@ function UserMenu() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">User</p>
+            <p className="text-sm font-medium leading-none">{user?.displayName || 'User'}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              user@example.com
+              {user?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -124,11 +145,9 @@ function UserMenu() {
           </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/">
-            <LogOut />
-            <span>Log out</span>
-          </Link>
+        <DropdownMenuItem onClick={handleLogout}>
+          <LogOut />
+          <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

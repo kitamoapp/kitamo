@@ -11,6 +11,7 @@ import { ReferredUserProvider } from '@/context/referred-user-context';
 import { BudgetProvider } from '@/context/budget-context';
 import { ReminderProvider } from '@/context/reminder-context';
 import { PaymentMethodProvider } from '@/context/payment-method-context';
+import { AuthProvider } from '@/context/auth-context';
 
 export const metadata: Metadata = {
   title: 'KitaMo',
@@ -51,21 +52,23 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CurrencyProvider>
-            <TransactionProvider>
-              <ReferredUserProvider>
-                <SubscriptionProvider>
-                  <BudgetProvider>
-                    <ReminderProvider>
-                      <PaymentMethodProvider>
-                        {children}
-                      </PaymentMethodProvider>
-                    </ReminderProvider>
-                  </BudgetProvider>
-                </SubscriptionProvider>
-              </ReferredUserProvider>
-            </TransactionProvider>
-          </CurrencyProvider>
+          <AuthProvider>
+            <CurrencyProvider>
+              <TransactionProvider>
+                <ReferredUserProvider>
+                  <SubscriptionProvider>
+                    <BudgetProvider>
+                      <ReminderProvider>
+                        <PaymentMethodProvider>
+                          {children}
+                        </PaymentMethodProvider>
+                      </ReminderProvider>
+                    </BudgetProvider>
+                  </SubscriptionProvider>
+                </ReferredUserProvider>
+              </TransactionProvider>
+            </CurrencyProvider>
+          </AuthProvider>
           <Toaster />
         </ThemeProvider>
       </body>

@@ -17,16 +17,25 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/context/auth-context';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
+
 
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { addReferredUser } = useReferredUsers();
+  const { signup } = useAuth();
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const form = e.currentTarget;
     const name = (form.elements.namedItem('name') as HTMLInputElement).value;
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
     const password = (form.elements.namedItem('password') as HTMLInputElement).value;
     const confirmPassword = (form.elements.namedItem('confirm-password') as HTMLInputElement).value;
 
@@ -36,28 +45,41 @@ export default function SignupPage() {
         description: 'Please re-enter your password.',
         variant: 'destructive',
       });
+      setIsSubmitting(false);
       return;
     }
 
-    const randomPlan = subscriptionTiers.filter((t) => t.price > 0)[
-      Math.floor(Math.random() * (subscriptionTiers.length - 1))
-    ];
-    const leg = Math.random() > 0.5 ? 'left' : 'right';
+    try {
+      await signup(email, password, name);
+      
+      const randomPlan = subscriptionTiers.filter((t) => t.price > 0)[
+        Math.floor(Math.random() * (subscriptionTiers.length - 1))
+      ];
+      const leg = Math.random() > 0.5 ? 'left' : 'right';
 
-    const newUser: NewReferredUser = {
-      name,
-      plan: randomPlan.name,
-      leg,
-    };
+      const newUser: NewReferredUser = {
+        name,
+        plan: randomPlan.name,
+        leg,
+      };
 
-    addReferredUser(newUser);
+      addReferredUser(newUser);
 
-    toast({
-      title: 'Welcome!',
-      description: 'Your account has been created successfully.',
-    });
+      toast({
+        title: 'Welcome!',
+        description: 'Your account has been created successfully.',
+      });
 
-    router.push('/dashboard');
+      router.push('/');
+    } catch (error: any) {
+      toast({
+        title: 'Signup Failed',
+        description: error.message || 'An unexpected error occurred.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -81,7 +103,7 @@ export default function SignupPage() {
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" type="text" placeholder="Your Name" required />
+                <Input id="name" type="text" placeholder="Your Name" required disabled={isSubmitting} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -90,17 +112,19 @@ export default function SignupPage() {
                   type="email"
                   placeholder="name@example.com"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" required disabled={isSubmitting} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input id="confirm-password" type="password" required />
+                <Input id="confirm-password" type="password" required disabled={isSubmitting} />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="animate-spin" />}
                 Create Account
               </Button>
             </form>

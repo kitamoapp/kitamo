@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,14 +16,51 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/context/auth-context';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
+
 
 function LoginForm() {
   const router = useRouter();
+  const { login, user, loading } = useAuth();
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
+
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/dashboard');
+    setIsSubmitting(true);
+    try {
+      await login(email, password);
+      router.push('/dashboard');
+    } catch (error: any) {
+      toast({
+        title: 'Login Failed',
+        description: error.message || 'An unexpected error occurred.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (loading) {
+    return <LoginSkeleton />;
+  }
+  
+  if (user) {
+     return <LoginSkeleton />;
+  }
+
 
   return (
     <>
@@ -49,13 +86,24 @@ function LoginForm() {
                 type="email"
                 placeholder="name@example.com"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
+              <Input 
+                id="password" 
+                type="password" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isSubmitting}
+              />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+               {isSubmitting && <Loader2 className="animate-spin" />}
               Sign In
             </Button>
           </form>
