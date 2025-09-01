@@ -19,7 +19,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+const getFirebaseAuth = () => getAuth(app);
+
 
 const getMessagingInstance = () => {
     // Check for browser environment and service worker support
@@ -74,4 +75,4 @@ const requestNotificationPermission = async () => {
 };
 
 
-export { app, auth, requestNotificationPermission, getMessagingInstance };
+export { app, getFirebaseAuth, requestNotificationPermission, getMessagingInstance };

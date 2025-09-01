@@ -3,8 +3,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth';
-import { app as firebaseApp } from '@/lib/firebase';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth';
 import { Suspense } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -50,7 +50,7 @@ function LoginForm() {
   };
 
   const handleSocialLogin = async (providerName: 'google' | 'facebook') => {
-    const auth = getAuth(firebaseApp);
+    const auth = getFirebaseAuth();
     const provider = providerName === 'google' 
         ? new GoogleAuthProvider() 
         : new FacebookAuthProvider();
