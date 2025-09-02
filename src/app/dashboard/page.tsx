@@ -120,9 +120,7 @@ export default function DashboardPage() {
   const BalanceIcon = currencyIcons[currency] || DollarSign;
 
   const canViewAdvancedAnalytics =
-    currentTier.name === 'Silver' ||
-    currentTier.name === 'Gold' ||
-    currentTier.name === 'Platinum';
+    currentTier.name === 'Gold' || currentTier.name === 'Platinum';
     
   const canViewInsights = currentTier.name !== 'Bronze';
 
@@ -265,9 +263,9 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className='flex-col md:flex-row md:items-center md:justify-between gap-4'>
                 <div>
-                  <CardTitle>Financial Summary</CardTitle>
+                  <CardTitle>Cash Flow Analysis</CardTitle>
                   <CardDescription>
-                    Your income and expenses over time.
+                    Performance of your income vs. expenses.
                   </CardDescription>
                 </div>
                 <Tabs value={period} onValueChange={(value) => setPeriod(value as Period)} className="space-y-4">
@@ -303,7 +301,7 @@ export default function DashboardPage() {
                 <UpgradeCard
                   title="Unlock Advanced Analytics"
                   description="See a detailed breakdown of your expenses by category to better understand your spending habits."
-                  buttonText="Upgrade to Silver"
+                  buttonText="Upgrade to Gold"
                 />
               )}
             </>

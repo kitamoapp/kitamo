@@ -15,7 +15,7 @@ import { AuthProvider } from '@/context/auth-context';
 
 export const metadata: Metadata = {
   title: 'KitaMo',
-  description: 'Your personal finance companion.',
+  description: 'Your personal AI financial consultancy service.',
   manifest: '/manifest.json',
 };
 

@@ -89,7 +89,7 @@ export default function SignupPage() {
           <div className="mb-4 text-4xl font-bold text-primary">KitaMo</div>
           <h1 className="text-3xl font-bold">Create an Account</h1>
           <p className="text-muted-foreground">
-            Start your financial journey with KitaMo
+            Begin your journey to financial clarity.
           </p>
         </div>
         <Card>

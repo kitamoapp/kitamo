@@ -124,7 +124,7 @@ function LoginForm() {
       <div className="mb-8 flex flex-col items-center">
         <div className="mb-4 text-4xl font-bold text-primary">KitaMo</div>
         <p className="text-muted-foreground">
-          Sign in to manage your finances
+          Sign in for your personalized financial consultation
         </p>
       </div>
       <Card>

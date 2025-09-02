@@ -79,9 +79,9 @@ export function TransactionsTable() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
+          <CardTitle>Transaction Analysis</CardTitle>
           <CardDescription>
-            A detailed list of your income and expenses.
+            The data powering your financial consultation.
           </CardDescription>
         </CardHeader>
         <CardContent>

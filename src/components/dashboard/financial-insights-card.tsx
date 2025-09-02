@@ -51,9 +51,9 @@ export function FinancialInsightsCard() {
             <Lightbulb className="h-6 w-6 text-primary" />
         </div>
         <div>
-            <CardTitle>Financial Insights</CardTitle>
+            <CardTitle>Your AI Financial Consultant</CardTitle>
             <CardDescription>
-            AI-powered analysis of your recent activity.
+            Personalized insights from your recent activity.
             </CardDescription>
         </div>
       </CardHeader>
@@ -79,5 +79,3 @@ export function FinancialInsightsCard() {
     </Card>
   );
 }
-
-    
