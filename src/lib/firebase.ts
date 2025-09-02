@@ -1,7 +1,5 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-// By importing auth, we ensure it's registered with the app instance
-import 'firebase/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
