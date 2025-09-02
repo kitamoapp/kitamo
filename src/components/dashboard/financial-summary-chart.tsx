@@ -37,7 +37,7 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
   const { formatCurrency } = useCurrency();
   const { transactions } = useTransactions();
 
-  const barChartData = useMemo(() => {
+  const { barChartData, maxY } = useMemo(() => {
     const now = new Date();
     let dataMap = new Map<string, { income: number; expenses: number; sortKey: number }>();
 
@@ -118,7 +118,7 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
     }
 
 
-    return Array.from(dataMap.entries())
+    const finalData = Array.from(dataMap.entries())
       .map(([key, value]) => ({
         label: key,
         income: value.income,
@@ -126,6 +126,12 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
         sortKey: value.sortKey,
       }))
       .sort((a, b) => a.sortKey - b.sortKey);
+    
+    // Find the max value for Y-axis domain
+    const maxVal = finalData.reduce((max, item) => Math.max(max, item.income, item.expenses), 0);
+    const yAxisMax = Math.max(50000, maxVal); // Set a minimum of 50000 or the max value if higher
+
+    return { barChartData: finalData, maxY: yAxisMax };
 
   }, [transactions, period]);
 
@@ -146,6 +152,7 @@ export function FinancialSummaryChart({ period }: { period: Period }) {
             tickMargin={8}
             fontSize={12}
             tickFormatter={(value) => formatCurrency(value).replace(/\.00$/, '')}
+            domain={[0, (dataMax: number) => Math.max(maxY, dataMax)]}
           />
           <ChartTooltip
             content={<ChartTooltipContent formatter={(value) => formatCurrency(value as number)} />}
