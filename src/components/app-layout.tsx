@@ -185,7 +185,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-          <UserMenu />
+          {/* UserMenu moved to header */}
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
@@ -195,7 +195,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 {/* Add page titles here if needed */}
             </div>
             <div className="flex items-center gap-4">
-                {/* Currency Switcher Removed */}
+                <UserMenu />
             </div>
         </header>
         <main className="flex-1 p-4 sm:p-8">{children}</main>
