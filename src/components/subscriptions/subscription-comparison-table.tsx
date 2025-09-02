@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useCurrency } from '@/context/currency-context';
 import type { SubscriptionTier } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Check, X, Loader2, CheckCircle } from 'lucide-react';
+import { Check, X, Loader2, CheckCircle, Minus } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
@@ -172,6 +172,17 @@ export function SubscriptionComparisonTable({
                   const hasFeature = tier.features.some(
                     (f) => f.id === feature.id
                   );
+
+                  if (feature.id === 'earning_cap') {
+                    return (
+                        <TableCell key={`${tier.name}-${feature.id}`} className="text-center font-semibold">
+                            {tier.earningCap === 0 && <Minus className="mx-auto h-5 w-5 text-muted-foreground" />}
+                            {tier.earningCap > 0 && tier.earningCap !== Infinity && formatCurrency(tier.earningCap)}
+                            {tier.earningCap === Infinity && "Unlimited"}
+                        </TableCell>
+                    )
+                  }
+
                   return (
                     <TableCell key={`${tier.name}-${feature.id}`} className="text-center">
                       {hasFeature ? (
@@ -284,4 +295,3 @@ export function SubscriptionComparisonTable({
     </>
   );
 }
-

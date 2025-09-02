@@ -21,8 +21,7 @@ export const allFeatures: SubscriptionFeature[] = [
   { text: '40% commission on matched volume', id: 'commission_40' },
   { text: '60% commission on matched volume', id: 'commission_60' },
   { text: '85% commission on matched volume', id: 'commission_85' },
-  { text: 'Higher earning cap', id: 'higher_cap' },
-  { text: 'Unlimited earning potential', id: 'unlimited_cap' },
+  { text: 'Earning Cap', id: 'earning_cap' },
 ];
 
 export const subscriptionTiers: SubscriptionTier[] = [
@@ -68,6 +67,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
       { text: 'Advanced analytics', id: 'advanced_analytics' },
       { text: 'Earn through referral system', id: 'referral_system' },
       { text: '40% commission on matched volume', id: 'commission_40' },
+      { text: 'Earning Cap', id: 'earning_cap' },
     ],
     commissionRate: 0.40,
     earningCap: 5000,
@@ -86,7 +86,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
       { text: 'Advanced analytics', id: 'advanced_analytics' },
       { text: 'Earn through referral system', id: 'referral_system' },
       { text: '60% commission on matched volume', id: 'commission_60' },
-      { text: 'Higher earning cap', id: 'higher_cap' },
+      { text: 'Earning Cap', id: 'earning_cap' },
     ],
     commissionRate: 0.60,
     earningCap: 15000,
@@ -105,7 +105,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
       { text: 'Advanced analytics', id: 'advanced_analytics' },
       { text: 'Earn through referral system', id: 'referral_system' },
       { text: '85% commission on matched volume', id: 'commission_85' },
-      { text: 'Unlimited earning potential', id: 'unlimited_cap' },
+      { text: 'Earning Cap', id: 'earning_cap' },
     ],
     commissionRate: 0.85,
     earningCap: Infinity,
