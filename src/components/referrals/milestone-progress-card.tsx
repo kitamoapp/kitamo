@@ -25,10 +25,10 @@ export function MilestoneProgressCard() {
   const { referredUsers } = useReferredUsers();
   const router = useRouter();
 
-  const isBronze = currentTier.name === 'Bronze';
-  const earningCap = currentTier.earningCap ?? 0;
-  const progress = earningCap > 0 ? (totalEarnings / earningCap) * 100 : 0;
-  const remaining = earningCap - totalEarnings;
+  const earnsCommission = currentTier.commissionRate > 0;
+  const earningCap = currentTier.earningCap;
+  
+  const progress = earningCap > 0 && earningCap !== Infinity ? (totalEarnings / earningCap) * 100 : (earningCap === Infinity ? 100 : 0);
 
   return (
     <Card>
@@ -44,13 +44,13 @@ export function MilestoneProgressCard() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isBronze ? (
+        {!earnsCommission ? (
           <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
             <h3 className="font-semibold text-foreground">
               Unlock Your Earning Potential!
             </h3>
             <p className="text-sm text-muted-foreground">
-              Upgrade to a paid plan to start earning from your referrals.
+              Upgrade to a plan with referral commissions to start earning.
             </p>
             <Button
               size="sm"
@@ -83,13 +83,11 @@ export function MilestoneProgressCard() {
 
             <Progress value={progress} className="h-3" />
 
-            <p className="text-sm text-muted-foreground">
-              You have earned{' '}
-              <span className="font-bold text-accent">
-                {convertAndFormatCurrency(totalEarnings)}
-              </span>{' '}
-              of your {convertAndFormatCurrency(earningCap)} cap this
-              month.
+             <p className="text-sm text-muted-foreground">
+              {earningCap === Infinity 
+                ? "You have uncapped earning potential!"
+                : `You have earned ${convertAndFormatCurrency(totalEarnings)} of your ${convertAndFormatCurrency(earningCap)} cap.`
+              }
             </p>
           </div>
         )}
@@ -97,3 +95,5 @@ export function MilestoneProgressCard() {
     </Card>
   );
 }
+
+    

@@ -22,6 +22,12 @@ export function FinancialInsightsCard() {
 
   useEffect(() => {
     const fetchInsights = async () => {
+      // Only fetch if there are enough transactions
+      if (transactions.filter(t => t.type === 'expense').length < 3) {
+        setInsights("You don't have enough recent transaction data for an analysis. Keep tracking your expenses to unlock AI-powered insights!");
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(true);
       setError(null);
       try {
@@ -73,3 +79,5 @@ export function FinancialInsightsCard() {
     </Card>
   );
 }
+
+    

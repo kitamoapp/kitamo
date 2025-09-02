@@ -91,51 +91,74 @@ export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Bronze',
     price: 0,
-    features: [{ text: 'Basic financial tracking tools' }],
+    priceId: 'price_php_bronze_free',
+    annualPriceId: 'price_php_bronze_free_annual',
+    features: [
+      { text: 'Basic financial tracking tools' },
+      { text: 'Manual budget setup' },
+    ],
     commissionRate: 0,
-    priceId: 'price_php_bronze',
-    annualPriceId: 'price_php_bronze_annual',
+    earningCap: 0,
+  },
+  {
+    name: 'Personal Plus',
+    price: 149,
+    annualPrice: 1490,
+    priceId: 'price_php_personal_plus_monthly',
+    annualPriceId: 'price_php_personal_plus_annual',
+    features: [
+      { text: 'All Bronze features' },
+      { text: 'AI-Powered financial insights' },
+      { text: 'AI-Powered "Smart Budget" generation' },
+      { text: 'Advanced analytics' },
+    ],
+    commissionRate: 0,
+    earningCap: 0,
   },
   {
     name: 'Silver',
     price: 299,
     annualPrice: 2870,
-    priceId: 'price_php_silver',
+    priceId: 'price_php_silver_monthly',
     annualPriceId: 'price_php_silver_annual',
     features: [
-      { text: 'All Bronze features' },
+      { text: 'All Personal Plus features' },
       { text: 'Earn through referral system' },
       { text: '40% commission on matched volume' },
     ],
-    commissionRate: 0.4,
+    commissionRate: 0.40,
+    earningCap: 5000,
   },
   {
     name: 'Gold',
     price: 699,
     annualPrice: 6710,
-    priceId: 'price_php_gold',
+    priceId: 'price_php_gold_monthly',
     annualPriceId: 'price_php_gold_annual',
     features: [
       { text: 'All Silver features' },
       { text: '60% commission on matched volume' },
-      { text: 'Advanced analytics' },
+      { text: 'Higher earning cap' },
     ],
-    commissionRate: 0.6,
+    commissionRate: 0.60,
+    earningCap: 15000,
   },
   {
     name: 'Platinum',
     price: 999,
     annualPrice: 9590,
-    priceId: 'price_php_platinum',
+    priceId: 'price_php_platinum_monthly',
     annualPriceId: 'price_php_platinum_annual',
     features: [
       { text: 'All Gold features' },
       { text: '85% commission on matched volume' },
-      { text: 'AI-powered financial insights' },
+      { text: 'Unlimited earning potential' },
     ],
     commissionRate: 0.85,
+    earningCap: Infinity,
   },
 ];
+
 
 export const referralMilestones: ReferralMilestone[] = [
     { name: 'Apprentice', requiredReferrals: 5 },
@@ -143,3 +166,5 @@ export const referralMilestones: ReferralMilestone[] = [
     { name: 'Leader', requiredReferrals: 25 },
     { name: 'Visionary', requiredReferrals: 50 },
 ]
+
+    

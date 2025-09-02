@@ -85,7 +85,7 @@ export function SubscriptionPlanCard({
               <span className="text-muted-foreground">
                 {billingCycle === 'annually' ? '/year' : '/month'}
               </span>
-              {billingCycle === 'annually' && tier.price > 0 && (
+              {billingCycle === 'annually' && tier.annualPrice && tier.price > 0 && (
                  <p className="text-sm text-muted-foreground">
                    Originally {convertAndFormatCurrency(tier.price * 12)}/year
                  </p>
@@ -118,3 +118,5 @@ export function SubscriptionPlanCard({
     </Card>
   );
 }
+
+    

@@ -38,7 +38,7 @@ import { subscriptionTiers } from '@/lib/data';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Please enter a name.'),
-  plan: z.enum(['Bronze', 'Silver', 'Gold', 'Platinum']),
+  plan: z.enum(['Bronze', 'Personal Plus', 'Silver', 'Gold', 'Platinum']),
   leg: z.enum(['left', 'right']),
 });
 
@@ -120,7 +120,7 @@ export function RecruitUserDialog() {
                     </FormControl>
                     <SelectContent>
                       {subscriptionTiers
-                        .filter((tier) => tier.price > 0)
+                        .filter((tier) => tier.price >= 0) // Show all plans
                         .map((tier) => (
                           <SelectItem key={tier.name} value={tier.name}>
                             {tier.name}
@@ -167,3 +167,5 @@ export function RecruitUserDialog() {
     </Dialog>
   );
 }
+
+    
