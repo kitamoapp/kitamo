@@ -17,7 +17,7 @@ import {
     PhoneMultiFactorGenerator,
     ConfirmationResult
 } from 'firebase/auth';
-import { getFirebaseAuth } from '@/lib/firebase';
+import { getFirebaseAuth, getFirebaseApp } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 type MfaState = 'idle' | 'requires_mfa' | 'verifying_mfa' | 'error';
@@ -45,6 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
   
   useEffect(() => {
+    getFirebaseApp(); // Ensure app is initialized
     const authInstance = getFirebaseAuth();
     setAuth(authInstance);
 

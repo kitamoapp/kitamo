@@ -17,18 +17,22 @@ const firebaseConfig = {
 };
 
 
-// Initialize Firebase on the client side
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+
 const getFirebaseApp = (): FirebaseApp | null => {
     if (typeof window === 'undefined') {
         return null; 
     }
-    return !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    if (!app) {
+       app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    }
+    return app;
 };
 
-const app = getFirebaseApp();
-let auth: Auth | null = null;
 
 const getFirebaseAuth = (): Auth | null => {
+    const app = getFirebaseApp();
     if (!app) return null;
     if (!auth) {
         auth = getAuth(app);
@@ -41,6 +45,7 @@ const getMessagingInstance = () => {
     // Check for browser environment and service worker support
     if (typeof window !== 'undefined' && "serviceWorker" in navigator) {
         try {
+            const app = getFirebaseApp();
             if (!app) return null;
             return getMessaging(app);
         } catch (error) {
@@ -91,4 +96,4 @@ const requestNotificationPermission = async () => {
 };
 
 
-export { app, getFirebaseAuth, requestNotificationPermission, getMessagingInstance };
+export { getFirebaseApp, getFirebaseAuth, requestNotificationPermission, getMessagingInstance };
