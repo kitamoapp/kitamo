@@ -76,16 +76,16 @@ export const transactions: Transaction[] = [
 
 export const referredUsers: ReferredUser[] = [
   // L1 - Direct Referrals
-  { id: '1', name: 'Alice', signupDate: new Date('2024-06-15').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Gold' },
-  { id: '2', name: 'Bob', signupDate: new Date('2024-06-20').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'right', plan: 'Silver' },
-  { id: '3', name: 'Charlie', signupDate: new Date('2024-07-01').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Platinum' },
+  { id: '1', name: 'Alice', signupDate: new Date('2024-06-15').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Pro' },
+  { id: '2', name: 'Bob', signupDate: new Date('2024-06-20').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'right', plan: 'Lite' },
+  { id: '3', name: 'Charlie', signupDate: new Date('2024-07-01').toISOString(), status: 'Active', referredBy: 'currentUser', leg: 'left', plan: 'Max' },
   // L2 - Referred by Alice (L)
-  { id: '4', name: 'Diana', signupDate: new Date('2024-07-05').toISOString(), status: 'Active', referredBy: '1', leg: 'left', plan: 'Silver' },
-  { id: '5', name: 'Ethan', signupDate: new Date('2024-07-06').toISOString(), status: 'Active', referredBy: '1', leg: 'right', plan: 'Gold' },
+  { id: '4', name: 'Diana', signupDate: new Date('2024-07-05').toISOString(), status: 'Active', referredBy: '1', leg: 'left', plan: 'Lite' },
+  { id: '5', name: 'Ethan', signupDate: new Date('2024-07-06').toISOString(), status: 'Active', referredBy: '1', leg: 'right', plan: 'Pro' },
   // L2 - Referred by Bob (R)
-  { id: '6', name: 'Fiona', signupDate: new Date('2024-07-08').toISOString(), status: 'Active', referredBy: '2', leg: 'left', plan: 'Platinum' },
+  { id: '6', name: 'Fiona', signupDate: new Date('2024-07-08').toISOString(), status: 'Active', referredBy: '2', leg: 'left', plan: 'Max' },
   // L3 - Referred by Diana (L)
-  { id: '7', name: 'George', signupDate: new Date('2024-07-10').toISOString(), status: 'Active', referredBy: '4', leg: 'right', plan: 'Gold' },
+  { id: '7', name: 'George', signupDate: new Date('2024-07-10').toISOString(), status: 'Active', referredBy: '4', leg: 'right', plan: 'Pro' },
 ];
 
 export const allFeatures: SubscriptionFeature[] = [
@@ -104,7 +104,7 @@ export const allFeatures: SubscriptionFeature[] = [
 
 export const subscriptionTiers: SubscriptionTier[] = [
   {
-    name: 'Bronze',
+    name: 'Free',
     price: 0,
     priceId: 'price_php_bronze_free',
     annualPriceId: 'price_php_bronze_free_annual',
@@ -116,7 +116,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     earningCap: 0,
   },
   {
-    name: 'Personal Plus',
+    name: 'Personal',
     price: 149,
     annualPrice: 1490,
     priceId: 'price_php_personal_plus_monthly',
@@ -132,7 +132,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     earningCap: 0,
   },
   {
-    name: 'Silver',
+    name: 'Lite',
     price: 299,
     annualPrice: 2870,
     priceId: 'price_php_silver_monthly',
@@ -150,7 +150,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     earningCap: 5000,
   },
   {
-    name: 'Gold',
+    name: 'Pro',
     price: 699,
     annualPrice: 6710,
     priceId: 'price_php_gold_monthly',
@@ -169,7 +169,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     earningCap: 15000,
   },
   {
-    name: 'Platinum',
+    name: 'Max',
     price: 999,
     annualPrice: 9590,
     priceId: 'price_php_platinum_monthly',

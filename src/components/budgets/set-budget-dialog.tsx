@@ -48,7 +48,7 @@ export function SetBudgetDialog() {
   const { currentTier } = useSubscription();
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const canUseSmartBudget = currentTier.name !== 'Bronze';
+  const canUseSmartBudget = currentTier.name !== 'Free';
 
   const defaultValues = expenseCategories.reduce((acc, category) => {
     acc[category.value] = budgets[category.value] || 0;

@@ -67,11 +67,11 @@ export function ReferredUsersTable() {
                     <Badge
                       variant="outline"
                       className={cn(
-                        user.plan === 'Platinum' &&
+                        user.plan === 'Max' &&
                           'border-sky-500 text-sky-500',
-                        user.plan === 'Gold' &&
+                        user.plan === 'Pro' &&
                           'border-amber-500 text-amber-500',
-                        user.plan === 'Silver' &&
+                        user.plan === 'Lite' &&
                           'border-slate-500 text-slate-500'
                       )}
                     >

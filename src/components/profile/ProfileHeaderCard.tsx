@@ -128,13 +128,13 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
                 <Badge
                     className={cn(
                     'text-base',
-                    currentTier.name === 'Platinum' &&
+                    currentTier.name === 'Max' &&
                         'border-sky-500 text-sky-500',
-                    currentTier.name === 'Gold' &&
+                    currentTier.name === 'Pro' &&
                         'border-amber-500 text-amber-500',
-                    currentTier.name === 'Silver' &&
+                    currentTier.name === 'Lite' &&
                         'border-slate-500 text-slate-500',
-                    currentTier.name === 'Bronze' && 'border-yellow-700 text-yellow-700'
+                    currentTier.name === 'Free' && 'border-yellow-700 text-yellow-700'
                     )}
                     variant="outline"
                 >

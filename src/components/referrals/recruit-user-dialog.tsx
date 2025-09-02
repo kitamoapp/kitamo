@@ -38,7 +38,7 @@ import { subscriptionTiers } from '@/lib/data';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Please enter a name.'),
-  plan: z.enum(['Bronze', 'Personal Plus', 'Silver', 'Gold', 'Platinum']),
+  plan: z.enum(['Free', 'Personal', 'Lite', 'Pro', 'Max']),
   leg: z.enum(['left', 'right']),
 });
 
@@ -51,7 +51,7 @@ export function RecruitUserDialog() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      plan: 'Silver',
+      plan: 'Lite',
       leg: 'left',
     },
   });

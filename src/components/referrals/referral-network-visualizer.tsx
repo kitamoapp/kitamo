@@ -20,10 +20,10 @@ import { Skeleton } from '../ui/skeleton';
 
 const PlanIcon = ({ plan }: { plan: ReferredUser['plan']}) => {
     switch (plan) {
-        case 'Bronze': return <Award className="h-4 w-4 text-yellow-700" />;
-        case 'Silver': return <Briefcase className="h-4 w-4 text-slate-500" />;
-        case 'Gold': return <Gem className="h-4 w-4 text-amber-500" />;
-        case 'Platinum': return <Gem className="h-4 w-4 text-sky-500" />;
+        case 'Free': return <Award className="h-4 w-4 text-yellow-700" />;
+        case 'Lite': return <Briefcase className="h-4 w-4 text-slate-500" />;
+        case 'Pro': return <Gem className="h-4 w-4 text-amber-500" />;
+        case 'Max': return <Gem className="h-4 w-4 text-sky-500" />;
         default: return <User className="h-4 w-4" />;
     }
 }

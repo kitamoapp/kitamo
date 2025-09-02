@@ -120,9 +120,9 @@ export default function DashboardPage() {
   const BalanceIcon = currencyIcons[currency] || DollarSign;
 
   const canViewAdvancedAnalytics =
-    currentTier.name === 'Gold' || currentTier.name === 'Platinum';
+    currentTier.name === 'Pro' || currentTier.name === 'Max';
     
-  const canViewInsights = currentTier.name !== 'Bronze';
+  const canViewInsights = currentTier.name !== 'Free';
 
   return (
     <>
@@ -301,7 +301,7 @@ export default function DashboardPage() {
                 <UpgradeCard
                   title="Unlock Advanced Analytics"
                   description="See a detailed breakdown of your expenses by category to better understand your spending habits."
-                  buttonText="Upgrade to Gold"
+                  buttonText="Upgrade to Pro"
                 />
               )}
             </>

@@ -15,7 +15,7 @@ export type ReferredUser = {
   status: 'Active' | 'Pending';
   referredBy: string | 'currentUser';
   leg: 'left' | 'right';
-  plan: 'Bronze' | 'Personal Plus' | 'Silver' | 'Gold' | 'Platinum';
+  plan: 'Free' | 'Personal' | 'Lite' | 'Pro' | 'Max';
 };
 
 export type Currency = 'USD' | 'EUR' | 'JPY' | 'GBP' | 'PHP';
@@ -32,7 +32,7 @@ export type SubscriptionFeature = {
 };
 
 export type SubscriptionTier = {
-  name: 'Bronze' | 'Personal Plus' | 'Silver' | 'Gold' | 'Platinum';
+  name: 'Free' | 'Personal' | 'Lite' | 'Pro' | 'Max';
   price: number;
   annualPrice?: number;
   priceId: string;
@@ -100,7 +100,7 @@ export type PaymentMethodValues = {
 export type NewReferredUser = {
   name: string;
   leg: 'left' | 'right';
-  plan: 'Bronze' | 'Personal Plus' | 'Silver' | 'Gold' | 'Platinum';
+  plan: 'Free' | 'Personal' | 'Lite' | 'Pro' | 'Max';
   referredBy?: string; // This can be the referral code
 };
 
