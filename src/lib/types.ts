@@ -1,4 +1,5 @@
 
+
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
@@ -104,4 +105,19 @@ export type NewReferredUser = {
   referredBy?: string; // This can be the referral code
 };
 
+export type NotificationType =
+  | 'new_referral'
+  | 'milestone'
+  | 'payout'
+  | 'warning';
+
+export type Notification = {
+  id: string;
+  type: NotificationType;
+  title: string;
+  description: string;
+  date: string;
+  read: boolean;
+  icon: React.ReactNode;
+};
     

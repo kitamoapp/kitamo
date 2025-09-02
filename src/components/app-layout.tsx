@@ -27,6 +27,7 @@ import {
   LayoutDashboard,
   Users,
   CreditCard,
+  Bell,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -51,6 +52,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/referrals', label: 'Referrals', icon: Users },
   { href: '/subscriptions', label: 'Subscriptions', icon: CreditCard },
+  { href: '/notifications', label: 'Notifications', icon: Bell },
 ];
 
 function UserMenu() {
