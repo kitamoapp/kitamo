@@ -113,6 +113,7 @@ export default function SubscriptionsPage() {
   
   const selectedTierPrice = selectedTier ? getTierPrice(selectedTier, regionalCurrency) : null;
   const purchaseAmount = billingCycle === 'annually' ? selectedTierPrice?.annualAmount : selectedTierPrice?.amount;
+  const priceIdForCheckout = billingCycle === 'annually' ? selectedTierPrice?.annualPriceId : selectedTierPrice?.priceId;
 
   return (
     <>
@@ -223,7 +224,8 @@ export default function SubscriptionsPage() {
             </div>
             <AlertDialogTitle className="text-center">Confirm Payment</AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-             This is a simulation. In a real application, you would be redirected to a secure payment partner to complete your purchase. The Price ID for this transaction would be <span className="font-mono bg-muted p-1 rounded-md text-xs">{billingCycle === 'annually' ? selectedTierPrice?.annualPriceId : selectedTierPrice?.priceId}</span>.
+             This is a simulation. In a real application, you would pass the following Price ID to your payment provider to initiate the checkout: <br />
+             <span className="mt-2 inline-block font-mono bg-muted p-1 rounded-md text-xs">{priceIdForCheckout || 'N/A'}</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
