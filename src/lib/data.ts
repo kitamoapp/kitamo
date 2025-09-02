@@ -100,51 +100,51 @@ export const subscriptionTiers: SubscriptionTier[] = [
   },
   {
     name: 'Silver',
-    price: 10,
-    annualPrice: 96, // 20% discount
+    price: 299,
+    annualPrice: 2870, // ~20% discount
     features: [
       { text: 'All Bronze features' },
       { text: 'Earn through referral system' },
       { text: '{commissionRate}% commission on matched volume' },
-      { text: 'Up to {cap} monthly earning cap', earningCap: 500 },
+      { text: 'Up to {cap} monthly earning cap', earningCap: 25000 },
     ],
     borderColor: 'border-slate-400',
     gradientFrom: 'from-slate-200',
     gradientTo: 'to-white',
     textColor: 'text-slate-700',
-    commissionRate: 0.1,
+    commissionRate: 0.40,
   },
   {
     name: 'Gold',
-    price: 25,
-    annualPrice: 240, // 20% discount
+    price: 699,
+    annualPrice: 6710, // ~20% discount
     features: [
       { text: 'All Silver features' },
       { text: '{commissionRate}% commission on matched volume' },
-      { text: 'Up to {cap} monthly earning cap', earningCap: 2500 },
+      { text: 'Up to {cap} monthly earning cap', earningCap: 125000 },
       { text: 'Advanced analytics' },
     ],
     borderColor: 'border-amber-500',
     gradientFrom: 'from-amber-200',
     gradientTo: 'to-yellow-100',
     textColor: 'text-amber-800',
-    commissionRate: 0.15,
+    commissionRate: 0.60,
   },
   {
     name: 'Platinum',
-    price: 40,
-    annualPrice: 384, // 20% discount
+    price: 999,
+    annualPrice: 9590, // ~20% discount
     features: [
       { text: 'All Gold features' },
       { text: '{commissionRate}% commission on matched volume' },
-      { text: 'Up to {cap} monthly earning cap', earningCap: 10000 },
+      { text: 'Up to {cap} monthly earning cap', earningCap: 500000 },
       { text: 'AI-powered financial insights' },
     ],
     borderColor: 'border-sky-500',
     gradientFrom: 'from-sky-200',
     gradientTo: 'to-cyan-100',
     textColor: 'text-sky-800',
-    commissionRate: 0.2,
+    commissionRate: 0.85,
   },
 ];
 
