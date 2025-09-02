@@ -1,4 +1,6 @@
 
+'use client';
+
 import { AppLayout } from '@/components/app-layout';
 import { ReferralCodeCard } from '@/components/referrals/referral-code-card';
 import { ReferralFaq } from '@/components/referrals/referral-faq';
