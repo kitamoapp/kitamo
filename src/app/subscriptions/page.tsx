@@ -13,7 +13,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { SubscriptionPlanCard } from '@/components/subscriptions/subscription-plan-card';
@@ -22,25 +21,28 @@ import { useToast } from '@/hooks/use-toast';
 import { usePaymentMethods } from '@/context/payment-method-context';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Landmark, Wallet, CreditCard, ShieldCheck, Loader2 } from 'lucide-react';
+import { Landmark, Wallet, CreditCard, Loader2, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from '@/components/ui/alert-dialog';
 import { Switch } from '@/components/ui/switch';
 import { useCurrency } from '@/context/currency-context';
+import { useStripe } from '@stripe/react-stripe-js';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-type DialogState = 'closed' | 'confirming' | 'addingPayment' | 'processingPayment';
+type DialogState = 'closed' | 'confirming' | 'addingPayment' | 'processingPayment' | 'error';
 export type BillingCycle = 'monthly' | 'annually';
 
 export default function SubscriptionsPage() {
   const { currentTier, setCurrentTier } = useSubscription();
-  const { convertAndFormatCurrency } = useCurrency();
+  const { currency, formatCurrency } = useCurrency();
   const { toast } = useToast();
   const { paymentMethods, addPaymentMethod } = usePaymentMethods();
+  const stripe = useStripe();
   
   const [dialogState, setDialogState] = useState<DialogState>('closed');
   const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
     if (paymentMethods.length > 0 && !selectedPaymentMethodId) {
@@ -50,57 +52,63 @@ export default function SubscriptionsPage() {
 
   const handleChoosePlan = (tier: SubscriptionTier) => {
     setSelectedTier(tier);
-    if (paymentMethods.length > 0) {
-      setDialogState('confirming');
-    } else {
-      setDialogState('addingPayment');
-    }
+    // Directly go to confirmation, Stripe handles payment methods.
+    setDialogState('confirming');
   };
   
   const handleDialogClose = () => {
     setDialogState('closed');
     setSelectedTier(null);
+    setErrorMessage('');
   }
 
-  const handleInitiatePurchase = () => {
-    if (selectedTier && selectedPaymentMethodId) {
-        setDialogState('processingPayment');
+  const handleInitiatePurchase = async () => {
+    if (!selectedTier || !stripe) {
+      setErrorMessage('Stripe is not ready. Please refresh the page.');
+      setDialogState('error');
+      return;
+    }
+    setDialogState('processingPayment');
+    
+    const priceId = billingCycle === 'annually' ? selectedTier.annualPriceId : selectedTier.priceId;
+
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ priceId }),
+      });
+
+      const session = await response.json();
+
+      if (response.ok) {
+          const result = await stripe.redirectToCheckout({ sessionId: session.id });
+          if (result.error) {
+              setErrorMessage(result.error.message || 'An unknown error occurred.');
+              setDialogState('error');
+          }
+      } else {
+          setErrorMessage(session.error || 'Failed to create checkout session.');
+          setDialogState('error');
+      }
+    } catch (err: any) {
+        setErrorMessage(err.message || 'An unexpected error occurred.');
+        setDialogState('error');
     }
   };
-  
-  const handleConfirmPurchase = () => {
-     if (selectedTier) {
-      setCurrentTier(selectedTier);
-       toast({
-        title: 'Subscription Updated!',
-        description: `You are now subscribed to the ${selectedTier.name} plan.`,
-      });
-    }
-    handleDialogClose();
-    setSelectedPaymentMethodId(null);
-  }
 
   const handleAddPaymentMethod = (values: PaymentMethodValues) => {
-    const newMethod = addPaymentMethod(values);
+    addPaymentMethod(values);
     toast({
       title: 'Payment Method Added',
       description: 'Your new payment method has been saved.',
     });
-    setSelectedPaymentMethodId(newMethod.id);
     setDialogState('confirming');
   };
   
-  const getPaymentMethodIcon = (type: PaymentMethod['type']) => {
-      switch (type) {
-          case 'Card': return <CreditCard className="h-6 w-6" />;
-          case 'Bank': return <Landmark className="h-6 w-6" />;
-          case 'Wallet': return <Wallet className="h-6 w-6" />;
-          default: return <CreditCard className="h-6 w-6" />;
-      }
-  }
-  
   const purchaseAmount = selectedTier ? (billingCycle === 'annually' ? selectedTier.annualPrice : selectedTier.price) : 0;
-  const priceIdForCheckout = selectedTier ? (billingCycle === 'annually' ? selectedTier.annualPriceId : selectedTier.priceId) : 'N/A';
 
   return (
     <>
@@ -141,85 +149,50 @@ export default function SubscriptionsPage() {
           </div>
         </div>
       </AppLayout>
-
-      <Dialog
-        open={dialogState === 'addingPayment'}
-        onOpenChange={(open) => !open && handleDialogClose()}
-      >
-        <DialogContent>
-          <PaymentMethodForm 
-            onSubmit={handleAddPaymentMethod}
-            onCancel={handleDialogClose}
-            isSubscriptionContext={true}
-          />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={dialogState === 'confirming'} onOpenChange={(open) => !open && handleDialogClose()}>
+      
+      <Dialog open={dialogState === 'confirming' || dialogState === 'processingPayment'} onOpenChange={(open) => !open && handleDialogClose()}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Your Subscription</DialogTitle>
             <DialogDescription>
               You are upgrading to the{' '}
-              <span className="font-bold">{selectedTier?.name} ({billingCycle})</span> plan. The selected payment method will be charged {' '}
-              <span className="font-bold">{convertAndFormatCurrency(purchaseAmount || 0)}</span>.
+              <span className="font-bold">{selectedTier?.name} ({billingCycle})</span> plan for{' '}
+              <span className="font-bold">{formatCurrency(purchaseAmount || 0)}</span>.
+              You will be redirected to Stripe to complete your purchase securely.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <RadioGroup value={selectedPaymentMethodId || ''} onValueChange={setSelectedPaymentMethodId}>
-              <div className="space-y-4">
-                {paymentMethods.map((method) => (
-                  <Label 
-                    key={method.id} 
-                    htmlFor={method.id}
-                    className={cn(
-                      "flex items-center gap-4 rounded-lg border p-4 cursor-pointer transition-colors",
-                      selectedPaymentMethodId === method.id && "border-primary ring-2 ring-primary"
-                    )}
-                  >
-                     <RadioGroupItem value={method.id} id={method.id} className="sr-only" />
-                     {getPaymentMethodIcon(method.type)}
-                     <div className='flex-1'>
-                        {method.type === 'Card' && <p className="font-semibold">{method.brand} ending in {method.last4}</p>}
-                        {method.type === 'Card' && <p className="text-sm text-muted-foreground">Expires {method.expiry}</p>}
-                        {method.type === 'Bank' && <p className="font-semibold">{method.bankName} ending in {method.last4s}</p>}
-                        {method.type === 'Bank' && <p className="text-sm text-muted-foreground">Bank Account</p>}
-                        {method.type === 'Wallet' && <p className="font-semibold">{method.provider}</p>}
-                        {method.type === 'Wallet' && <p className="text-sm text-muted-foreground">{method.email}</p>}
-                     </div>
-                  </Label>
-                ))}
-              </div>
-            </RadioGroup>
-          </div>
           <DialogFooter>
-            <Button variant="outline" onClick={handleDialogClose}>
+            <Button variant="outline" onClick={handleDialogClose} disabled={dialogState === 'processingPayment'}>
                 Cancel
             </Button>
-            <Button onClick={handleInitiatePurchase} disabled={!selectedPaymentMethodId}>
-              Confirm Purchase
+            <Button onClick={handleInitiatePurchase} disabled={dialogState === 'processingPayment'}>
+              {dialogState === 'processingPayment' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Proceed to Checkout
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       
-       <AlertDialog open={dialogState === 'processingPayment'} onOpenChange={(open) => !open && handleDialogClose()}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 mb-4'>
-                <ShieldCheck className="h-6 w-6 text-primary" />
-            </div>
-            <AlertDialogTitle className="text-center">Confirm Payment</AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-             This is a simulation. In a real application, you would pass the following Price ID to your payment provider to initiate the checkout: <br />
-             <span className="mt-2 inline-block font-mono bg-muted p-1 rounded-md text-xs">{priceIdForCheckout || 'N/A'}</span>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleConfirmPurchase} className="w-full">Simulate Successful Payment</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <Dialog open={dialogState === 'error'} onOpenChange={(open) => !open && handleDialogClose()}>
+        <DialogContent>
+          <DialogHeader>
+            <AlertTriangle className="h-10 w-10 text-destructive mx-auto mb-4" />
+            <DialogTitle className="text-center">Payment Error</DialogTitle>
+            <DialogDescription className="text-center">
+             An error occurred during the checkout process.
+            </DialogDescription>
+          </DialogHeader>
+          <Alert variant="destructive">
+            <AlertTitle>Error Details</AlertTitle>
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleDialogClose}>
+                Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
