@@ -167,5 +167,3 @@ export function RecruitUserDialog() {
     </Dialog>
   );
 }
-
-    

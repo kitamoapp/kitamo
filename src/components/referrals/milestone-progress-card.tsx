@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Award, Star, Zap } from 'lucide-react';
+import { Award } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { useCurrency } from '@/context/currency-context';
@@ -10,19 +10,15 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { useSubscription } from '@/hooks/use-subscription';
-import { useReferredUsers } from '@/context/referred-user-context';
-import { referralMilestones } from '@/lib/data';
 
 export function MilestoneProgressCard() {
   const { convertAndFormatCurrency } = useCurrency();
   const { currentTier, totalEarnings } = useSubscription();
-  const { referredUsers } = useReferredUsers();
   const router = useRouter();
 
   const earnsCommission = currentTier.commissionRate > 0;
@@ -97,5 +93,3 @@ export function MilestoneProgressCard() {
     </Card>
   );
 }
-
-    

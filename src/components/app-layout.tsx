@@ -15,7 +15,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
-  useSidebar,
 } from '@/components/ui/sidebar';
 import {
   LogOut,
@@ -28,10 +27,10 @@ import {
   Users,
   CreditCard,
   Bell,
+  Wallet,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,6 +49,7 @@ import { Skeleton } from './ui/skeleton';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/transactions', label: 'Transactions', icon: Wallet },
   { href: '/referrals', label: 'Referrals', icon: Users },
   { href: '/subscriptions', label: 'Subscriptions', icon: CreditCard },
   { href: '/notifications', label: 'Notifications', icon: Bell },
@@ -185,14 +185,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-          {/* UserMenu moved to header */}
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-40 flex h-16 w-full items-center gap-4 border-b bg-background/95 px-4 backdrop-blur sm:px-8">
             <SidebarTrigger className="md:hidden"/>
             <div className="flex-1">
-                {/* Add page titles here if needed */}
             </div>
             <div className="flex items-center gap-4">
                 <UserMenu />

@@ -53,14 +53,13 @@ import { Label } from '@/components/ui/label';
 import { TransactionsTable } from '@/components/transactions/transactions-table';
 import { AddTransactionDialog } from '@/components/transactions/add-transaction-dialog';
 import { SetReminderDialog } from '@/components/transactions/set-reminder-dialog';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SetBudgetDialog } from '@/components/budgets/set-budget-dialog';
 import { BudgetSummaryCard } from '@/components/dashboard/budget-summary-card';
 import { UpcomingBillsCard } from '@/components/dashboard/upcoming-bills-card';
 import { useTransactions } from '@/context/transaction-context';
 import { FinancialInsightsCard } from '@/components/dashboard/financial-insights-card';
 import { useDashboardComponents } from '@/hooks/use-dashboard-components';
-import type { DashboardComponent } from '@/hooks/use-dashboard-components';
 import { useSettings } from '@/hooks/use-settings';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
@@ -263,7 +262,7 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className='flex-col md:flex-row md:items-center md:justify-between gap-4'>
                 <div>
-                  <CardTitle>Cash Flow Analysis</CardTitle>
+                  <CardTitle>Financial Summary</CardTitle>
                   <CardDescription>
                     Performance of your income vs. expenses.
                   </CardDescription>

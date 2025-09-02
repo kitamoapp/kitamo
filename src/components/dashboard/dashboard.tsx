@@ -60,7 +60,6 @@ import { UpcomingBillsCard } from '@/components/dashboard/upcoming-bills-card';
 import { useTransactions } from '@/context/transaction-context';
 import { FinancialInsightsCard } from '@/components/dashboard/financial-insights-card';
 import { useDashboardComponents } from '@/hooks/use-dashboard-components';
-import type { DashboardComponent } from '@/hooks/use-dashboard-components';
 import { useSettings } from '@/hooks/use-settings';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
@@ -120,12 +119,12 @@ export default function DashboardPage() {
   const BalanceIcon = currencyIcons[currency] || DollarSign;
 
   const canViewAdvancedAnalytics =
-    currentTier.name === 'Personal Plus' ||
-    currentTier.name === 'Silver' ||
-    currentTier.name === 'Gold' ||
-    currentTier.name === 'Platinum';
+    currentTier.name === 'Personal' ||
+    currentTier.name === 'Lite' ||
+    currentTier.name === 'Pro' ||
+    currentTier.name === 'Max';
     
-  const canViewInsights = currentTier.name !== 'Bronze';
+  const canViewInsights = currentTier.name !== 'Free';
 
   return (
     <>
@@ -335,5 +334,3 @@ export default function DashboardPage() {
     </>
   );
 }
-
-    

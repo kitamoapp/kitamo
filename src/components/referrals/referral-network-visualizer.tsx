@@ -10,19 +10,22 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Users, Award, Briefcase, Gem, User, PlusCircle, MinusCircle } from 'lucide-react';
+import { Users, Award, Briefcase, Gem, User, PlusCircle, MinusCircle, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useReferredUsers } from '@/context/referred-user-context';
 import type { ReferredUser } from '@/lib/types';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
+import { subscriptionTiers } from '@/lib/data';
 
 
 const PlanIcon = ({ plan }: { plan: ReferredUser['plan']}) => {
+    const tier = subscriptionTiers.find(t => t.name === plan);
     switch (plan) {
-        case 'Free': return <Award className="h-4 w-4 text-yellow-700" />;
+        case 'Free': return <Shield className="h-4 w-4 text-gray-500" />;
+        case 'Personal': return <User className="h-4 w-4 text-green-500" />;
         case 'Lite': return <Briefcase className="h-4 w-4 text-slate-500" />;
-        case 'Pro': return <Gem className="h-4 w-4 text-amber-500" />;
+        case 'Pro': return <Award className="h-4 w-4 text-amber-500" />;
         case 'Max': return <Gem className="h-4 w-4 text-sky-500" />;
         default: return <User className="h-4 w-4" />;
     }

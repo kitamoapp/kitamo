@@ -72,7 +72,9 @@ export function ReferredUsersTable() {
                         user.plan === 'Pro' &&
                           'border-amber-500 text-amber-500',
                         user.plan === 'Lite' &&
-                          'border-slate-500 text-slate-500'
+                          'border-slate-500 text-slate-500',
+                        user.plan === 'Personal' && 'border-green-500 text-green-500',
+                        user.plan === 'Free' && 'border-gray-500 text-gray-500'
                       )}
                     >
                       {user.plan}

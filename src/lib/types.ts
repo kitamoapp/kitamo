@@ -120,4 +120,3 @@ export type Notification = {
   read: boolean;
   icon: React.ReactNode;
 };
-    

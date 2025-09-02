@@ -4,12 +4,13 @@ import { ReferralCodeCard } from '@/components/referrals/referral-code-card';
 import { ReferralFaq } from '@/components/referrals/referral-faq';
 import { MilestoneProgressCard } from '@/components/referrals/milestone-progress-card';
 import { ReferralNetworkVisualizer } from '@/components/referrals/referral-network-visualizer';
+import { RecruitUserDialog } from '@/components/referrals/recruit-user-dialog';
 
 export default function ReferralsPage() {
   return (
     <AppLayout>
       <div className="space-y-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Referrals</h1>
             <p className="text-muted-foreground">
@@ -17,6 +18,7 @@ export default function ReferralsPage() {
               earnings.
             </p>
           </div>
+          <RecruitUserDialog />
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-8">

@@ -3,7 +3,7 @@
 
 import { useState, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Camera, Trash2, Users } from 'lucide-react';
+import { Camera, Trash2, Users, Shield, Award, Gem, Briefcase, User as UserIcon } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -13,12 +13,44 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useReferredUsers } from '@/context/referred-user-context';
-import type { ReferredUser } from '@/lib/types';
+import type { ReferredUser, SubscriptionTier } from '@/lib/types';
+import { subscriptionTiers } from '@/lib/data';
 
 interface ProfileHeaderCardProps {
   fullName: string;
   email: string;
 }
+
+const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
+  const getIcon = () => {
+    switch (tier.name) {
+        case 'Free': return <Shield className="h-4 w-4" />;
+        case 'Personal': return <UserIcon className="h-4 w-4" />;
+        case 'Lite': return <Briefcase className="h-4 w-4" />;
+        case 'Pro': return <Award className="h-4 w-4" />;
+        case 'Max': return <Gem className="h-4 w-4" />;
+        default: return <Shield className="h-4 w-4" />;
+    }
+  };
+
+  return (
+    <Badge
+      className={cn(
+        'text-base gap-2',
+        tier.name === 'Max' && 'border-sky-500/50 text-sky-500 bg-sky-500/10',
+        tier.name === 'Pro' && 'border-amber-500/50 text-amber-500 bg-amber-500/10',
+        tier.name === 'Lite' && 'border-slate-500/50 text-slate-500 bg-slate-500/10',
+        tier.name === 'Personal' && 'border-green-500/50 text-green-500 bg-green-500/10',
+        tier.name === 'Free' && 'border-gray-500/50 text-gray-500 bg-gray-500/10'
+      )}
+      variant="outline"
+    >
+      {getIcon()}
+      {tier.name}
+    </Badge>
+  );
+};
+
 
 export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
   const { currentTier } = useSubscription();
@@ -125,21 +157,7 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
         <div className="flex justify-around items-center text-center mb-4">
             <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Current Plan</p>
-                <Badge
-                    className={cn(
-                    'text-base',
-                    currentTier.name === 'Max' &&
-                        'border-sky-500 text-sky-500',
-                    currentTier.name === 'Pro' &&
-                        'border-amber-500 text-amber-500',
-                    currentTier.name === 'Lite' &&
-                        'border-slate-500 text-slate-500',
-                    currentTier.name === 'Free' && 'border-yellow-700 text-yellow-700'
-                    )}
-                    variant="outline"
-                >
-                    {currentTier.name}
-                </Badge>
+                <PlanBadge tier={currentTier} />
             </div>
              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Total Downlines</p>
