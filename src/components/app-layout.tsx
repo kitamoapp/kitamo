@@ -44,7 +44,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { CurrencySwitcher } from './currency-switcher';
 import { useAuth } from '@/context/auth-context';
 import { Skeleton } from './ui/skeleton';
 
@@ -194,7 +193,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 {/* Add page titles here if needed */}
             </div>
             <div className="flex items-center gap-4">
-                <CurrencySwitcher />
+                {/* Currency Switcher Removed */}
             </div>
         </header>
         <main className="flex-1 p-4 sm:p-8">{children}</main>

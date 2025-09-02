@@ -1,39 +1,20 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import type { Currency } from '@/lib/types';
 import { rates } from '@/lib/currency-rates';
 
 interface CurrencyContextType {
   currency: Currency;
-  setCurrency: (currency: Currency) => void;
   formatCurrency: (amount: number, currencyCode?: Currency) => string;
   convertAndFormatCurrency: (amount: number, from?: Currency) => string;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY = 'kitamo-display-currency';
-
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-  const [displayCurrency, setDisplayCurrency] = useState<Currency>('PHP');
-
-  useEffect(() => {
-    const savedDisplayCurrency = localStorage.getItem(LOCAL_STORAGE_KEY) as Currency | null;
-    if (savedDisplayCurrency) {
-      setDisplayCurrency(savedDisplayCurrency);
-    }
-  }, []);
-
-  const handleSetCurrency = (newCurrency: Currency) => {
-    try {
-        window.localStorage.setItem(LOCAL_STORAGE_KEY, newCurrency);
-    } catch (error) {
-        console.error('Error saving currency to localStorage', error);
-    }
-    setDisplayCurrency(newCurrency);
-  }
+  const displayCurrency: Currency = 'PHP'; // Hardcoded to PHP
 
   const convertCurrency = (amount: number, from: Currency, to: Currency) => {
     const fromRate = rates[from];
@@ -64,7 +45,7 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
   }, [displayCurrency, formatCurrency]);
 
   return (
-    <CurrencyContext.Provider value={{ currency: displayCurrency, setCurrency: handleSetCurrency, formatCurrency, convertAndFormatCurrency }}>
+    <CurrencyContext.Provider value={{ currency: displayCurrency, formatCurrency, convertAndFormatCurrency }}>
       {children}
     </CurrencyContext.Provider>
   );
