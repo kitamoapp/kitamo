@@ -93,6 +93,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     price: 0,
     features: [{ text: 'Basic financial tracking tools' }],
     commissionRate: 0,
+    priceId: 'price_php_bronze',
+    annualPriceId: 'price_php_bronze_annual',
   },
   {
     name: 'Silver',
@@ -105,7 +107,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
       { text: 'Earn through referral system' },
       { text: '40% commission on matched volume' },
     ],
-    commissionRate: 0.40,
+    commissionRate: 0.4,
   },
   {
     name: 'Gold',
@@ -118,7 +120,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
       { text: '60% commission on matched volume' },
       { text: 'Advanced analytics' },
     ],
-    commissionRate: 0.60,
+    commissionRate: 0.6,
   },
   {
     name: 'Platinum',

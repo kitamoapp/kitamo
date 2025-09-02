@@ -1,8 +1,4 @@
 
-
-
-
-
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
@@ -38,8 +34,8 @@ export type SubscriptionTier = {
   name: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
   price: number;
   annualPrice?: number;
-  priceId?: string;
-  annualPriceId?: string;
+  priceId: string;
+  annualPriceId: string;
   features: SubscriptionFeature[];
   commissionRate: number;
 };
@@ -105,5 +101,3 @@ export type NewReferredUser = {
   plan: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
   referredBy?: string; // This can be the referral code
 };
-
-    

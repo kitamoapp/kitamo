@@ -12,7 +12,6 @@ import { BudgetProvider } from '@/context/budget-context';
 import { ReminderProvider } from '@/context/reminder-context';
 import { PaymentMethodProvider } from '@/context/payment-method-context';
 import { AuthProvider } from '@/context/auth-context';
-import { StripeProvider } from '@/context/stripe-provider';
 
 export const metadata: Metadata = {
   title: 'KitaMo',
@@ -58,15 +57,13 @@ export default function RootLayout({
               <TransactionProvider>
                 <ReferredUserProvider>
                   <SubscriptionProvider>
-                     <StripeProvider>
-                        <BudgetProvider>
-                          <ReminderProvider>
-                            <PaymentMethodProvider>
-                              {children}
-                            </PaymentMethodProvider>
-                          </ReminderProvider>
-                        </BudgetProvider>
-                      </StripeProvider>
+                    <BudgetProvider>
+                      <ReminderProvider>
+                        <PaymentMethodProvider>
+                          {children}
+                        </PaymentMethodProvider>
+                      </ReminderProvider>
+                    </BudgetProvider>
                   </SubscriptionProvider>
                 </ReferredUserProvider>
               </TransactionProvider>
