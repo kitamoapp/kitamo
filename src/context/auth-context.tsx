@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { 
     onAuthStateChanged, 
     User, 
@@ -9,15 +9,13 @@ import {
     signInWithEmailAndPassword, 
     signOut,
     updateProfile,
-    type Auth,
     RecaptchaVerifier,
     PhoneAuthProvider,
-    signInWithPhoneNumber,
     MultiFactorResolver,
     PhoneMultiFactorGenerator,
     ConfirmationResult
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useFirebase } from '@/hooks/use-firebase';
 import { useToast } from '@/hooks/use-toast';
 
 type MfaState = 'idle' | 'requires_mfa' | 'verifying_mfa' | 'error';
@@ -36,23 +34,27 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { auth } = useFirebase();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [mfaState, setMfaState] = useState<MfaState>('idle');
   const [mfaResolver, setMfaResolver] = useState<MultiFactorResolver | null>(null);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
   const { toast } = useToast();
-  
 
   useEffect(() => {
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   const login = async (email: string, password: string) => {
+    if (!auth) return;
+    
     setMfaState('idle');
     setMfaResolver(null);
 
@@ -60,19 +62,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
         if (error.code === 'auth/multi-factor-required') {
+            if (!recaptchaVerifierRef.current) {
+                recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                    'size': 'invisible',
+                    'callback': () => {},
+                });
+            }
+            
             const resolver = error.customData.resolver as MultiFactorResolver;
             setMfaResolver(resolver);
             
             const phoneInfo = resolver.hints[0];
             const phoneAuthProvider = new PhoneAuthProvider(auth);
 
-            // This must be initialized only on the client, after the container is available.
-            const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible',
-                'callback': () => {},
-            });
-
-            const confirmation = await phoneAuthProvider.verifyPhoneNumber(phoneInfo, recaptchaVerifier);
+            const confirmation = await phoneAuthProvider.verifyPhoneNumber(phoneInfo, recaptchaVerifierRef.current);
             setConfirmationResult(confirmation);
             setMfaState('requires_mfa');
         } else {
@@ -105,6 +108,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signup = async (email: string, password: string, displayName: string) => {
+    if (!auth) return;
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
@@ -113,6 +117,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
+    if (!auth) return;
     await signOut(auth);
     setMfaState('idle');
     setMfaResolver(null);

@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from './use-toast';
 import { v4 as uuidv4 } from 'uuid';
-import { requestNotificationPermission } from '@/lib/firebase';
+import { requestNotificationPermission } from './use-firebase';
 
 export type Setting = 
   | 'biometricLogin'
