@@ -26,10 +26,14 @@ const getFirebaseApp = (): FirebaseApp | null => {
 };
 
 const app = getFirebaseApp();
+let auth: Auth | null = null;
 
 const getFirebaseAuth = (): Auth | null => {
     if (!app) return null;
-    return getAuth(app);
+    if (!auth) {
+        auth = getAuth(app);
+    }
+    return auth;
 }
 
 
