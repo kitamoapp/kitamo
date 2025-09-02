@@ -99,6 +99,7 @@ export function TransactionsTable() {
   const handleDeleteSelected = () => {
     deleteMultipleTransactions(Array.from(selectedRows));
     setSelectedRows(new Set());
+    setShowDeleteAlert(false);
   }
 
   const numSelected = selectedRows.size;
@@ -108,9 +109,9 @@ export function TransactionsTable() {
       <Card>
         <CardHeader className="flex-row items-center justify-between">
             <div>
-              <CardTitle>Transaction Analysis</CardTitle>
+              <CardTitle>Recent Transactions</CardTitle>
               <CardDescription>
-                The data powering your financial consultation.
+                A log of your income and expenses.
               </CardDescription>
             </div>
              {numSelected > 0 && (
@@ -125,7 +126,7 @@ export function TransactionsTable() {
             <div className="flex flex-col items-center justify-center gap-4 text-center py-10">
                 <Receipt className="h-16 w-16 text-muted-foreground/50" />
                 <p className="text-muted-foreground">You have no transactions yet.</p>
-                <p className="text-sm text-muted-foreground">Add a transaction to get started.</p>
+                <p className="text-sm text-muted-foreground">Click "Add Transaction" to get started.</p>
             </div>
           ) : (
             <>
@@ -199,7 +200,7 @@ export function TransactionsTable() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead padding="checkbox" className="w-[50px]">
+                      <TableHead className="w-[50px]">
                         <Checkbox
                            checked={numSelected === sortedTransactions.length && sortedTransactions.length > 0 ? true : (numSelected > 0 ? 'indeterminate' : false)}
                            onCheckedChange={handleSelectAll}
@@ -216,8 +217,8 @@ export function TransactionsTable() {
                   </TableHeader>
                   <TableBody>
                     {sortedTransactions.map((transaction) => (
-                      <TableRow key={transaction.id} data-state={selectedRows.has(transaction.id) && "selected"}>
-                        <TableCell padding="checkbox">
+                      <TableRow key={transaction.id} data-state={selectedRows.has(transaction.id) ? "selected" : ""}>
+                        <TableCell>
                             <Checkbox
                                 checked={selectedRows.has(transaction.id)}
                                 onCheckedChange={() => handleSelectRow(transaction.id)}
@@ -304,7 +305,7 @@ export function TransactionsTable() {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete 
-              {numSelected > 0 ? ` ${numSelected} transactions` : ' this transaction'} from your records.
+              {numSelected > 0 ? ` ${numSelected} selected transactions` : ' this transaction'} from your records.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -316,7 +317,7 @@ export function TransactionsTable() {
             >
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction onClick={numSelected > 0 ? handleDeleteSelected : handleDeleteConfirm}>
+            <AlertDialogAction onClick={numSelected > 0 && !transactionToDelete ? handleDeleteSelected : handleDeleteConfirm}>
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
