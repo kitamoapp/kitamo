@@ -16,6 +16,7 @@ import {
     ConfirmationResult,
     getAuth,
     Auth,
+    sendPasswordResetEmail,
 } from 'firebase/auth';
 import { getFirebaseApp } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -32,6 +33,7 @@ interface AuthContextType {
   signup: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
   verifyMfaCode: (code: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -130,8 +132,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setMfaResolver(null);
     setConfirmationResult(null);
   };
+  
+  const resetPassword = async (email: string) => {
+    if (!auth) return;
+    await sendPasswordResetEmail(auth, email);
+  }
 
-  const value = { user, loading, login, signup, logout, auth, mfaState, mfaResolver, verifyMfaCode };
+  const value = { user, loading, login, signup, logout, auth, mfaState, mfaResolver, verifyMfaCode, resetPassword };
 
   return (
     <AuthContext.Provider value={value}>
