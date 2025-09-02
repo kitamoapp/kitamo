@@ -26,7 +26,9 @@ function SettingsSkeleton() {
         <Card>
           <CardHeader>
             <CardTitle><Skeleton className="h-6 w-32" /></CardTitle>
-            <CardDescription><Skeleton className="h-4 w-64" /></CardDescription>
+            <div className="text-sm text-muted-foreground">
+                <Skeleton className="h-4 w-64" />
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
              <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
@@ -48,7 +50,9 @@ function SettingsSkeleton() {
          <Card>
           <CardHeader>
             <CardTitle><Skeleton className="h-6 w-32" /></CardTitle>
-            <CardDescription><Skeleton className="h-4 w-64" /></CardDescription>
+             <div className="text-sm text-muted-foreground">
+                <Skeleton className="h-4 w-64" />
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
