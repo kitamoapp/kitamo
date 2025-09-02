@@ -28,7 +28,9 @@ export function MilestoneProgressCard() {
   const earnsCommission = currentTier.commissionRate > 0;
   const earningCap = currentTier.earningCap;
   
-  const progress = earningCap > 0 && earningCap !== Infinity ? (totalEarnings / earningCap) * 100 : (earningCap === Infinity ? 100 : 0);
+  const progress = earningCap > 0 && earningCap !== Infinity 
+    ? (totalEarnings / earningCap) * 100 
+    : (earningCap === Infinity ? 100 : 0);
 
   return (
     <Card>
