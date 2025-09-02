@@ -27,6 +27,7 @@ export type Category = {
 };
 
 export type SubscriptionFeature = {
+  id: string;
   text: string;
 };
 

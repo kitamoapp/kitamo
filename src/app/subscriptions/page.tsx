@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { SubscriptionPlanCard } from '@/components/subscriptions/subscription-plan-card';
+import { SubscriptionComparisonTable } from '@/components/subscriptions/subscription-comparison-table';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
@@ -136,17 +136,12 @@ export default function SubscriptionsPage() {
               Save 20%
             </div>
           </div>
+          
+          <SubscriptionComparisonTable 
+            billingCycle={billingCycle}
+            onChoosePlan={handleChoosePlan}
+          />
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {subscriptionTiers.map((tier) => (
-              <SubscriptionPlanCard
-                key={tier.name}
-                tier={tier}
-                onChoosePlan={handleChoosePlan}
-                billingCycle={billingCycle}
-              />
-            ))}
-          </div>
         </div>
       </AppLayout>
 
@@ -230,3 +225,4 @@ export default function SubscriptionsPage() {
     </>
   );
 }
+

@@ -4,6 +4,7 @@ import type {
   ReferredUser,
   SubscriptionTier,
   ReferralMilestone,
+  SubscriptionFeature,
 } from '@/lib/types';
 
 export const transactions: Transaction[] = [
@@ -87,6 +88,20 @@ export const referredUsers: ReferredUser[] = [
   { id: '7', name: 'George', signupDate: new Date('2024-07-10').toISOString(), status: 'Active', referredBy: '4', leg: 'right', plan: 'Gold' },
 ];
 
+export const allFeatures: SubscriptionFeature[] = [
+  { text: 'Basic financial tracking tools', id: 'basic_tracking' },
+  { text: 'Manual budget setup', id: 'manual_budget' },
+  { text: 'AI-Powered financial insights', id: 'ai_insights' },
+  { text: 'AI-Powered "Smart Budget" generation', id: 'ai_budget' },
+  { text: 'Advanced analytics', id: 'advanced_analytics' },
+  { text: 'Earn through referral system', id: 'referral_system' },
+  { text: '40% commission on matched volume', id: 'commission_40' },
+  { text: '60% commission on matched volume', id: 'commission_60' },
+  { text: '85% commission on matched volume', id: 'commission_85' },
+  { text: 'Higher earning cap', id: 'higher_cap' },
+  { text: 'Unlimited earning potential', id: 'unlimited_cap' },
+];
+
 export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Bronze',
@@ -94,8 +109,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
     priceId: 'price_php_bronze_free',
     annualPriceId: 'price_php_bronze_free_annual',
     features: [
-      { text: 'Basic financial tracking tools' },
-      { text: 'Manual budget setup' },
+      { text: 'Basic financial tracking tools', id: 'basic_tracking' },
+      { text: 'Manual budget setup', id: 'manual_budget' },
     ],
     commissionRate: 0,
     earningCap: 0,
@@ -107,10 +122,11 @@ export const subscriptionTiers: SubscriptionTier[] = [
     priceId: 'price_php_personal_plus_monthly',
     annualPriceId: 'price_php_personal_plus_annual',
     features: [
-      { text: 'All Bronze features' },
-      { text: 'AI-Powered financial insights' },
-      { text: 'AI-Powered "Smart Budget" generation' },
-      { text: 'Advanced analytics' },
+      { text: 'Basic financial tracking tools', id: 'basic_tracking' },
+      { text: 'Manual budget setup', id: 'manual_budget' },
+      { text: 'AI-Powered financial insights', id: 'ai_insights' },
+      { text: 'AI-Powered "Smart Budget" generation', id: 'ai_budget' },
+      { text: 'Advanced analytics', id: 'advanced_analytics' },
     ],
     commissionRate: 0,
     earningCap: 0,
@@ -122,9 +138,13 @@ export const subscriptionTiers: SubscriptionTier[] = [
     priceId: 'price_php_silver_monthly',
     annualPriceId: 'price_php_silver_annual',
     features: [
-      { text: 'All Personal Plus features' },
-      { text: 'Earn through referral system' },
-      { text: '40% commission on matched volume' },
+      { text: 'Basic financial tracking tools', id: 'basic_tracking' },
+      { text: 'Manual budget setup', id: 'manual_budget' },
+      { text: 'AI-Powered financial insights', id: 'ai_insights' },
+      { text: 'AI-Powered "Smart Budget" generation', id: 'ai_budget' },
+      { text: 'Advanced analytics', id: 'advanced_analytics' },
+      { text: 'Earn through referral system', id: 'referral_system' },
+      { text: '40% commission on matched volume', id: 'commission_40' },
     ],
     commissionRate: 0.40,
     earningCap: 5000,
@@ -136,9 +156,14 @@ export const subscriptionTiers: SubscriptionTier[] = [
     priceId: 'price_php_gold_monthly',
     annualPriceId: 'price_php_gold_annual',
     features: [
-      { text: 'All Silver features' },
-      { text: '60% commission on matched volume' },
-      { text: 'Higher earning cap' },
+      { text: 'Basic financial tracking tools', id: 'basic_tracking' },
+      { text: 'Manual budget setup', id: 'manual_budget' },
+      { text: 'AI-Powered financial insights', id: 'ai_insights' },
+      { text: 'AI-Powered "Smart Budget" generation', id: 'ai_budget' },
+      { text: 'Advanced analytics', id: 'advanced_analytics' },
+      { text: 'Earn through referral system', id: 'referral_system' },
+      { text: '60% commission on matched volume', id: 'commission_60' },
+      { text: 'Higher earning cap', id: 'higher_cap' },
     ],
     commissionRate: 0.60,
     earningCap: 15000,
@@ -150,9 +175,14 @@ export const subscriptionTiers: SubscriptionTier[] = [
     priceId: 'price_php_platinum_monthly',
     annualPriceId: 'price_php_platinum_annual',
     features: [
-      { text: 'All Gold features' },
-      { text: '85% commission on matched volume' },
-      { text: 'Unlimited earning potential' },
+      { text: 'Basic financial tracking tools', id: 'basic_tracking' },
+      { text: 'Manual budget setup', id: 'manual_budget' },
+      { text: 'AI-Powered financial insights', id: 'ai_insights' },
+      { text: 'AI-Powered "Smart Budget" generation', id: 'ai_budget' },
+      { text: 'Advanced analytics', id: 'advanced_analytics' },
+      { text: 'Earn through referral system', id: 'referral_system' },
+      { text: '85% commission on matched volume', id: 'commission_85' },
+      { text: 'Unlimited earning potential', id: 'unlimited_cap' },
     ],
     commissionRate: 0.85,
     earningCap: Infinity,
