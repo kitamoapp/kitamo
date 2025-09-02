@@ -2,6 +2,7 @@
 
 
 
+
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
@@ -79,7 +80,7 @@ interface BankPaymentMethod extends BasePaymentMethod {
 
 interface WalletPaymentMethod extends BasePaymentMethod {
     type: 'Wallet';
-    provider: string;
+    provider: 'GCash' | 'PayMaya';
     email: string;
 }
 
@@ -93,7 +94,7 @@ export type PaymentMethodValues = {
   accountNumber: string;
   routingNumber: string;
   bankName: string;
-  provider: string;
+  provider: 'GCash' | 'PayMaya';
   email: string;
   autoPay: boolean;
 };

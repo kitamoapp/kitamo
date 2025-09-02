@@ -45,7 +45,7 @@ const bankSchema = z.object({
 });
 
 const walletSchema = z.object({
-    provider: z.string().min(1, 'Please select a provider.'),
+    provider: z.enum(['GCash', 'PayMaya']),
     email: z.string().email('Please enter a valid email address.'),
 });
 
@@ -66,7 +66,7 @@ export const baseDefaultValues: PaymentMethodValues = {
   accountNumber: '',
   routingNumber: '',
   bankName: '',
-  provider: '',
+  provider: 'GCash',
   email: '',
   autoPay: true,
 };
@@ -110,7 +110,7 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
           defaultValues.bankName = editingMethod.bankName || '';
           break;
         case 'Wallet':
-          defaultValues.provider = editingMethod.provider || '';
+          defaultValues.provider = editingMethod.provider || 'GCash';
           defaultValues.email = editingMethod.email || '';
           break;
       }
@@ -156,15 +156,52 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
                         </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                        <SelectItem value="Wallet">Digital Wallet</SelectItem>
                         <SelectItem value="Card">Card</SelectItem>
                         <SelectItem value="Bank">Bank Account</SelectItem>
-                        <SelectItem value="Wallet">Digital Wallet</SelectItem>
                     </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          {paymentType === 'Wallet' && (
+              <>
+                <FormField
+                    control={form.control}
+                    name="provider"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Wallet Provider</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                            <SelectValue placeholder="Select a provider" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            <SelectItem value="GCash">GCash</SelectItem>
+                            <SelectItem value="PayMaya">PayMaya</SelectItem>
+                        </SelectContent>
+                        </Select>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Associated Email or Phone</FormLabel>
+                        <FormControl><Input placeholder="Your account email or phone" {...field} /></FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+              </>
+          )}
 
           {paymentType === 'Card' && (
             <>
@@ -254,43 +291,6 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
               </>
           )}
 
-          {paymentType === 'Wallet' && (
-              <>
-                <FormField
-                    control={form.control}
-                    name="provider"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Wallet Provider</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                            <SelectTrigger>
-                            <SelectValue placeholder="Select a provider" />
-                            </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                            <SelectItem value="PayPal">PayPal</SelectItem>
-                            <SelectItem value="GCash">GCash</SelectItem>
-                            <SelectItem value="Venmo">Venmo</SelectItem>
-                        </SelectContent>
-                        </Select>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Wallet Email or Phone</FormLabel>
-                        <FormControl><Input placeholder="Associated email or phone" {...field} /></FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-              </>
-          )}
 
           <DialogFooter>
             <DialogClose asChild>
