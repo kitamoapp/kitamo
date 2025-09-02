@@ -26,16 +26,14 @@ import { Landmark, Wallet, CreditCard, ShieldCheck, Loader2 } from 'lucide-react
 import { cn } from '@/lib/utils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from '@/components/ui/alert-dialog';
 import { Switch } from '@/components/ui/switch';
-import { useAuth } from '@/context/auth-context';
 import { useCurrency } from '@/context/currency-context';
 
 type DialogState = 'closed' | 'confirming' | 'addingPayment' | 'processingPayment';
 export type BillingCycle = 'monthly' | 'annually';
 
 export default function SubscriptionsPage() {
-  const { setCurrentTier, getTierPrice } = useSubscription();
-  const { formatCurrency } = useCurrency();
-  const { regionalCurrency, loading: authLoading } = useAuth();
+  const { currentTier, setCurrentTier } = useSubscription();
+  const { convertAndFormatCurrency } = useCurrency();
   const { toast } = useToast();
   const { paymentMethods, addPaymentMethod } = usePaymentMethods();
   
@@ -100,20 +98,9 @@ export default function SubscriptionsPage() {
           default: return <CreditCard className="h-6 w-6" />;
       }
   }
-
-  if (authLoading || !regionalCurrency) {
-    return (
-        <AppLayout>
-            <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-        </AppLayout>
-    )
-  }
   
-  const selectedTierPrice = selectedTier ? getTierPrice(selectedTier, regionalCurrency) : null;
-  const purchaseAmount = billingCycle === 'annually' ? selectedTierPrice?.annualAmount : selectedTierPrice?.amount;
-  const priceIdForCheckout = billingCycle === 'annually' ? selectedTierPrice?.annualPriceId : selectedTierPrice?.priceId;
+  const purchaseAmount = selectedTier ? (billingCycle === 'annually' ? selectedTier.annualPrice : selectedTier.price) : 0;
+  const priceIdForCheckout = selectedTier ? (billingCycle === 'annually' ? selectedTier.annualPriceId : selectedTier.priceId) : 'N/A';
 
   return (
     <>
@@ -175,7 +162,7 @@ export default function SubscriptionsPage() {
             <DialogDescription>
               You are upgrading to the{' '}
               <span className="font-bold">{selectedTier?.name} ({billingCycle})</span> plan. The selected payment method will be charged {' '}
-              <span className="font-bold">{formatCurrency(purchaseAmount || 0, regionalCurrency)}</span>.
+              <span className="font-bold">{convertAndFormatCurrency(purchaseAmount || 0)}</span>.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -195,7 +182,7 @@ export default function SubscriptionsPage() {
                      <div className='flex-1'>
                         {method.type === 'Card' && <p className="font-semibold">{method.brand} ending in {method.last4}</p>}
                         {method.type === 'Card' && <p className="text-sm text-muted-foreground">Expires {method.expiry}</p>}
-                        {method.type === 'Bank' && <p className="font-semibold">{method.bankName} ending in {method.last4}</p>}
+                        {method.type === 'Bank' && <p className="font-semibold">{method.bankName} ending in {method.last4s}</p>}
                         {method.type === 'Bank' && <p className="text-sm text-muted-foreground">Bank Account</p>}
                         {method.type === 'Wallet' && <p className="font-semibold">{method.provider}</p>}
                         {method.type === 'Wallet' && <p className="text-sm text-muted-foreground">{method.email}</p>}

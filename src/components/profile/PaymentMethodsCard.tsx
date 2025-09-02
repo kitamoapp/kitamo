@@ -108,7 +108,7 @@ export function PaymentMethodsCard() {
                   <div>
                     {method.type === 'Card' && <p className="font-semibold">{method.brand} ending in {method.last4}</p>}
                     {method.type === 'Card' && <p className="text-sm text-muted-foreground">Expires {method.expiry}</p>}
-                    {method.type === 'Bank' && <p className="font-semibold">{method.bankName} ending in {method.last4}</p>}
+                    {method.type === 'Bank' && <p className="font-semibold">{method.bankName} ending in {method.last4s}</p>}
                     {method.type === 'Bank' && <p className="text-sm text-muted-foreground">Bank Account</p>}
                     {method.type === 'Wallet' && <p className="font-semibold">{method.provider}</p>}
                     {method.type === 'Wallet' && <p className="text-sm text-muted-foreground">{method.email}</p>}

@@ -18,19 +18,16 @@ import { Progress } from '../ui/progress';
 import { useSubscription } from '@/hooks/use-subscription';
 import { useReferredUsers } from '@/context/referred-user-context';
 import { referralMilestones } from '@/lib/data';
-import { useAuth } from '@/context/auth-context';
 
 export function MilestoneProgressCard() {
-  const { formatCurrency } = useCurrency();
-  const { regionalCurrency } = useAuth();
-  const { currentTier, totalEarnings, getTierPrice } = useSubscription();
+  const { convertAndFormatCurrency } = useCurrency();
+  const { currentTier, totalEarnings } = useSubscription();
   const { referredUsers } = useReferredUsers();
   const router = useRouter();
 
   const isBronze = currentTier.name === 'Bronze';
   
-  const currentTierPriceInfo = getTierPrice(currentTier, regionalCurrency || 'PHP');
-  const earningCap = currentTierPriceInfo?.amount ? Infinity : 0; // Simplified for now
+  const earningCap = Infinity; 
 
   const progress = earningCap > 0 && earningCap !== Infinity ? (totalEarnings / earningCap) * 100 : 0;
 
@@ -72,7 +69,7 @@ export function MilestoneProgressCard() {
                   Monthly Earnings
                 </p>
                 <p className="font-semibold text-lg text-primary">
-                  {formatCurrency(totalEarnings, regionalCurrency)}
+                  {convertAndFormatCurrency(totalEarnings)}
                 </p>
               </div>
               <div className="text-right">
@@ -80,7 +77,7 @@ export function MilestoneProgressCard() {
                 <p className="font-semibold text-lg">
                   {earningCap === Infinity
                     ? 'Unlimited'
-                    : formatCurrency(earningCap, regionalCurrency)}
+                    : convertAndFormatCurrency(earningCap)}
                 </p>
               </div>
             </div>
@@ -90,7 +87,7 @@ export function MilestoneProgressCard() {
             <p className="text-sm text-muted-foreground">
               You have earned{' '}
               <span className="font-bold text-accent">
-                {formatCurrency(totalEarnings, regionalCurrency)}
+                {convertAndFormatCurrency(totalEarnings)}
               </span>{' '}
               this month.
             </p>

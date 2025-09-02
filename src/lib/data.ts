@@ -90,16 +90,16 @@ export const referredUsers: ReferredUser[] = [
 export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Bronze',
-    prices: [{ currency: 'PHP', amount: 0 }, { currency: 'USD', amount: 0 }],
+    price: 0,
     features: [{ text: 'Basic financial tracking tools' }],
     commissionRate: 0,
   },
   {
     name: 'Silver',
-    prices: [
-      { currency: 'PHP', amount: 299, annualAmount: 2870, priceId: 'price_php_silver', annualPriceId: 'price_php_silver_annual' },
-      { currency: 'USD', amount: 10, annualAmount: 96, priceId: 'price_usd_silver', annualPriceId: 'price_usd_silver_annual' },
-    ],
+    price: 299,
+    annualPrice: 2870,
+    priceId: 'price_php_silver',
+    annualPriceId: 'price_php_silver_annual',
     features: [
       { text: 'All Bronze features' },
       { text: 'Earn through referral system' },
@@ -109,10 +109,10 @@ export const subscriptionTiers: SubscriptionTier[] = [
   },
   {
     name: 'Gold',
-    prices: [
-      { currency: 'PHP', amount: 699, annualAmount: 6710, priceId: 'price_php_gold', annualPriceId: 'price_php_gold_annual' },
-      { currency: 'USD', amount: 25, annualAmount: 240, priceId: 'price_usd_gold', annualPriceId: 'price_usd_gold_annual' },
-    ],
+    price: 699,
+    annualPrice: 6710,
+    priceId: 'price_php_gold',
+    annualPriceId: 'price_php_gold_annual',
     features: [
       { text: 'All Silver features' },
       { text: '60% commission on matched volume' },
@@ -122,10 +122,10 @@ export const subscriptionTiers: SubscriptionTier[] = [
   },
   {
     name: 'Platinum',
-    prices: [
-        { currency: 'PHP', amount: 999, annualAmount: 9590, priceId: 'price_php_platinum', annualPriceId: 'price_php_platinum_annual' },
-        { currency: 'USD', amount: 40, annualAmount: 384, priceId: 'price_usd_platinum', annualPriceId: 'price_usd_platinum_annual' },
-    ],
+    price: 999,
+    annualPrice: 9590,
+    priceId: 'price_php_platinum',
+    annualPriceId: 'price_php_platinum_annual',
     features: [
       { text: 'All Gold features' },
       { text: '85% commission on matched volume' },

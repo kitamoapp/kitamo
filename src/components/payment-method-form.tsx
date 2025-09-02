@@ -106,7 +106,7 @@ export function PaymentMethodForm({ editingMethod, onSubmit, onCancel, isSubscri
           defaultValues.expiry = editingMethod.expiry || '';
           break;
         case 'Bank':
-          defaultValues.accountNumber = `••••••••${editingMethod.last4}`;
+          defaultValues.accountNumber = `••••••••${editingMethod.last4s}`;
           defaultValues.bankName = editingMethod.bankName || '';
           break;
         case 'Wallet':

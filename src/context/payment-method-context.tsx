@@ -77,7 +77,7 @@ export const PaymentMethodProvider = ({ children }: { children: ReactNode }) => 
             return {
                 id,
                 type: 'Bank',
-                last4: values.accountNumber.slice(-4),
+                last4s: values.accountNumber.slice(-4),
                 bankName: values.bankName,
                 autoPay: values.autoPay,
             };

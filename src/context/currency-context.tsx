@@ -4,7 +4,6 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import type { Currency } from '@/lib/types';
 import { rates } from '@/lib/currency-rates';
-import { useAuth } from './auth-context';
 
 interface CurrencyContextType {
   currency: Currency;
@@ -18,18 +17,14 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 const LOCAL_STORAGE_KEY = 'kitamo-display-currency';
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-  const { regionalCurrency, loading: authLoading } = useAuth();
   const [displayCurrency, setDisplayCurrency] = useState<Currency>('PHP');
 
   useEffect(() => {
-    // Set the initial display currency from localStorage or default to regional currency when available
     const savedDisplayCurrency = localStorage.getItem(LOCAL_STORAGE_KEY) as Currency | null;
     if (savedDisplayCurrency) {
       setDisplayCurrency(savedDisplayCurrency);
-    } else if (regionalCurrency) {
-      setDisplayCurrency(regionalCurrency);
     }
-  }, [regionalCurrency]);
+  }, []);
 
   const handleSetCurrency = (newCurrency: Currency) => {
     try {
@@ -55,7 +50,6 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
         currency: code,
     };
 
-    // Use a more compact notation for JPY as it has no decimals
     if (code === 'JPY') {
         options.minimumFractionDigits = 0;
         options.maximumFractionDigits = 0;

@@ -1,6 +1,7 @@
 
 
 
+
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
@@ -32,17 +33,12 @@ export type SubscriptionFeature = {
   text: string;
 };
 
-export type TierPrice = {
-    currency: Currency;
-    amount: number;
-    annualAmount?: number;
-    priceId?: string;
-    annualPriceId?: string;
-}
-
 export type SubscriptionTier = {
   name: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
-  prices: TierPrice[];
+  price: number;
+  annualPrice?: number;
+  priceId?: string;
+  annualPriceId?: string;
   features: SubscriptionFeature[];
   commissionRate: number;
 };
@@ -77,7 +73,7 @@ interface CardPaymentMethod extends BasePaymentMethod {
 
 interface BankPaymentMethod extends BasePaymentMethod {
     type: 'Bank';
-    last4: string;
+    last4s: string;
     bankName: string;
 }
 
