@@ -11,13 +11,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useCurrency } from '@/context/currency-context';
-import type { SubscriptionFeature, SubscriptionTier } from '@/lib/types';
+import type { SubscriptionFeature, SubscriptionTier, TierPrice } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 import { useSubscription } from '@/hooks/use-subscription';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
 import type { BillingCycle } from '@/app/subscriptions/page';
+import { useAuth } from '@/context/auth-context';
 
 interface SubscriptionPlanCardProps {
   tier: SubscriptionTier;
@@ -30,32 +31,30 @@ export function SubscriptionPlanCard({
   onChoosePlan,
   billingCycle
 }: SubscriptionPlanCardProps) {
-  const { convertAndFormatCurrency } = useCurrency();
+  const { formatCurrency, currency: displayCurrency } = useCurrency();
+  const { regionalCurrency } = useAuth();
   const { currentTier, isLoaded } = useSubscription();
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
+  
+  // The billing currency should be the locked regional currency
+  const billingCurrency = regionalCurrency || displayCurrency;
+
+  const tierPriceInfo = React.useMemo(() => {
+    return tier.prices.find(p => p.currency === billingCurrency) || tier.prices.find(p => p.currency === 'USD');
+  }, [tier.prices, billingCurrency]) as TierPrice;
+  
+  const price = billingCycle === 'annually' ? tierPriceInfo.annualAmount : tierPriceInfo.amount;
+  const originalFullPrice = tierPriceInfo.amount * 12;
 
   const renderFeature = (feature: SubscriptionFeature) => {
-    let text = feature.text;
-    
-    if (text.includes('{commissionRate}')) {
-        text = text.replace('{commissionRate}', (tier.commissionRate * 100).toString());
-    }
-    
-    if (feature.earningCap && text.includes('{cap}')) {
-      const capText =
-        feature.earningCap === Infinity
-          ? 'Unlimited'
-          : convertAndFormatCurrency(feature.earningCap);
-      text = text.replace('{cap}', capText);
-    }
-    return text;
+    return feature.text;
   };
   
-  if (!isClient || !isLoaded) {
+  if (!isClient || !isLoaded || !regionalCurrency) {
     return (
         <Card className="flex flex-col">
             <CardHeader>
@@ -78,8 +77,6 @@ export function SubscriptionPlanCard({
         </Card>
     );
   }
-  
-  const price = billingCycle === 'annually' ? tier.annualPrice : tier.price;
 
   return (
     <Card
@@ -94,13 +91,13 @@ export function SubscriptionPlanCard({
         <CardDescription>
           {price != null && price > 0 ? (
             <>
-              <span className="text-2xl font-bold">{convertAndFormatCurrency(price)}</span>
+              <span className="text-2xl font-bold">{formatCurrency(price, billingCurrency)}</span>
               <span className="text-muted-foreground">
                 {billingCycle === 'annually' ? '/year' : '/month'}
               </span>
-              {billingCycle === 'annually' && tier.price > 0 && (
+              {billingCycle === 'annually' && tierPriceInfo.amount > 0 && (
                  <p className="text-sm text-muted-foreground">
-                   Originally {convertAndFormatCurrency(tier.price * 12)}/year
+                   Originally {formatCurrency(originalFullPrice, billingCurrency)}/year
                  </p>
               )}
             </>

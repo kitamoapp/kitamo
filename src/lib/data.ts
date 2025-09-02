@@ -90,60 +90,47 @@ export const referredUsers: ReferredUser[] = [
 export const subscriptionTiers: SubscriptionTier[] = [
   {
     name: 'Bronze',
-    price: 0,
+    prices: [{ currency: 'PHP', amount: 0 }, { currency: 'USD', amount: 0 }],
     features: [{ text: 'Basic financial tracking tools' }],
-    borderColor: 'border-yellow-700',
-    gradientFrom: 'from-yellow-100',
-    gradientTo: 'to-stone-100',
-    textColor: 'text-yellow-800',
     commissionRate: 0,
   },
   {
     name: 'Silver',
-    price: 299,
-    annualPrice: 2870, // ~20% discount
+    prices: [
+      { currency: 'PHP', amount: 299, annualAmount: 2870, priceId: 'price_php_silver', annualPriceId: 'price_php_silver_annual' },
+      { currency: 'USD', amount: 10, annualAmount: 96, priceId: 'price_usd_silver', annualPriceId: 'price_usd_silver_annual' },
+    ],
     features: [
       { text: 'All Bronze features' },
       { text: 'Earn through referral system' },
-      { text: '{commissionRate}% commission on matched volume' },
-      { text: 'Up to {cap} monthly earning cap', earningCap: 25000 },
+      { text: '40% commission on matched volume' },
     ],
-    borderColor: 'border-slate-400',
-    gradientFrom: 'from-slate-200',
-    gradientTo: 'to-white',
-    textColor: 'text-slate-700',
     commissionRate: 0.40,
   },
   {
     name: 'Gold',
-    price: 699,
-    annualPrice: 6710, // ~20% discount
+    prices: [
+      { currency: 'PHP', amount: 699, annualAmount: 6710, priceId: 'price_php_gold', annualPriceId: 'price_php_gold_annual' },
+      { currency: 'USD', amount: 25, annualAmount: 240, priceId: 'price_usd_gold', annualPriceId: 'price_usd_gold_annual' },
+    ],
     features: [
       { text: 'All Silver features' },
-      { text: '{commissionRate}% commission on matched volume' },
-      { text: 'Up to {cap} monthly earning cap', earningCap: 125000 },
+      { text: '60% commission on matched volume' },
       { text: 'Advanced analytics' },
     ],
-    borderColor: 'border-amber-500',
-    gradientFrom: 'from-amber-200',
-    gradientTo: 'to-yellow-100',
-    textColor: 'text-amber-800',
     commissionRate: 0.60,
   },
   {
     name: 'Platinum',
-    price: 999,
-    annualPrice: 9590, // ~20% discount
+    prices: [
+        { currency: 'PHP', amount: 999, annualAmount: 9590, priceId: 'price_php_platinum', annualPriceId: 'price_php_platinum_annual' },
+        { currency: 'USD', amount: 40, annualAmount: 384, priceId: 'price_usd_platinum', annualPriceId: 'price_usd_platinum_annual' },
+    ],
     features: [
       { text: 'All Gold features' },
-      { text: '{commissionRate}% commission on matched volume' },
-      { text: 'Up to {cap} monthly earning cap', earningCap: 500000 },
+      { text: '85% commission on matched volume' },
       { text: 'AI-powered financial insights' },
     ],
-    borderColor: 'border-sky-500',
-    gradientFrom: 'from-sky-200',
-    gradientTo: 'to-cyan-100',
-    textColor: 'text-sky-800',
     commissionRate: 0.85,
   },
 ];

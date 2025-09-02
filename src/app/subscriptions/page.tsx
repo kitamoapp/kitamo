@@ -22,16 +22,20 @@ import { useToast } from '@/hooks/use-toast';
 import { usePaymentMethods } from '@/context/payment-method-context';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Landmark, Wallet, CreditCard, ShieldCheck } from 'lucide-react';
+import { Landmark, Wallet, CreditCard, ShieldCheck, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogFooter } from '@/components/ui/alert-dialog';
 import { Switch } from '@/components/ui/switch';
+import { useAuth } from '@/context/auth-context';
+import { useCurrency } from '@/context/currency-context';
 
 type DialogState = 'closed' | 'confirming' | 'addingPayment' | 'processingPayment';
 export type BillingCycle = 'monthly' | 'annually';
 
 export default function SubscriptionsPage() {
-  const { setCurrentTier } = useSubscription();
+  const { setCurrentTier, getTierPrice } = useSubscription();
+  const { formatCurrency } = useCurrency();
+  const { regionalCurrency, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const { paymentMethods, addPaymentMethod } = usePaymentMethods();
   
@@ -97,6 +101,18 @@ export default function SubscriptionsPage() {
       }
   }
 
+  if (authLoading || !regionalCurrency) {
+    return (
+        <AppLayout>
+            <div className="flex justify-center items-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        </AppLayout>
+    )
+  }
+  
+  const selectedTierPrice = selectedTier ? getTierPrice(selectedTier, regionalCurrency) : null;
+  const purchaseAmount = billingCycle === 'annually' ? selectedTierPrice?.annualAmount : selectedTierPrice?.amount;
 
   return (
     <>
@@ -157,7 +173,8 @@ export default function SubscriptionsPage() {
             <DialogTitle>Confirm Your Subscription</DialogTitle>
             <DialogDescription>
               You are upgrading to the{' '}
-              <span className="font-bold">{selectedTier?.name} ({billingCycle})</span> plan. The selected payment method below will be charged.
+              <span className="font-bold">{selectedTier?.name} ({billingCycle})</span> plan. The selected payment method will be charged {' '}
+              <span className="font-bold">{formatCurrency(purchaseAmount || 0, regionalCurrency)}</span>.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -206,7 +223,7 @@ export default function SubscriptionsPage() {
             </div>
             <AlertDialogTitle className="text-center">Confirm Payment</AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-             This is a simulation. In a real application, you would be redirected to a secure payment partner to complete your purchase.
+             This is a simulation. In a real application, you would be redirected to a secure payment partner to complete your purchase. The Price ID for this transaction would be <span className="font-mono bg-muted p-1 rounded-md text-xs">{billingCycle === 'annually' ? selectedTierPrice?.annualPriceId : selectedTierPrice?.priceId}</span>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

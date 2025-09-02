@@ -1,5 +1,6 @@
 
 
+
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
@@ -29,20 +30,20 @@ export type Category = {
 
 export type SubscriptionFeature = {
   text: string;
-  // Use earningCap to dynamically insert the value into the text where {cap} is a placeholder
-  earningCap?: number;
 };
+
+export type TierPrice = {
+    currency: Currency;
+    amount: number;
+    annualAmount?: number;
+    priceId?: string;
+    annualPriceId?: string;
+}
 
 export type SubscriptionTier = {
   name: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
-  price: number;
-  annualPrice?: number;
-  earningCap?: number;
+  prices: TierPrice[];
   features: SubscriptionFeature[];
-  borderColor: string;
-  gradientFrom: string;
-  gradientTo: string;
-  textColor: string;
   commissionRate: number;
 };
 

@@ -19,6 +19,7 @@ import {
 } from 'firebase/auth';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import type { Currency } from '@/lib/types';
 
 type MfaState = 'idle' | 'requires_mfa' | 'verifying_mfa' | 'error';
 
@@ -27,6 +28,7 @@ interface AuthContextType {
   loading: boolean;
   mfaState: MfaState;
   mfaResolver: MultiFactorResolver | null;
+  regionalCurrency: Currency | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -35,6 +37,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const REGIONAL_CURRENCY_KEY = 'kitamo-regional-currency';
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,8 +46,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [mfaState, setMfaState] = useState<MfaState>('idle');
   const [mfaResolver, setMfaResolver] = useState<MultiFactorResolver | null>(null);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [regionalCurrency, setRegionalCurrency] = useState<Currency | null>(null);
   const { toast } = useToast();
-
+  
   useEffect(() => {
     const authInstance = getFirebaseAuth();
     setAuth(authInstance);
@@ -51,6 +56,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (authInstance) {
       const unsubscribe = onAuthStateChanged(authInstance, (user) => {
         setUser(user);
+        if (user) {
+            // User is signed in, check for their regional currency
+            const storedCurrency = localStorage.getItem(REGIONAL_CURRENCY_KEY);
+            if (storedCurrency) {
+                setRegionalCurrency(storedCurrency as Currency);
+            }
+        } else {
+            // User is signed out, clear regional currency
+            setRegionalCurrency(null);
+            localStorage.removeItem(REGIONAL_CURRENCY_KEY);
+        }
         setLoading(false);
       });
       return () => unsubscribe();
@@ -58,6 +74,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   }, []);
+
+  const getCurrencyFromLocale = (): Currency => {
+    if (typeof window === 'undefined') return 'USD';
+    const lang = window.navigator.language;
+    if (lang.includes('PH')) return 'PHP';
+    if (lang.includes('JP')) return 'JPY';
+    if (lang.includes('GB')) return 'GBP';
+    if (lang.startsWith('en-')) return 'USD';
+    // Add more mappings as needed
+    return 'USD'; // Default fallback
+  }
 
   const login = async (email: string, password: string) => {
     if (!auth) throw new Error("Auth service is not available.");
@@ -119,6 +146,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
+        
+        // Set regional currency at signup
+        const currency = getCurrencyFromLocale();
+        localStorage.setItem(REGIONAL_CURRENCY_KEY, currency);
+        setRegionalCurrency(currency);
+
         setUser({ ...userCredential.user, displayName });
     }
   };
@@ -131,7 +164,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationResult(null);
   };
 
-  const value = { user, loading, login, signup, logout, mfaState, mfaResolver, verifyMfaCode };
+  const value = { user, loading, login, signup, logout, mfaState, mfaResolver, verifyMfaCode, regionalCurrency };
 
   return (
     <AuthContext.Provider value={value}>
