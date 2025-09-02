@@ -15,44 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Bell, DollarSign, Users, Award, AlertTriangle } from 'lucide-react';
 import type { NotificationType, Notification } from '@/lib/types';
 
-const initialNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'new_referral',
-    title: 'New Referral!',
-    description: 'John Doe just signed up using your referral code.',
-    date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    read: false,
-    icon: <Users className="h-6 w-6 text-blue-500" />,
-  },
-  {
-    id: '2',
-    type: 'milestone',
-    title: 'Milestone Achieved!',
-    description: "You've reached the 'Pro' tier. Keep it up!",
-    date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    read: false,
-    icon: <Award className="h-6 w-6 text-yellow-500" />,
-  },
-  {
-    id: '3',
-    type: 'payout',
-    title: 'Payout Processed',
-    description: 'Your monthly earnings of $250.00 have been sent.',
-    date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    read: true,
-    icon: <DollarSign className="h-6 w-6 text-green-500" />,
-  },
-  {
-    id: '4',
-    type: 'warning',
-    title: 'Action Required',
-    description: 'Your subscription payment is due in 3 days.',
-    date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    read: true,
-    icon: <AlertTriangle className="h-6 w-6 text-red-500" />,
-  },
-];
+const initialNotifications: Notification[] = [];
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] =

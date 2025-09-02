@@ -24,11 +24,7 @@ const ReminderContext = createContext<ReminderContextType | undefined>(
 const LOCAL_STORAGE_KEY = 'kitamo-reminders';
 
 const getInitialReminders = (): Reminder[] => {
-   const now = new Date();
-   return [
-     { id: 'rem-1', title: 'Netflix Subscription', amount: 15.99, category: 'Entertainment', date: add(now, { days: 5 }).toISOString(), recurrence: 'monthly' },
-     { id: 'rem-2', title: 'Gym Membership', amount: 40, category: 'Health', date: add(now, { days: 10 }).toISOString(), recurrence: 'monthly' },
-   ];
+   return [];
 }
 
 
