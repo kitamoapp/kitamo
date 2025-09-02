@@ -113,6 +113,8 @@ export default function SubscriptionsPage() {
   };
   
   const purchaseAmount = selectedTier ? (billingCycle === 'annually' ? selectedTier.annualPrice : selectedTier.price) : 0;
+  const priceId = selectedTier ? (billingCycle === 'annually' ? selectedTier.annualPriceId : selectedTier.priceId) : 'N/A';
+
 
   const getPaymentMethodIcon = (type: PaymentMethod['type']) => {
     switch (type) {
@@ -167,14 +169,23 @@ export default function SubscriptionsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Your Subscription</DialogTitle>
-            <DialogDescription>
+             <DialogDescription>
               You are upgrading to the{' '}
-              <span className="font-bold">{selectedTier?.name} ({billingCycle})</span> plan for{' '}
-              <span className="font-bold">{formatCurrency(purchaseAmount || 0)}</span>.
+              <span className="font-bold">{selectedTier?.name} ({billingCycle})</span> plan.
             </DialogDescription>
           </DialogHeader>
            
            <div className="space-y-4">
+               <div className="rounded-lg border bg-muted/30 p-4">
+                    <div className="flex justify-between items-center">
+                        <p className="text-muted-foreground">Amount Due</p>
+                        <p className="font-bold text-2xl">{formatCurrency(purchaseAmount || 0)}</p>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2">
+                        Price ID: <span className="font-mono">{priceId}</span>
+                    </div>
+                </div>
+
                 <h3 className="text-sm font-medium text-muted-foreground">Select Payment Method</h3>
                 <RadioGroup value={selectedPaymentMethodId ?? ''} onValueChange={setSelectedPaymentMethodId} className="space-y-2">
                     {paymentMethods.map(method => (
