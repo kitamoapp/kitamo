@@ -1,4 +1,6 @@
 
+'use client';
+
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 
 // Your web app's Firebase configuration
@@ -13,6 +15,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
+let app: FirebaseApp;
+if (getApps().length === 0) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
+}
 
 export { app };
