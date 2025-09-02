@@ -13,7 +13,9 @@ import {
     PhoneAuthProvider,
     MultiFactorResolver,
     PhoneMultiFactorGenerator,
-    ConfirmationResult
+    ConfirmationResult,
+    getAuth,
+    Auth,
 } from 'firebase/auth';
 import { useFirebase } from '@/hooks/use-firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -25,6 +27,7 @@ interface AuthContextType {
   loading: boolean;
   mfaState: MfaState;
   mfaResolver: MultiFactorResolver | null;
+  auth: Auth | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -124,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setConfirmationResult(null);
   };
 
-  const value = { user, loading, login, signup, logout, mfaState, mfaResolver, verifyMfaCode };
+  const value = { user, loading, login, signup, logout, auth, mfaState, mfaResolver, verifyMfaCode };
 
   return (
     <AuthContext.Provider value={value}>
