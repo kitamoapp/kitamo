@@ -1,6 +1,4 @@
 
-'use client';
-
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 
 // Your web app's Firebase configuration
@@ -14,12 +12,17 @@ const firebaseConfig = {
   messagingSenderId: "737936337826"
 };
 
-// Initialize Firebase
+// Singleton pattern to ensure app is initialized only once
 let app: FirebaseApp;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApp();
-}
+export function getFirebaseApp() {
+    if (app) {
+        return app;
+    }
 
-export { app };
+    if (getApps().length === 0) {
+        app = initializeApp(firebaseConfig);
+    } else {
+        app = getApp();
+    }
+    return app;
+}

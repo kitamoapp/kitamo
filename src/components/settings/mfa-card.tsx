@@ -11,12 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Smartphone, Loader2, ShieldCheck, ShieldOff } from 'lucide-react';
-import { PhoneAuthProvider, RecaptchaVerifier, PhoneMultiFactorGenerator, multiFactor } from 'firebase/auth';
+import { PhoneAuthProvider, RecaptchaVerifier, PhoneMultiFactorGenerator, multiFactor, getAuth } from 'firebase/auth';
+import { getFirebaseApp } from '@/lib/firebase';
 
 type MfaSetupState = 'idle' | 'enteringPhone' | 'verifyingCode' | 'enrolling' | 'enrolled';
 
 export function MfaCard() {
-    const { user, auth } = useAuth();
+    const { user } = useAuth();
     const { toast } = useToast();
     const [setupState, setSetupState] = useState<MfaSetupState>('idle');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -39,7 +40,8 @@ export function MfaCard() {
     }
     
     const handleSendCode = async () => {
-        if (!user || !auth) return;
+        const auth = getAuth(getFirebaseApp());
+        if (!user) return;
         setIsSubmitting(true);
         try {
             const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container-mfa', {

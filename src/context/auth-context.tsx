@@ -17,7 +17,7 @@ import {
     getAuth,
     Auth,
 } from 'firebase/auth';
-import { app } from '@/lib/firebase';
+import { getFirebaseApp } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 type MfaState = 'idle' | 'requires_mfa' | 'verifying_mfa' | 'error';
@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    const app = getFirebaseApp();
     const authInstance = getAuth(app);
     setAuth(authInstance);
 
