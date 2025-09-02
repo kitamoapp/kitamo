@@ -1,6 +1,4 @@
 
-'use client';
-
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
@@ -16,37 +14,14 @@ const firebaseConfig = {
   messagingSenderId: "737936337826"
 };
 
-
-let app: FirebaseApp | null = null;
-let auth: Auth | null = null;
-
-const getFirebaseApp = (): FirebaseApp | null => {
-    if (typeof window === 'undefined') {
-        return null; 
-    }
-    if (!app) {
-       app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-    }
-    return app;
-};
-
-
-const getFirebaseAuth = (): Auth | null => {
-    const app = getFirebaseApp();
-    if (!app) return null;
-    if (!auth) {
-        auth = getAuth(app);
-    }
-    return auth;
-}
-
+// Initialize Firebase
+const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const auth: Auth = getAuth(app);
 
 const getMessagingInstance = () => {
     // Check for browser environment and service worker support
     if (typeof window !== 'undefined' && "serviceWorker" in navigator) {
         try {
-            const app = getFirebaseApp();
-            if (!app) return null;
             return getMessaging(app);
         } catch (error) {
             console.error("Firebase Messaging not supported in this browser:", error);
@@ -95,5 +70,4 @@ const requestNotificationPermission = async () => {
     return null;
 };
 
-
-export { getFirebaseApp, getFirebaseAuth, requestNotificationPermission, getMessagingInstance };
+export { app, auth, requestNotificationPermission, getMessagingInstance };

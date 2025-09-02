@@ -17,7 +17,7 @@ import {
     PhoneMultiFactorGenerator,
     ConfirmationResult
 } from 'firebase/auth';
-import { getFirebaseAuth, getFirebaseApp } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 type MfaState = 'idle' | 'requires_mfa' | 'verifying_mfa' | 'error';
@@ -38,31 +38,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [auth, setAuth] = useState<Auth | null>(null);
   const [mfaState, setMfaState] = useState<MfaState>('idle');
   const [mfaResolver, setMfaResolver] = useState<MultiFactorResolver | null>(null);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const { toast } = useToast();
   
-  useEffect(() => {
-    getFirebaseApp(); // Ensure app is initialized
-    const authInstance = getFirebaseAuth();
-    setAuth(authInstance);
 
-    if (authInstance) {
-      const unsubscribe = onAuthStateChanged(authInstance, (user) => {
-        setUser(user);
-        setLoading(false);
-      });
-      return () => unsubscribe();
-    } else {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
       setLoading(false);
-    }
+    });
+    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
-    if (!auth) throw new Error("Auth service is not available.");
-    
     setMfaState('idle');
     setMfaResolver(null);
 
@@ -75,7 +65,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             
             const phoneInfo = resolver.hints[0];
             const phoneAuthProvider = new PhoneAuthProvider(auth);
-            
+
+            // This must be initialized only on the client, after the container is available.
             const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
                 'size': 'invisible',
                 'callback': () => {},
@@ -114,7 +105,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signup = async (email: string, password: string, displayName: string) => {
-    if (!auth) throw new Error("Auth service is not available.");
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (userCredential.user) {
         await updateProfile(userCredential.user, { displayName });
@@ -123,7 +113,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    if (!auth) throw new Error("Auth service is not available.");
     await signOut(auth);
     setMfaState('idle');
     setMfaResolver(null);

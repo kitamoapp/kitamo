@@ -11,7 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Smartphone, Loader2, ShieldCheck, ShieldOff } from 'lucide-react';
-import { getAuth, PhoneAuthProvider, RecaptchaVerifier, PhoneMultiFactorGenerator, multiFactor } from 'firebase/auth';
+import { PhoneAuthProvider, RecaptchaVerifier, PhoneMultiFactorGenerator, multiFactor } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 type MfaSetupState = 'idle' | 'enteringPhone' | 'verifyingCode' | 'enrolling' | 'enrolled';
 
@@ -42,7 +43,6 @@ export function MfaCard() {
         if (!user) return;
         setIsSubmitting(true);
         try {
-            const auth = getAuth();
             const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container-mfa', {
                 'size': 'invisible',
                 'callback': () => {},
