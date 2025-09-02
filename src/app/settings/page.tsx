@@ -14,6 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { useSettings } from '@/hooks/use-settings';
 import type { Setting } from '@/hooks/use-settings';
 import { Skeleton } from '@/components/ui/skeleton';
+import { MfaCard } from '@/components/settings/mfa-card';
 
 function SettingsSkeleton() {
   return (
@@ -95,6 +96,8 @@ export default function SettingsPage() {
             Manage your account and notification preferences.
           </p>
         </div>
+
+        <MfaCard />
 
         <Card>
           <CardHeader>

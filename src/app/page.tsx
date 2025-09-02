@@ -23,17 +23,18 @@ import { Loader2 } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
-  const { login, user, loading } = useAuth();
+  const { login, user, loading, mfaState, verifyMfaCode } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [mfaCode, setMfaCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (user && mfaState === 'idle') {
       router.push('/dashboard');
     }
-  }, [user, router]);
+  }, [user, mfaState, router]);
 
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -41,7 +42,7 @@ function LoginForm() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      router.push('/dashboard');
+      // On success, the useEffect will redirect or the mfaState will change
     } catch (error: any) {
       toast({
         title: 'Login Failed',
@@ -53,12 +54,68 @@ function LoginForm() {
     }
   };
 
+  const handleMfaVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await verifyMfaCode(mfaCode);
+      // On success, useEffect will redirect
+    } catch (error: any) {
+      // The toast is handled inside the context
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+
   if (loading) {
     return <LoginSkeleton />;
   }
   
-  if (user) {
+  if (user && mfaState === 'idle') {
      return <LoginSkeleton />;
+  }
+  
+  if (mfaState === 'requires_mfa' || mfaState === 'verifying_mfa') {
+    return (
+      <>
+        <div className="mb-8 flex flex-col items-center">
+          <div className="mb-4 text-4xl font-bold text-primary">KitaMo</div>
+          <p className="text-muted-foreground">
+            Complete verification to sign in
+          </p>
+        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Enter Verification Code</CardTitle>
+                <CardDescription>
+                    A code was sent to your phone. Enter it below to continue.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleMfaVerification} className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="mfa-code">Verification Code</Label>
+                        <Input
+                            id="mfa-code"
+                            type="text"
+                            placeholder="123456"
+                            required
+                            value={mfaCode}
+                            onChange={(e) => setMfaCode(e.target.value)}
+                            disabled={isSubmitting || mfaState === 'verifying_mfa'}
+                            maxLength={6}
+                        />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={isSubmitting || mfaState === 'verifying_mfa'}>
+                        { (isSubmitting || mfaState === 'verifying_mfa') && <Loader2 className="animate-spin" />}
+                        Verify
+                    </Button>
+                </form>
+            </CardContent>
+        </Card>
+      </>
+    )
   }
 
 
