@@ -10,6 +10,7 @@ interface TransactionContextType {
   addTransaction: (transaction: Transaction) => void;
   updateTransaction: (transaction: Transaction) => void;
   deleteTransaction: (id: string) => void;
+  deleteMultipleTransactions: (ids: string[]) => void;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -61,9 +62,13 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const deleteTransaction = (id: string) => {
     setTransactions(prev => prev.filter(t => t.id !== id));
   };
+  
+  const deleteMultipleTransactions = (ids: string[]) => {
+    setTransactions(prev => prev.filter(t => !ids.includes(t.id)));
+  }
 
   return (
-    <TransactionContext.Provider value={{ transactions, addTransaction, updateTransaction, deleteTransaction }}>
+    <TransactionContext.Provider value={{ transactions, addTransaction, updateTransaction, deleteTransaction, deleteMultipleTransactions }}>
       {children}
     </TransactionContext.Provider>
   );

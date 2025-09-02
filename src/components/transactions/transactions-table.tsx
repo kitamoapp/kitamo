@@ -21,7 +21,7 @@ import {
 import { useCurrency } from '@/context/currency-context';
 import { useTransactions } from '@/context/transaction-context';
 import { Button } from '../ui/button';
-import { MoreHorizontal, Receipt } from 'lucide-react';
+import { MoreHorizontal, Receipt, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,22 +41,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog';
+import { Checkbox } from '../ui/checkbox';
 
 export function TransactionsTable() {
   const { formatCurrency } = useCurrency();
-  const { transactions, deleteTransaction } = useTransactions();
+  const { transactions, deleteTransaction, deleteMultipleTransactions } = useTransactions();
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [transactionToDelete, setTransactionToDelete] =
     useState<string | null>(null);
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 
   const sortedTransactions = useMemo(() => {
     return [...transactions].sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
   }, [transactions]);
-
 
   const handleEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
@@ -75,14 +76,49 @@ export function TransactionsTable() {
     setTransactionToDelete(null);
   };
 
+  const handleSelectRow = (id: string) => {
+    setSelectedRows(prev => {
+        const newSelected = new Set(prev);
+        if (newSelected.has(id)) {
+            newSelected.delete(id);
+        } else {
+            newSelected.add(id);
+        }
+        return newSelected;
+    });
+  };
+
+  const handleSelectAll = (checked: boolean | 'indeterminate') => {
+    if (checked === true) {
+        setSelectedRows(new Set(sortedTransactions.map(t => t.id)));
+    } else {
+        setSelectedRows(new Set());
+    }
+  }
+  
+  const handleDeleteSelected = () => {
+    deleteMultipleTransactions(Array.from(selectedRows));
+    setSelectedRows(new Set());
+  }
+
+  const numSelected = selectedRows.size;
+
   return (
     <>
       <Card>
-        <CardHeader>
-          <CardTitle>Transaction Analysis</CardTitle>
-          <CardDescription>
-            The data powering your financial consultation.
-          </CardDescription>
+        <CardHeader className="flex-row items-center justify-between">
+            <div>
+              <CardTitle>Transaction Analysis</CardTitle>
+              <CardDescription>
+                The data powering your financial consultation.
+              </CardDescription>
+            </div>
+             {numSelected > 0 && (
+                <Button variant="destructive" size="sm" onClick={() => setShowDeleteAlert(true)}>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete ({numSelected})
+                </Button>
+            )}
         </CardHeader>
         <CardContent>
           {sortedTransactions.length === 0 ? (
@@ -98,6 +134,11 @@ export function TransactionsTable() {
                   <div className="space-y-4">
                       {sortedTransactions.map((transaction) => (
                           <div key={transaction.id} className="flex items-center gap-4 rounded-lg border p-4">
+                              <Checkbox
+                                checked={selectedRows.has(transaction.id)}
+                                onCheckedChange={() => handleSelectRow(transaction.id)}
+                                aria-label="Select row"
+                              />
                               <div className="flex-1 space-y-1">
                                   <p className="font-medium">{transaction.description}</p>
                                   <p className="text-sm text-muted-foreground">{transaction.category}</p>
@@ -158,6 +199,13 @@ export function TransactionsTable() {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead padding="checkbox" className="w-[50px]">
+                        <Checkbox
+                           checked={numSelected === sortedTransactions.length && sortedTransactions.length > 0 ? true : (numSelected > 0 ? 'indeterminate' : false)}
+                           onCheckedChange={handleSelectAll}
+                           aria-label="Select all"
+                        />
+                      </TableHead>
                       <TableHead>Description</TableHead>
                       <TableHead>Category</TableHead>
                       <TableHead>Date</TableHead>
@@ -168,7 +216,14 @@ export function TransactionsTable() {
                   </TableHeader>
                   <TableBody>
                     {sortedTransactions.map((transaction) => (
-                      <TableRow key={transaction.id}>
+                      <TableRow key={transaction.id} data-state={selectedRows.has(transaction.id) && "selected"}>
+                        <TableCell padding="checkbox">
+                            <Checkbox
+                                checked={selectedRows.has(transaction.id)}
+                                onCheckedChange={() => handleSelectRow(transaction.id)}
+                                aria-label="Select row"
+                            />
+                        </TableCell>
                         <TableCell className="font-medium">
                           {transaction.description}
                         </TableCell>
@@ -248,8 +303,8 @@ export function TransactionsTable() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this
-              transaction from your records.
+              This action cannot be undone. This will permanently delete 
+              {numSelected > 0 ? ` ${numSelected} transactions` : ' this transaction'} from your records.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -261,7 +316,7 @@ export function TransactionsTable() {
             >
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm}>
+            <AlertDialogAction onClick={numSelected > 0 ? handleDeleteSelected : handleDeleteConfirm}>
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
