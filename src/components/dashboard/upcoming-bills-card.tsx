@@ -11,13 +11,27 @@ import {
 } from '@/components/ui/card';
 import { useReminders } from '@/context/reminder-context';
 import { useCurrency } from '@/context/currency-context';
-import { Bell, Calendar, Repeat } from 'lucide-react';
+import { Bell, Calendar, MoreHorizontal, Repeat, Trash2 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { SetReminderDialog } from '../transactions/set-reminder-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { Button } from '../ui/button';
+import { Edit, Edit2 } from 'lucide-react';
+import type { Reminder } from '@/lib/types';
+import { EditReminderDialog } from '../transactions/edit-reminder-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
+
 
 export function UpcomingBillsCard() {
-  const { reminders } = useReminders();
+  const { reminders, deleteReminder } = useReminders();
   const { formatCurrency } = useCurrency();
+  const [editingReminder, setEditingReminder] = React.useState<Reminder | null>(null);
+  const [deletingReminder, setDeletingReminder] = React.useState<Reminder | null>(null);
 
   const sortedReminders = React.useMemo(() => {
     return [...reminders]
@@ -25,6 +39,21 @@ export function UpcomingBillsCard() {
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
         .slice(0, 5); // Show up to 5 upcoming bills
   }, [reminders]);
+
+  const handleEdit = (reminder: Reminder) => {
+    setEditingReminder(reminder);
+  };
+  
+  const handleDeleteInitiate = (reminder: Reminder) => {
+    setDeletingReminder(reminder);
+  }
+
+  const handleDeleteConfirm = () => {
+    if (deletingReminder) {
+      deleteReminder(deletingReminder.id);
+    }
+    setDeletingReminder(null);
+  }
 
   if (sortedReminders.length === 0) {
     return (
@@ -46,6 +75,7 @@ export function UpcomingBillsCard() {
   }
 
   return (
+    <>
     <Card className="col-span-1 lg:col-span-2">
       <CardHeader>
         <CardTitle>Upcoming Bills & Subscriptions</CardTitle>
@@ -74,14 +104,64 @@ export function UpcomingBillsCard() {
                     </p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="font-bold text-lg">{formatCurrency(reminder.amount)}</p>
-                <p className="text-xs text-muted-foreground">{reminder.category}</p>
+              <div className="flex items-center gap-2">
+                  <div className="text-right">
+                    <p className="font-bold text-lg">{formatCurrency(reminder.amount)}</p>
+                    <p className="text-xs text-muted-foreground">{reminder.category}</p>
+                  </div>
+                   <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEdit(reminder)}>
+                          <Edit2 className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteInitiate(reminder)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
               </div>
             </li>
           ))}
         </ul>
       </CardContent>
     </Card>
+
+    {editingReminder && (
+      <EditReminderDialog 
+        reminder={editingReminder}
+        onOpenChange={(open) => {
+          if (!open) setEditingReminder(null);
+        }}
+      />
+    )}
+
+    {deletingReminder && (
+       <AlertDialog open={!!deletingReminder} onOpenChange={(open) => !open && setDeletingReminder(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the reminder for "{deletingReminder.title}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )}
+    </>
   );
 }

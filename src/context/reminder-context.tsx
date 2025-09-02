@@ -14,6 +14,7 @@ import { add } from 'date-fns';
 interface ReminderContextType {
   reminders: Reminder[];
   addReminder: (reminder: Reminder) => void;
+  updateReminder: (reminder: Reminder) => void;
   deleteReminder: (id: string) => void;
 }
 
@@ -62,12 +63,18 @@ export const ReminderProvider = ({ children }: { children: ReactNode }) => {
     setReminders((prev) => [...prev, reminder]);
   };
 
+  const updateReminder = (updatedReminder: Reminder) => {
+    setReminders(prev => 
+      prev.map(r => r.id === updatedReminder.id ? updatedReminder : r)
+    );
+  }
+
   const deleteReminder = (id: string) => {
     setReminders((prev) => prev.filter((r) => r.id !== id));
   };
 
   return (
-    <ReminderContext.Provider value={{ reminders, addReminder, deleteReminder }}>
+    <ReminderContext.Provider value={{ reminders, addReminder, updateReminder, deleteReminder }}>
       {children}
     </ReminderContext.Provider>
   );
