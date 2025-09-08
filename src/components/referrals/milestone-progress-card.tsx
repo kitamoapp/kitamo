@@ -37,7 +37,7 @@ export function MilestoneProgressCard() {
             <span>Your Progress</span>
           </CardTitle>
           <CardDescription>
-            Track your earnings towards your monthly cap.
+            Track your community rewards towards your monthly cap.
           </CardDescription>
         </div>
       </CardHeader>
@@ -48,7 +48,7 @@ export function MilestoneProgressCard() {
               Unlock Your Earning Potential!
             </h3>
             <p className="text-sm text-muted-foreground">
-              Upgrade to a plan with referral commissions to start earning.
+              Upgrade to a plan with community rewards to start earning.
             </p>
             <Button
               size="sm"
@@ -63,7 +63,7 @@ export function MilestoneProgressCard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  Monthly Earnings
+                  Monthly Bonus
                 </p>
                 <p className="font-semibold text-lg text-primary">
                   {convertAndFormatCurrency(totalEarnings)}
@@ -84,7 +84,7 @@ export function MilestoneProgressCard() {
              <p className="text-sm text-muted-foreground">
               {earningCap === Infinity 
                 ? "You have uncapped earning potential!"
-                : `You have earned ${convertAndFormatCurrency(totalEarnings)} of your ${convertAndFormatCurrency(earningCap)} cap.`
+                : `You've earned ${convertAndFormatCurrency(totalEarnings)} of your ${convertAndFormatCurrency(earningCap)} cap.`
               }
             </p>
           </div>

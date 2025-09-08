@@ -106,7 +106,7 @@ export type NewReferredUser = {
   name: string;
   leg: 'left' | 'right';
   plan: 'Free' | 'Personal' | 'Lite' | 'Pro' | 'Max';
-  referredBy?: string; // This can be the referral code
+  referredBy?: string; // This can be the invite code
 };
 
 export type NotificationType =

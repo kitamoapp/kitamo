@@ -72,37 +72,37 @@ const calculateEarnings = (
     return tier?.price || 0;
   };
 
-  const directReferrals = referredUsers.filter(
+  const directConnections = referredUsers.filter(
     (u) => u.referredBy === 'currentUser' && u.status === 'Active'
   );
 
-  const leftLegReferral = directReferrals.find((u) => u.leg === 'left');
-  const rightLegReferral = directReferrals.find((u) => u.leg === 'right');
+  const leftLegConnection = directConnections.find((u) => u.leg === 'left');
+  const rightLegConnection = directConnections.find((u) => u.leg === 'right');
 
   let leftLegVolume = 0;
-  if (leftLegReferral) {
+  if (leftLegConnection) {
     leftLegVolume =
-      getPlanPrice(leftLegReferral.plan) +
-      getDownlineVolume(leftLegReferral.id, referredUsers);
+      getPlanPrice(leftLegConnection.plan) +
+      getDownlineVolume(leftLegConnection.id, referredUsers);
   }
 
   let rightLegVolume = 0;
-  if (rightLegReferral) {
+  if (rightLegConnection) {
     rightLegVolume =
-      getPlanPrice(rightLegReferral.plan) +
-      getDownlineVolume(rightLegReferral.id, referredUsers);
+      getPlanPrice(rightLegConnection.plan) +
+      getDownlineVolume(rightLegConnection.id, referredUsers);
   }
 
   const payableVolume = Math.min(leftLegVolume, rightLegVolume);
   let totalEarnings = payableVolume * tier.commissionRate;
   
-  const payingLeftReferrals = directReferrals.filter(u => u.leg === 'left' && getPlanPrice(u.plan) > 0);
-  const payingRightReferrals = directReferrals.filter(u => u.leg === 'right' && getPlanPrice(u.plan) > 0);
+  const payingLeftConnections = directConnections.filter(u => u.leg === 'left' && getPlanPrice(u.plan) > 0);
+  const payingRightConnections = directConnections.filter(u => u.leg === 'right' && getPlanPrice(u.plan) > 0);
   const currentTierPrice = getPlanPrice(tier.name);
 
-  if (payingLeftReferrals.length > 0 && payingRightReferrals.length > 0) {
-      const directReferralPayments = directReferrals.reduce((sum, user) => sum + getPlanPrice(user.plan), 0);
-      if (directReferralPayments >= currentTierPrice) {
+  if (payingLeftConnections.length > 0 && payingRightConnections.length > 0) {
+      const directConnectionPayments = directConnections.reduce((sum, user) => sum + getPlanPrice(user.plan), 0);
+      if (directConnectionPayments >= currentTierPrice) {
           totalEarnings += currentTierPrice;
       }
   }

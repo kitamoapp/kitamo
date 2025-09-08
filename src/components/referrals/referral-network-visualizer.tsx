@@ -73,7 +73,7 @@ const LegColumn = ({ leg, users, allUsers, expandedNodes, toggleNode }: { leg: '
         {/* Connector from top */}
         <div className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border"></div>
 
-        <h3 className='font-semibold text-lg'>{leg === 'left' ? 'Left' : 'Right'} Leg</h3>
+        <h3 className='font-semibold text-lg'>{leg === 'left' ? 'Left' : 'Right'} Team</h3>
 
         {users.length > 0 ? (
             <div className="space-y-4">
@@ -81,7 +81,7 @@ const LegColumn = ({ leg, users, allUsers, expandedNodes, toggleNode }: { leg: '
             </div>
         ) : (
             <div className="text-center text-muted-foreground p-4 border-2 border-dashed rounded-lg">
-                No users on this leg yet.
+                No one on this team yet.
             </div>
         )}
     </div>
@@ -156,14 +156,14 @@ export function ReferralNetworkVisualizer() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Your Referral Network</CardTitle>
+          <CardTitle>Your Community Network</CardTitle>
           <CardDescription>
-            Recruit users to start building your network.
+            Invite friends to start building your community.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center gap-4 text-center py-10">
             <Users className="h-16 w-16 text-muted-foreground/50" />
-            <p className="text-muted-foreground">You haven't referred anyone yet.</p>
+            <p className="text-muted-foreground">You haven't invited anyone yet.</p>
         </CardContent>
       </Card>
     )
@@ -172,9 +172,9 @@ export function ReferralNetworkVisualizer() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your Referral Network</CardTitle>
+        <CardTitle>Your Community Network</CardTitle>
         <CardDescription>
-          Click the plus icon to expand a user's downline.
+          Click the plus icon to expand a person's connections.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6 py-4">
@@ -185,7 +185,7 @@ export function ReferralNetworkVisualizer() {
             </Avatar>
             <div>
                 <p className='text-lg font-semibold'>You</p>
-                <p className='text-sm text-muted-foreground'>Network Root</p>
+                <p className='text-sm text-muted-foreground'>Community Root</p>
             </div>
         </div>
         

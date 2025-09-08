@@ -32,7 +32,7 @@ import { useRouter } from 'next/navigation';
 
 const opportunityIcons = {
   savings: PiggyBank,
-  income: Users, // Changed to Users icon for referral
+  income: Users, // Changed to Users icon for community
   negotiation: MessageSquareQuote,
 };
 
@@ -74,7 +74,7 @@ export default function OpportunitiesPage() {
   }, [transactions, canUseFeature]);
 
   const handleActionClick = (opportunity: FinancialOpportunity) => {
-    if (opportunity.action === 'Go to Referrals') {
+    if (opportunity.action === 'Invite Friends') {
       router.push('/referrals');
     }
     // Handle other actions if necessary

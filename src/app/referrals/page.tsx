@@ -14,9 +14,9 @@ export default function ReferralsPage() {
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Referrals</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Your Community</h1>
             <p className="text-muted-foreground">
-              Share your code, track your referrals, and increase your
+              Help your friends and grow the community to increase your
               earnings.
             </p>
           </div>

@@ -25,32 +25,32 @@ export function ReferralFaq() {
 
   const faqs = [
     {
-      question: 'How do I refer a friend?',
+      question: 'How do I invite a friend?',
       answer:
-        "Simply share your unique referral code with them. When they sign up using your code and subscribe to a paid plan, you'll start earning.",
+        "Simply share your unique invite code with them. When they sign up using your code and subscribe to a paid plan, you'll earn rewards for helping them and the community grow.",
     },
     {
-      question: 'What do I get for a successful referral?',
-      answer: `Your earning potential depends on your subscription tier. Higher tiers earn a larger percentage from both direct and indirect referrals. For example, Silver members earn 15% from direct referrals and 5% from indirect, while Platinum members earn 35% and 25% respectively.`,
+      question: 'What rewards do I get for helping someone join?',
+      answer: `Your earning potential depends on your subscription tier. Higher tiers earn a larger bonus from both direct and indirect connections in your community. For example, Lite members earn a 40% bonus from matched volume, while Max members earn an 85% bonus.`,
     },
     {
-      question: 'How many people can I refer?',
-      answer: 'There is no limit to how many friends you can refer!',
+      question: 'How many people can I invite?',
+      answer: 'There is no limit to how many friends you can help by inviting them to the community!',
     },
     {
       question: 'How do subscription tiers work?',
       answer:
-        'As you refer more active users, you will unlock higher subscription tiers. Each tier increases your maximum earning potential and the percentage you earn from referrals.',
+        'As your community grows with more active members, you can unlock higher subscription tiers. Each tier increases your maximum earning potential and the rewards you get for helping the community.',
     },
     {
-      question: 'What are referral milestones?',
+      question: 'What are community milestones?',
       answer:
-        'Milestones are goals based on the number of active users you have referred. Reaching a milestone unlocks a new subscription tier with a higher earning potential.',
+        'Milestones are goals based on the number of active users in your community. Reaching a milestone unlocks a new subscription tier with a higher earning potential.',
     },
     {
       question: 'When will I see my bonus?',
       answer:
-        'Your referral earnings will be credited to your account as your referrals generate revenue.',
+        'Your community rewards will be credited to your account as your connections generate revenue.',
     },
   ];
 
@@ -67,7 +67,7 @@ export function ReferralFaq() {
       <CardHeader>
         <CardTitle>Frequently Asked Questions</CardTitle>
         <CardDescription>
-          Everything you need to know about our referral program.
+          Everything you need to know about our community program.
         </CardDescription>
       </CardHeader>
       <CardContent>

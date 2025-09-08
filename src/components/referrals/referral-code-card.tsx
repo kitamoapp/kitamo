@@ -35,7 +35,7 @@ export function ReferralCodeCard() {
     setHasCopied(true);
     toast({
       title: 'Copied!',
-      description: 'Referral code copied to clipboard.',
+      description: 'Invite code copied to clipboard.',
     });
     setTimeout(() => {
       setHasCopied(false);
@@ -43,7 +43,7 @@ export function ReferralCodeCard() {
   };
   
   const referralLink = isClient ? `${window.location.origin}/signup?ref=${referralCode}` : '';
-  const referralMessage = `Hey! I'm using KitaMo to manage my finances and it's been great. You should check it out! Sign up using my referral link: ${referralLink}`;
+  const referralMessage = `Hey! I'm using KitaMo to manage my finances and it's been great. You should check it out! You can use my invite code when you sign up: ${referralCode}. Link: ${referralLink}`;
 
   const shareActions = [
     { name: 'WhatsApp', icon: MessageCircle, url: `https://wa.me/?text=${encodeURIComponent(referralMessage)}`},
@@ -67,7 +67,7 @@ export function ReferralCodeCard() {
       <CardHeader>
         <CardTitle>Invite Friends</CardTitle>
         <CardDescription>
-          Share your code with friends to grow your network.
+          Share your code to help friends and grow the community.
         </CardDescription>
       </CardHeader>
       <CardContent>

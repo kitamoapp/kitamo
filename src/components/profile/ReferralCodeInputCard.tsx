@@ -22,7 +22,7 @@ export function ReferralCodeInputCard() {
     if (code === '') {
         toast({
             title: 'Error',
-            description: 'Please enter a referral code.',
+            description: 'Please enter an invite code.',
             variant: 'destructive'
         })
         return;
@@ -32,12 +32,12 @@ export function ReferralCodeInputCard() {
       setHasReferralCode(true);
       toast({
           title: 'Success!',
-          description: 'Your referral code has been applied.'
+          description: 'Your invite code has been applied.'
       })
     } else {
        toast({
             title: 'Invalid Code',
-            description: 'The referral code you entered is not valid. Please check and try again.',
+            description: 'The invite code you entered is not valid. Please check and try again.',
             variant: 'destructive'
         })
     }
@@ -46,24 +46,24 @@ export function ReferralCodeInputCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Referral Code</CardTitle>
+        <CardTitle>Invite Code</CardTitle>
         <CardDescription>
-          If you received a referral code after signing up, you can enter it here.
+          If someone invited you to the community, you can enter their code here.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="referral-code">Your Upline's Code</Label>
+          <Label htmlFor="referral-code">Inviter's Code</Label>
           <Input 
             id="referral-code"
-            placeholder="Enter referral code"
+            placeholder="Enter invite code"
             value={referralCode}
             onChange={(e) => setReferralCode(e.target.value)}
             disabled={hasReferralCode} 
           />
         </div>
         <Button onClick={handleSaveReferralCode} disabled={hasReferralCode}>
-            {hasReferralCode ? 'Code Applied' : 'Save Code'}
+            {hasReferralCode ? 'Code Applied' : 'Apply Code'}
         </Button>
       </CardContent>
     </Card>

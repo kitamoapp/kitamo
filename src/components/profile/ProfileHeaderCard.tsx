@@ -160,7 +160,7 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
                 <PlanBadge tier={currentTier} />
             </div>
              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Total Downlines</p>
+                <p className="text-sm font-medium text-muted-foreground">Community Size</p>
                 <div className="flex items-center justify-center gap-2">
                     <Users className="h-5 w-5 text-primary" />
                     <p className="text-xl font-bold">{downlineCount}</p>

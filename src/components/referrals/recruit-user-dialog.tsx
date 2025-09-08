@@ -64,8 +64,8 @@ export function RecruitUserDialog() {
     });
 
     toast({
-      title: 'User Recruited!',
-      description: `${values.name} has been added to your network.`,
+      title: 'Friend Invited!',
+      description: `${values.name} has been added to your community.`,
     });
     form.reset();
     setOpen(false);
@@ -76,15 +76,15 @@ export function RecruitUserDialog() {
       <DialogTrigger asChild>
         <Button>
           <Plus className="-ml-1 mr-2 h-4 w-4" />
-          Recruit User
+          Invite a Friend
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Recruit New User</DialogTitle>
+          <DialogTitle>Invite a New Friend</DialogTitle>
           <DialogDescription>
-            Add a new user to your referral network. This simulates a new user
-            signing up with your code.
+            Add a new person to your community. This simulates a new
+            user signing up with your code.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -94,7 +94,7 @@ export function RecruitUserDialog() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User's Name</FormLabel>
+                  <FormLabel>Friend's Name</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., Jane Doe" {...field} />
                   </FormControl>
@@ -138,19 +138,19 @@ export function RecruitUserDialog() {
               name="leg"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Placement Leg</FormLabel>
+                  <FormLabel>Placement Team</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a leg" />
+                        <SelectValue placeholder="Select a team" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="left">Left Leg</SelectItem>
-                      <SelectItem value="right">Right Leg</SelectItem>
+                      <SelectItem value="left">Left Team</SelectItem>
+                      <SelectItem value="right">Right Team</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -159,7 +159,7 @@ export function RecruitUserDialog() {
             />
 
             <DialogFooter>
-              <Button type="submit">Add to Network</Button>
+              <Button type="submit">Add to Community</Button>
             </DialogFooter>
           </form>
         </Form>

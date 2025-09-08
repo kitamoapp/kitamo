@@ -23,7 +23,7 @@ const ReferredUserContext = createContext<ReferredUserContextType | undefined>(
 );
 
 const LOCAL_STORAGE_KEY = 'kitamo-referred-users';
-// A mock mapping of referral codes to user IDs.
+// A mock mapping of invite codes to user IDs.
 // In a real app, this would be handled by your backend.
 const REFERRAL_CODE_TO_USER_ID_MAP: Record<string, string> = {
   'ALICECODE': '1',
