@@ -53,7 +53,6 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/transactions', label: 'Transactions', icon: Wallet },
   { href: '/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { href: '/referrals', label: 'Referrals', icon: Users },
 ];
 
