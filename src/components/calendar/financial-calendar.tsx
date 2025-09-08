@@ -9,12 +9,13 @@ import {
   TrendingUp,
   Bell,
   Wallet,
+  Calendar as CalendarIcon,
 } from 'lucide-react';
 import { DayPicker, type DateFormatter } from 'react-day-picker';
-import { format, isSameDay } from 'date-fns';
+import { format, isSameDay, getYear, getMonth } from 'date-fns';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { useTransactions } from '@/context/transaction-context';
 import type { Transaction, Reminder } from '@/lib/types';
 import { useCurrency } from '@/context/currency-context';
@@ -22,8 +23,18 @@ import { useReminders } from '@/context/reminder-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Label } from '../ui/label';
 
 const formatDay: DateFormatter = (day) => day.getDate().toString();
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: currentYear - 1999 }, (_, i) => currentYear - i);
+const months = [
+  "January", "February", "March", "April", "May", "June", 
+  "July", "August", "September", "October", "November", "December"
+];
 
 export function FinancialCalendar() {
   const { transactions } = useTransactions();
@@ -32,6 +43,9 @@ export function FinancialCalendar() {
 
   const [month, setMonth] = React.useState(new Date());
   const [selectedDay, setSelectedDay] = React.useState<Date>(new Date());
+  
+  const [jumpToMonth, setJumpToMonth] = React.useState(getMonth(new Date()));
+  const [jumpToYear, setJumpToYear] = React.useState(getYear(new Date()));
 
   const dailyData = React.useMemo(() => {
     const data: Record<string, { income: number; expense: number, reminders: Reminder[] }> = {};
@@ -128,6 +142,8 @@ export function FinancialCalendar() {
           classNames={{
             months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
             month: 'space-y-4 w-full',
+            caption: "flex justify-center pt-1 relative items-center",
+            caption_label: "text-lg font-medium",
             table: 'w-full border-collapse',
             head_row: 'flex border-b',
             head_cell: 'w-full text-muted-foreground rounded-md font-normal text-sm pb-2',
@@ -150,6 +166,58 @@ export function FinancialCalendar() {
             IconLeft: () => <ChevronLeft className="h-4 w-4" />,
             IconRight: () => <ChevronRight className="h-4 w-4" />,
             DayContent: DayWithDetails,
+            Caption: ({ displayMonth }) => {
+              return (
+                <div className="flex justify-between items-center px-2 mb-4">
+                    <h2 className="text-lg font-semibold">{format(displayMonth, 'MMMM yyyy')}</h2>
+                    <div className="flex items-center gap-1">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="outline" size="icon" className="h-8 w-8">
+                                    <CalendarIcon className="h-4 w-4" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-4 space-y-4">
+                                <div className="text-center font-semibold">Jump to Date</div>
+                                <div className="flex gap-2">
+                                    <div className='space-y-1.5'>
+                                        <Label htmlFor="jump-month">Month</Label>
+                                        <Select value={jumpToMonth.toString()} onValueChange={value => setJumpToMonth(parseInt(value))}>
+                                            <SelectTrigger id="jump-month"><SelectValue/></SelectTrigger>
+                                            <SelectContent>
+                                                {months.map((m, i) => (
+                                                    <SelectItem key={m} value={i.toString()}>{m}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className='space-y-1.5'>
+                                        <Label htmlFor="jump-year">Year</Label>
+                                        <Select value={jumpToYear.toString()} onValueChange={value => setJumpToYear(parseInt(value))}>
+                                            <SelectTrigger id="jump-year"><SelectValue/></SelectTrigger>
+                                            <SelectContent>
+                                                {years.map(y => (
+                                                    <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                                <Button className="w-full" onClick={() => setMonth(new Date(jumpToYear, jumpToMonth))}>
+                                    Go
+                                </Button>
+                            </PopoverContent>
+                        </Popover>
+                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setMonth(prev => new Date(prev.getFullYear(), prev.getMonth() - 1))}>
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + 1))}>
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+              );
+            },
           }}
         />
       </div>
