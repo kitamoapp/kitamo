@@ -250,23 +250,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        <Card>
-            <CardHeader className="flex-row justify-between items-center">
-                 <div className="flex items-center gap-4">
-                    <MessageSquare className="h-6 w-6" />
-                    <div>
-                        <CardTitle>Feedback & Support</CardTitle>
-                        <CardDescription>
-                        Help us improve by sharing your thoughts or rating the app.
-                        </CardDescription>
-                    </div>
-                </div>
-                <Button variant="outline" onClick={() => router.push('/feedback')}>
-                    Give Feedback
-                </Button>
-            </CardHeader>
-        </Card>
-
       </div>
     </AppLayout>
   );
