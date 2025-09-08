@@ -155,18 +155,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
-             <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname.startsWith('/opportunities')}
-                  tooltip='Opportunities'
-                >
-                  <Link href="/opportunities">
-                    <Sparkles />
-                    <span>Opportunities</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
