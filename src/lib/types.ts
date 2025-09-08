@@ -1,5 +1,4 @@
 
-
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
@@ -110,7 +109,7 @@ export type NewReferredUser = {
 };
 
 export type NotificationType =
-  | 'new_referral'
+  | 'new_community_member'
   | 'milestone'
   | 'payout'
   | 'warning';

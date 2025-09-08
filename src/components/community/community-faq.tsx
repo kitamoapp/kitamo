@@ -27,11 +27,11 @@ export function CommunityFaq() {
     {
       question: 'How do I help a friend get started?',
       answer:
-        "Simply share your unique code with them. When they use your code while getting started and subscribe to a paid plan, you'll earn rewards for helping them and the community grow.",
+        "Simply share your unique code with them. When they use your code while getting started and subscribe to a paid plan, you'll be rewarded for helping them and the community grow.",
     },
     {
       question: 'What rewards do I get for helping someone?',
-      answer: `Your earning potential depends on your subscription tier. Higher tiers earn a larger bonus from both direct and indirect connections in your community. For example, Lite members earn a 40% bonus from matched volume, while Max members earn an 85% bonus.`,
+      answer: `Your reward potential depends on your subscription tier. Higher tiers unlock a larger bonus from community activity. For example, Lite subscribers receive a 40% bonus from community activity, while Max subscribers receive an 85% bonus.`,
     },
     {
       question: 'How many people can I help?',
@@ -40,12 +40,12 @@ export function CommunityFaq() {
     {
       question: 'How do subscription tiers work?',
       answer:
-        'As your community grows with more active members, you can unlock higher subscription tiers. Each tier increases your maximum earning potential and the rewards you get for helping the community.',
+        'As your community grows, you can unlock higher subscription tiers. Each tier increases your maximum bonus potential and the rewards you get for helping the community.',
     },
     {
       question: 'What are community milestones?',
       answer:
-        'Milestones are goals based on the number of active users in your community. Reaching a milestone unlocks a new subscription tier with a higher earning potential.',
+        'Milestones are goals based on the number of active people in your community. Reaching a milestone unlocks a new subscription tier with a higher reward potential.',
     },
     {
       question: 'When will I see my bonus?',

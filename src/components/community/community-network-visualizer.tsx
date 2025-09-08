@@ -73,7 +73,7 @@ const LegColumn = ({ leg, users, allUsers, expandedNodes, toggleNode }: { leg: '
         {/* Connector from top */}
         <div className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border"></div>
 
-        <h3 className='font-semibold text-lg'>{leg === 'left' ? 'Left' : 'Right'} Team</h3>
+        <h3 className='font-semibold text-lg'>{leg === 'left' ? 'Left' : 'Right'} Group</h3>
 
         {users.length > 0 ? (
             <div className="space-y-4">
@@ -81,7 +81,7 @@ const LegColumn = ({ leg, users, allUsers, expandedNodes, toggleNode }: { leg: '
             </div>
         ) : (
             <div className="text-center text-muted-foreground p-4 border-2 border-dashed rounded-lg">
-                No one on this team yet.
+                No one in this group yet.
             </div>
         )}
     </div>

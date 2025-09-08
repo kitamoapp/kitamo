@@ -138,19 +138,19 @@ export function HelpFriendDialog() {
               name="leg"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Placement Team</FormLabel>
+                  <FormLabel>Placement Group</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a team" />
+                        <SelectValue placeholder="Select a group" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="left">Left Team</SelectItem>
-                      <SelectItem value="right">Right Team</SelectItem>
+                      <SelectItem value="left">Left Group</SelectItem>
+                      <SelectItem value="right">Right Group</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

@@ -16,7 +16,7 @@ import {
 import { Progress } from '../ui/progress';
 import { useSubscription } from '@/hooks/use-subscription';
 
-export function MilestoneProgressCard() {
+export function CommunityProgressCard() {
   const { convertAndFormatCurrency } = useCurrency();
   const { currentTier, totalEarnings } = useSubscription();
   const router = useRouter();
@@ -37,7 +37,7 @@ export function MilestoneProgressCard() {
             <span>Your Progress</span>
           </CardTitle>
           <CardDescription>
-            Track your community rewards towards your monthly cap.
+            Track your community rewards towards your monthly bonus limit.
           </CardDescription>
         </div>
       </CardHeader>
@@ -45,17 +45,17 @@ export function MilestoneProgressCard() {
         {!earnsCommission ? (
           <div className="space-y-2 rounded-lg bg-background/50 p-4 text-center">
             <h3 className="font-semibold text-foreground">
-              Unlock Your Earning Potential!
+              Unlock Your Reward Potential!
             </h3>
             <p className="text-sm text-muted-foreground">
-              Upgrade to a plan with community rewards to start earning.
+              Upgrade to a plan with community rewards to start receiving bonuses.
             </p>
             <Button
               size="sm"
               className="mt-4"
               onClick={() => router.push('/subscriptions')}
             >
-              Upgrade to Earn
+              Upgrade to Get Rewards
             </Button>
           </div>
         ) : (
@@ -70,7 +70,7 @@ export function MilestoneProgressCard() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-muted-foreground">Earning Cap</p>
+                <p className="text-sm text-muted-foreground">Monthly Bonus Limit</p>
                 <p className="font-semibold text-lg">
                   {earningCap === Infinity
                     ? 'Unlimited'
@@ -83,8 +83,8 @@ export function MilestoneProgressCard() {
 
              <p className="text-sm text-muted-foreground">
               {earningCap === Infinity 
-                ? "You have uncapped earning potential!"
-                : `You've earned ${convertAndFormatCurrency(totalEarnings)} of your ${convertAndFormatCurrency(earningCap)} cap.`
+                ? "You have uncapped reward potential!"
+                : `You've received ${convertAndFormatCurrency(totalEarnings)} of your ${convertAndFormatCurrency(earningCap)} bonus limit.`
               }
             </p>
           </div>
