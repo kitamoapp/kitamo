@@ -28,6 +28,7 @@ import {
   CreditCard,
   Bell,
   Wallet,
+  Sparkles,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -50,6 +51,7 @@ import { Skeleton } from './ui/skeleton';
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/transactions', label: 'Transactions', icon: Wallet },
+  { href: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { href: '/referrals', label: 'Referrals', icon: Users },
   { href: '/subscriptions', label: 'Subscriptions', icon: CreditCard },
   { href: '/notifications', label: 'Notifications', icon: Bell },
@@ -172,7 +174,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href)}
                   tooltip={item.label}
                 >
                   <Link href={item.href}>
