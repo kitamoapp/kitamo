@@ -30,18 +30,34 @@ import {
   SelectValue,
 } from '../ui/select';
 import { Textarea } from '../ui/textarea';
+import { cn } from '@/lib/utils';
 
 export function FeedbackCard() {
   const { toast } = useToast();
-  const [open, setOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [ratingOpen, setRatingOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [feedbackType, setFeedbackType] = useState('general');
   const [feedbackMessage, setFeedbackMessage] = useState('');
 
-  const handleRateApp = () => {
+  const handleRatingSubmit = () => {
+    if (rating === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'No Rating Selected',
+        description: 'Please select a star rating before submitting.',
+      });
+      return;
+    }
+    // In a real app, send the rating to your server
+    console.log(`User rated the app: ${rating} stars`);
     toast({
-      title: 'Thank You!',
-      description: 'We appreciate you taking the time to rate our app.',
+      title: 'Thank You for Your Rating!',
+      description: `You gave the app ${rating} out of 5 stars. We appreciate your feedback!`,
     });
+    setRatingOpen(false);
+    setRating(0);
   };
 
   const handleFeedbackSubmit = (e: React.FormEvent) => {
@@ -64,7 +80,7 @@ export function FeedbackCard() {
       description: "Thanks for your feedback. We'll use it to improve.",
     });
     setFeedbackMessage('');
-    setOpen(false);
+    setFeedbackOpen(false);
   };
 
   return (
@@ -76,11 +92,52 @@ export function FeedbackCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col sm:flex-row gap-4">
-        <Button variant="outline" className="w-full" onClick={handleRateApp}>
-          <Star className="mr-2 h-4 w-4" />
-          Rate the App
-        </Button>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={ratingOpen} onOpenChange={setRatingOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="w-full">
+              <Star className="mr-2 h-4 w-4" />
+              Rate the App
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>How would you rate our app?</DialogTitle>
+              <DialogDescription>
+                Your feedback helps us improve. Please select a rating below.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-center items-center gap-2 py-4">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  className={cn(
+                    'h-10 w-10 cursor-pointer transition-colors',
+                    (hoverRating || rating) >= star
+                      ? 'text-yellow-400 fill-yellow-400'
+                      : 'text-muted-foreground'
+                  )}
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                />
+              ))}
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setRatingOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleRatingSubmit}>
+                Submit Rating
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={feedbackOpen} onOpenChange={setFeedbackOpen}>
           <DialogTrigger asChild>
             <Button className="w-full">
               <MessageSquare className="mr-2 h-4 w-4" />
@@ -124,7 +181,7 @@ export function FeedbackCard() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setFeedbackOpen(false)}
                 >
                   Cancel
                 </Button>
