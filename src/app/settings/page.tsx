@@ -15,6 +15,7 @@ import { useSettings } from '@/hooks/use-settings';
 import type { Setting } from '@/hooks/use-settings';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MfaCard } from '@/components/settings/mfa-card';
+import { ThemeCard } from '@/components/settings/theme-card';
 
 function SettingsSkeleton() {
   return (
@@ -101,6 +102,7 @@ export default function SettingsPage() {
           </p>
         </div>
 
+        <ThemeCard />
         <MfaCard />
 
         <Card>

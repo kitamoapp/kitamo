@@ -20,18 +20,14 @@ import {
   LogOut,
   Settings,
   User,
-  Moon,
-  Sun,
-  Monitor,
   LayoutDashboard,
   Users,
   CreditCard,
   Bell,
   Wallet,
-  Sparkles,
   Calendar,
+  Sparkles,
 } from 'lucide-react';
-import { useTheme } from 'next-themes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -39,11 +35,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/auth-context';
@@ -57,7 +49,6 @@ const navItems = [
 ];
 
 function UserMenu() {
-  const { setTheme } = useTheme();
   const { user, loading, logout } = useAuth();
   const router = useRouter();
 
@@ -134,29 +125,6 @@ function UserMenu() {
               <span>Settings</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <Sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span>Theme</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem onClick={() => setTheme('light')}>
-                  <Sun />
-                  <span>Light</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('dark')}>
-                  <Moon />
-                  <span>Dark</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('system')}>
-                  <Monitor />
-                  <span>System</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
@@ -195,6 +163,18 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+             <SidebarMenuItem>
+                <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith('/opportunities')}
+                    tooltip={'Opportunities'}
+                >
+                    <Link href={'/opportunities'}>
+                        <Sparkles />
+                        <span>{'Opportunities'}</span>
+                    </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
