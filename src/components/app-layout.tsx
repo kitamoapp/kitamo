@@ -42,6 +42,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context/auth-context';
 import { Skeleton } from './ui/skeleton';
+import { Button } from './ui/button';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -109,12 +110,6 @@ function UserMenu() {
               <span>Profile</span>
             </Link>
           </DropdownMenuItem>
-           <DropdownMenuItem asChild>
-            <Link href="/notifications">
-              <Bell />
-              <span>Notifications</span>
-            </Link>
-          </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/settings">
               <Settings />
@@ -134,6 +129,7 @@ function UserMenu() {
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <SidebarProvider>
@@ -162,6 +158,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
+          <UserMenu />
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
@@ -170,7 +167,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <div className="flex-1">
             </div>
             <div className="flex items-center gap-4">
-                <UserMenu />
+               <Button variant="ghost" size="icon" onClick={() => router.push('/notifications')}>
+                 <Bell />
+                 <span className="sr-only">Notifications</span>
+               </Button>
             </div>
         </header>
         <main className="flex-1 p-4 sm:p-8">{children}</main>

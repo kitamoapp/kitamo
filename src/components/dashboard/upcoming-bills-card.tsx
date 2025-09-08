@@ -76,7 +76,7 @@ export function UpcomingBillsCard() {
 
   return (
     <>
-    <Card className="col-span-1 lg:col-span-2">
+    <Card>
       <CardHeader>
         <CardTitle>Upcoming Bills & Subscriptions</CardTitle>
         <CardDescription>

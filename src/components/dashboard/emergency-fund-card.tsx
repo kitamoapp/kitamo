@@ -92,7 +92,7 @@ export function EmergencyFundCard() {
 
   return (
     <>
-      <Card className="col-span-1 lg:col-span-2">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
           <div className="flex items-center gap-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
