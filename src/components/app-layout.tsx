@@ -29,6 +29,7 @@ import {
   Sparkles,
   Heart,
   Briefcase,
+  LifeBuoy,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -114,6 +115,12 @@ function UserMenu() {
             <Link href="/settings">
               <Settings />
               <span>Settings</span>
+            </Link>
+          </DropdownMenuItem>
+           <DropdownMenuItem asChild>
+            <Link href="/feedback">
+              <LifeBuoy />
+              <span>Feedback & Support</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

@@ -21,10 +21,11 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Shield, User, Briefcase, Award, Gem } from 'lucide-react';
+import { Shield, User, Briefcase, Award, Gem, MessageSquare, BookUser, Palette, Lock } from 'lucide-react';
 import type { SubscriptionTier } from '@/lib/types';
 import { LanguageCard } from '@/components/settings/language-card';
-import { FeedbackCard } from '@/components/settings/feedback-card';
+import { ChangePasswordCard } from '@/components/settings/change-password-card';
+import { BiometricLoginCard } from '@/components/settings/biometric-login-card';
 
 
 const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
@@ -142,36 +143,54 @@ export default function SettingsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
           <p className="text-muted-foreground">
-            Manage your account and notification preferences.
+            Manage your account and application preferences.
           </p>
         </div>
 
-        <ThemeCard />
-        <LanguageCard />
-        <MfaCard />
+        <Card>
+            <CardHeader className="flex flex-row items-center gap-4">
+                <Palette className="h-6 w-6" />
+                <div>
+                    <CardTitle>Appearance & Language</CardTitle>
+                    <CardDescription>
+                    Customize the look, feel, and language of your interface.
+                    </CardDescription>
+                </div>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <ThemeCard />
+                <LanguageCard />
+            </CardContent>
+        </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Account</CardTitle>
-            <CardDescription>
-              Manage your account and subscription settings.
-            </CardDescription>
+             <CardHeader className="flex flex-row items-center gap-4">
+                <Lock className="h-6 w-6" />
+                <div>
+                    <CardTitle>Security</CardTitle>
+                    <CardDescription>
+                    Manage your password, multi-factor authentication, and other security settings.
+                    </CardDescription>
+                </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <ChangePasswordCard />
+                <MfaCard />
+                <BiometricLoginCard />
+            </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-4">
+            <BookUser className="h-6 w-6" />
+            <div>
+                <CardTitle>Account & Notifications</CardTitle>
+                <CardDescription>
+                Manage your subscription and how you get notified.
+                </CardDescription>
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <Label htmlFor="biometric-login" className="text-base">Biometric Login</Label>
-                <p className="text-sm text-muted-foreground">
-                  Use your fingerprint or face to log in to your account.
-                </p>
-              </div>
-              <Switch
-                id="biometric-login"
-                aria-label="Toggle biometric login"
-                checked={settings.biometricLogin}
-                onCheckedChange={(checked) => handleSettingChange('biometricLogin', checked)}
-              />
-            </div>
              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-x-4 rounded-lg border p-4">
                 <div className="space-y-0.5">
                     <p className="text-base font-medium">Subscription Plan</p>
@@ -200,17 +219,6 @@ export default function SettingsPage() {
                 onCheckedChange={(checked) => handleSettingChange('autoRenewSubscription', checked)}
               />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Notifications</CardTitle>
-            <CardDescription>
-              Choose how you want to be notified.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
             <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
               <div className="space-y-0.5">
                 <Label htmlFor="email-notifications" className="text-base">Email Notifications</Label>
@@ -242,7 +250,22 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        <FeedbackCard />
+        <Card>
+            <CardHeader className="flex-row justify-between items-center">
+                 <div className="flex items-center gap-4">
+                    <MessageSquare className="h-6 w-6" />
+                    <div>
+                        <CardTitle>Feedback & Support</CardTitle>
+                        <CardDescription>
+                        Help us improve by sharing your thoughts or rating the app.
+                        </CardDescription>
+                    </div>
+                </div>
+                <Button variant="outline" onClick={() => router.push('/feedback')}>
+                    Give Feedback
+                </Button>
+            </CardHeader>
+        </Card>
 
       </div>
     </AppLayout>

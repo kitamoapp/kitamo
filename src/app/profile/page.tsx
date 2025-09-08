@@ -6,7 +6,6 @@ import { ProfileHeaderCard } from '@/components/profile/ProfileHeaderCard';
 import { AccountInfoCard } from '@/components/profile/AccountInfoCard';
 import { PaymentMethodsCard } from '@/components/profile/PaymentMethodsCard';
 import { CommunityCodeInputCard } from '@/components/profile/CommunityCodeInputCard';
-import { ChangePasswordCard } from '@/components/profile/ChangePasswordCard';
 
 export default function ProfilePage() {
   return (
@@ -30,7 +29,6 @@ export default function ProfilePage() {
             <AccountInfoCard />
             <PaymentMethodsCard />
             <CommunityCodeInputCard />
-            <ChangePasswordCard />
           </div>
         </div>
       </div>

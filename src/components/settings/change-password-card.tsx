@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -58,28 +57,28 @@ export function ChangePasswordCard() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Change Password</CardTitle>
-        <CardDescription>
-          Update your password for better security.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="currentPassword">Current Password</Label>
-          <Input id="currentPassword" type="password" value={passwordInfo.currentPassword} onChange={handlePasswordInfoChange} />
+    <div className="space-y-6 rounded-lg border p-4">
+        <div className="space-y-0.5">
+            <h4 className="text-base font-medium">Change Password</h4>
+            <p className="text-sm text-muted-foreground">
+                Update your password for better security.
+            </p>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="newPassword">New Password</Label>
-          <Input id="newPassword" type="password" value={passwordInfo.newPassword} onChange={handlePasswordInfoChange} />
+        <div className="space-y-4">
+            <div className="space-y-2">
+                <Label htmlFor="currentPassword">Current Password</Label>
+                <Input id="currentPassword" type="password" value={passwordInfo.currentPassword} onChange={handlePasswordInfoChange} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="newPassword">New Password</Label>
+                <Input id="newPassword" type="password" value={passwordInfo.newPassword} onChange={handlePasswordInfoChange} />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Input id="confirmPassword" type="password" value={passwordInfo.confirmPassword} onChange={handlePasswordInfoChange} />
+            </div>
+            <Button onClick={handleUpdatePassword}>Update Password</Button>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm New Password</Label>
-          <Input id="confirmPassword" type="password" value={passwordInfo.confirmPassword} onChange={handlePasswordInfoChange} />
-        </div>
-        <Button onClick={handleUpdatePassword}>Update Password</Button>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
