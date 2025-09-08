@@ -29,6 +29,7 @@ import {
   Bell,
   Wallet,
   Sparkles,
+  Calendar,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -51,6 +52,7 @@ import { Skeleton } from './ui/skeleton';
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/transactions', label: 'Transactions', icon: Wallet },
+  { href: '/calendar', label: 'Calendar', icon: Calendar },
   { href: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { href: '/referrals', label: 'Referrals', icon: Users },
 ];
