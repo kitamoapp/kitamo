@@ -240,8 +240,6 @@ export default function DashboardPage() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-            <SetBudgetDialog />
-            <SetReminderDialog />
             <AddTransactionDialog />
           </div>
         </div>
@@ -278,8 +276,6 @@ export default function DashboardPage() {
            )}
         </div>
         
-        {canViewInsights ? <OpportunitiesCard /> : null}
-
         {visibleComponents.financialInsights && (
           <>
             {canViewInsights ? (
