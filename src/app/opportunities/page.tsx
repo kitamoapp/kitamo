@@ -74,7 +74,7 @@ export default function OpportunitiesPage() {
   }, [transactions, canUseFeature]);
 
   const handleActionClick = (opportunity: FinancialOpportunity) => {
-    if (opportunity.action === 'Invite Friends') {
+    if (opportunity.action === 'Help a Friend') {
       router.push('/referrals');
     }
     // Handle other actions if necessary

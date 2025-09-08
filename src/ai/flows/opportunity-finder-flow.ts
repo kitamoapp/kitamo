@@ -31,7 +31,7 @@ const FinancialOpportunitySchema = z.object({
     type: z.enum(['savings', 'income', 'negotiation']).describe("The type of opportunity."),
     title: z.string().describe("A short, catchy title for the opportunity."),
     description: z.string().describe("A 2-3 sentence, actionable description of the opportunity, written in a friendly and encouraging tone. Use plain text with newlines for paragraphs."),
-    action: z.string().optional().describe("A short call-to-action label for a button, like 'See Details' or 'Invite Friends'."),
+    action: z.string().optional().describe("A short call-to-action label for a button, like 'See Details' or 'Help a Friend'."),
 });
 export type FinancialOpportunity = z.infer<typeof FinancialOpportunitySchema>;
 
@@ -62,7 +62,7 @@ const prompt = ai.definePrompt({
 
     Here are some ideas for inspiration:
     -   **Savings**: Identify a high-spending, non-essential category (like 'Shopping' or 'Entertainment') and suggest a small, achievable reduction. Frame it positively (e.g., "Unlock ₱500 extra this month!").
-    -   **Income**: If the user's income seems low or their expenses are high, suggest they invite friends to the app to earn extra money by helping the community grow. Frame this as a core feature of the app for earning. Give it an action of "Invite Friends".
+    -   **Income**: If the user's income seems low or their expenses are high, suggest they help friends get started with the app to earn extra money by helping the community grow. Frame this as a core feature of the app for earning. Give it an action of "Help a Friend".
     -   **Negotiation**: If you see recurring bills (like utilities), suggest they negotiate a better rate. You can even offer to help generate a script.
 
     Prioritize opportunities that are most relevant to the user's data. If there isn't much data, provide more general but still helpful advice.

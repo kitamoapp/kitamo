@@ -5,7 +5,7 @@ import { AppLayout } from '@/components/app-layout';
 import { ProfileHeaderCard } from '@/components/profile/ProfileHeaderCard';
 import { AccountInfoCard } from '@/components/profile/AccountInfoCard';
 import { PaymentMethodsCard } from '@/components/profile/PaymentMethodsCard';
-import { ReferralCodeInputCard } from '@/components/profile/ReferralCodeInputCard';
+import { CommunityCodeInputCard } from '@/components/profile/CommunityCodeInputCard';
 import { ChangePasswordCard } from '@/components/profile/ChangePasswordCard';
 
 export default function ProfilePage() {
@@ -29,7 +29,7 @@ export default function ProfilePage() {
           <div className="md:col-span-2 space-y-8">
             <AccountInfoCard />
             <PaymentMethodsCard />
-            <ReferralCodeInputCard />
+            <CommunityCodeInputCard />
             <ChangePasswordCard />
           </div>
         </div>

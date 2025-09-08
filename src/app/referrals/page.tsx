@@ -2,11 +2,11 @@
 'use client';
 
 import { AppLayout } from '@/components/app-layout';
-import { ReferralCodeCard } from '@/components/referrals/referral-code-card';
-import { ReferralFaq } from '@/components/referrals/referral-faq';
-import { MilestoneProgressCard } from '@/components/referrals/milestone-progress-card';
-import { ReferralNetworkVisualizer } from '@/components/referrals/referral-network-visualizer';
-import { RecruitUserDialog } from '@/components/referrals/recruit-user-dialog';
+import { CommunityCodeCard } from '@/components/community/community-code-card';
+import { CommunityFaq } from '@/components/community/community-faq';
+import { MilestoneProgressCard } from '@/components/community/milestone-progress-card';
+import { CommunityNetworkVisualizer } from '@/components/community/community-network-visualizer';
+import { HelpFriendDialog } from '@/components/community/help-friend-dialog';
 
 export default function ReferralsPage() {
   return (
@@ -20,21 +20,21 @@ export default function ReferralsPage() {
               earnings.
             </p>
           </div>
-          <RecruitUserDialog />
+          <HelpFriendDialog />
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-8">
             <MilestoneProgressCard />
             <div className="block lg:hidden">
-              <ReferralCodeCard />
+              <CommunityCodeCard />
             </div>
-            <ReferralNetworkVisualizer />
+            <CommunityNetworkVisualizer />
           </div>
           <div className="lg:col-span-1 space-y-8">
             <div className="hidden lg:block">
-              <ReferralCodeCard />
+              <CommunityCodeCard />
             </div>
-            <ReferralFaq />
+            <CommunityFaq />
           </div>
         </div>
       </div>
