@@ -47,7 +47,7 @@ const prompt = ai.definePrompt({
 
     Analyze the user's transaction data:
     {{#each transactions}}
-    - {{this.description}} ({{this.category}}): {{this.amount}} on {{formatDate this.date "yyyy-MM-dd"}}
+    - {{this.description}} ({{this.category}}): {{this.amount}} on {{this.date}}
     {{/each}}
     
     Based on this data, provide a short, consultative summary. Your analysis should:
