@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -11,27 +12,33 @@ import {
 import { useTransactions } from '@/context/transaction-context';
 import { useReminders } from '@/context/reminder-context';
 import { getLoanRiskAdvice } from '@/ai/flows/loan-advisor-flow';
-import { AlertCircle, Loader2, ShieldCheck, ShieldAlert, PiggyBank } from 'lucide-react';
+import { AlertCircle, Loader2, ShieldCheck, ShieldAlert, PiggyBank, Edit } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Progress } from '../ui/progress';
 import { useCurrency } from '@/context/currency-context';
 import { cn } from '@/lib/utils';
 import { useSubscription } from '@/hooks/use-subscription';
 import { UpgradeCard } from '../upgrade-card';
+import { Button } from '../ui/button';
+import { SetGoalDialog } from './set-goal-dialog';
+import { useGoals } from '@/context/goal-context';
 
 export function EmergencyFundCard() {
   const { transactions } = useTransactions();
   const { reminders } = useReminders();
   const { formatCurrency } = useCurrency();
   const { currentTier } = useSubscription();
+  const { emergencyFundGoal, setEmergencyFundGoal } = useGoals();
 
   const [advice, setAdvice] = useState('');
   const [status, setStatus] = useState<'onTrack' | 'atRisk' | 'noData' | 'loading'>('loading');
   const [error, setError] = useState<string | null>(null);
-  const [fundTarget, setFundTarget] = useState(0);
+  const [recommendedTarget, setRecommendedTarget] = useState(0);
   const [currentFund, setCurrentFund] = useState(0);
+  const [showGoalDialog, setShowGoalDialog] = useState(false);
 
   const canUseFeature = currentTier.name !== 'Free';
+  const displayTarget = emergencyFundGoal || recommendedTarget;
 
   useEffect(() => {
     if (!canUseFeature) {
@@ -43,10 +50,14 @@ export function EmergencyFundCard() {
       setStatus('loading');
       setError(null);
       try {
-        const result = await getLoanRiskAdvice({ transactions, reminders });
+        const result = await getLoanRiskAdvice({
+           transactions, 
+           reminders,
+           customEmergencyFundTarget: emergencyFundGoal > 0 ? emergencyFundGoal : undefined,
+        });
         setAdvice(result.advice);
         setStatus(result.status);
-        setFundTarget(result.emergencyFundTarget);
+        setRecommendedTarget(result.recommendedEmergencyFundTarget);
         setCurrentFund(result.currentEmergencyFund);
       } catch (err) {
         console.error('Error fetching loan risk advice:', err);
@@ -55,9 +66,9 @@ export function EmergencyFundCard() {
     };
 
     fetchAdvice();
-  }, [transactions, reminders, canUseFeature]);
+  }, [transactions, reminders, canUseFeature, emergencyFundGoal]);
 
-  const progress = fundTarget > 0 ? (currentFund / fundTarget) * 100 : 0;
+  const progress = displayTarget > 0 ? (currentFund / displayTarget) * 100 : 0;
 
   const renderIcon = () => {
     switch (status) {
@@ -80,53 +91,68 @@ export function EmergencyFundCard() {
   }
 
   return (
-    <Card className="col-span-1 lg:col-span-2">
-      <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
-            {renderIcon()}
-        </div>
-        <div>
-            <CardTitle>Emergency Fund Status</CardTitle>
-            <CardDescription>
-                Your progress towards a financial safety net.
-            </CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {status === 'loading' && (
-          <div className="flex items-center justify-center gap-2 text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin" />
-            <span>Analyzing your finances...</span>
+    <>
+      <Card className="col-span-1 lg:col-span-2">
+        <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
+          <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
+                  {renderIcon()}
+              </div>
+              <div>
+                  <CardTitle>Emergency Fund Status</CardTitle>
+                  <CardDescription>
+                      Your progress towards a financial safety net.
+                  </CardDescription>
+              </div>
           </div>
-        )}
-        {error && (
-            <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-            </Alert>
-        )}
-        {status !== 'loading' && !error && (
-            <div className='space-y-4'>
-                <div>
-                    <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium text-sm">
-                            {formatCurrency(currentFund)} / {formatCurrency(fundTarget)}
-                        </span>
-                        <span className={cn("text-sm font-semibold", status === 'onTrack' && 'text-green-500', status === 'atRisk' && 'text-amber-500')}>
-                          {status === 'onTrack' && "On Track"}
-                          {status === 'atRisk' && "At Risk"}
-                          {status === 'noData' && "Start Saving"}
-                        </span>
-                    </div>
-                     <Progress value={progress} className={cn(status === 'atRisk' && "[&>div]:bg-amber-500")} />
-                </div>
-                <p className="text-sm text-muted-foreground italic">
-                    {advice}
-                </p>
+           <Button variant="ghost" size="icon" onClick={() => setShowGoalDialog(true)}>
+             <Edit className="h-4 w-4" />
+             <span className="sr-only">Set custom goal</span>
+           </Button>
+        </CardHeader>
+        <CardContent>
+          {status === 'loading' && (
+            <div className="flex items-center justify-center gap-2 text-muted-foreground">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Analyzing your finances...</span>
             </div>
-        )}
-      </CardContent>
-    </Card>
+          )}
+          {error && (
+              <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+              </Alert>
+          )}
+          {status !== 'loading' && !error && (
+              <div className='space-y-4'>
+                  <div>
+                      <div className="flex justify-between items-center mb-1">
+                          <span className="font-medium text-sm">
+                              {formatCurrency(currentFund)} / {formatCurrency(displayTarget)}
+                          </span>
+                          <span className={cn("text-sm font-semibold", status === 'onTrack' && 'text-green-500', status === 'atRisk' && 'text-amber-500')}>
+                            {status === 'onTrack' && "On Track"}
+                            {status === 'atRisk' && "At Risk"}
+                            {status === 'noData' && "Start Saving"}
+                          </span>
+                      </div>
+                      <Progress value={progress} className={cn(status === 'atRisk' && "[&>div]:bg-amber-500")} />
+                  </div>
+                  <p className="text-sm text-muted-foreground italic">
+                      {advice}
+                  </p>
+              </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <SetGoalDialog 
+        open={showGoalDialog}
+        onOpenChange={setShowGoalDialog}
+        currentGoal={emergencyFundGoal}
+        onSetGoal={setEmergencyFundGoal}
+      />
+    </>
   );
 }

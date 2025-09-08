@@ -12,6 +12,7 @@ import { BudgetProvider } from '@/context/budget-context';
 import { ReminderProvider } from '@/context/reminder-context';
 import { PaymentMethodProvider } from '@/context/payment-method-context';
 import { AuthProvider } from '@/context/auth-context';
+import { GoalProvider } from '@/context/goal-context';
 
 export const metadata: Metadata = {
   title: 'KitaMo',
@@ -60,7 +61,9 @@ export default function RootLayout({
                     <BudgetProvider>
                       <ReminderProvider>
                         <PaymentMethodProvider>
-                          {children}
+                          <GoalProvider>
+                            {children}
+                          </GoalProvider>
                         </PaymentMethodProvider>
                       </ReminderProvider>
                     </BudgetProvider>

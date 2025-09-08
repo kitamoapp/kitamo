@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -39,6 +40,7 @@ const LoanRiskAdviceInputSchema = z.object({
       })
     )
     .describe('A list of upcoming scheduled payments and bills.'),
+  customEmergencyFundTarget: z.number().optional().describe("The user's self-defined emergency fund goal."),
 });
 export type LoanRiskAdviceInput = z.infer<typeof LoanRiskAdviceInputSchema>;
 
@@ -51,9 +53,9 @@ const LoanRiskAdviceOutputSchema = z.object({
   advice: z
     .string()
     .describe('A concise, actionable piece of advice for the user.'),
-  emergencyFundTarget: z
+  recommendedEmergencyFundTarget: z
     .number()
-    .describe('The recommended emergency fund goal (e.g., 3 months of expenses).'),
+    .describe('The AI-recommended emergency fund goal (e.g., 3 months of expenses).'),
   currentEmergencyFund: z
     .number()
     .describe('The user\'s current savings that can be considered an emergency fund (current balance).'),
@@ -100,6 +102,9 @@ const prompt = ai.definePrompt({
     Here is the user's financial situation:
     - Average Monthly Expenses: {{averageMonthlyExpenses}}
     - Current Balance (Savings): {{balance}}
+    {{#if customEmergencyFundTarget}}
+    - User's Custom Savings Goal: {{customEmergencyFundTarget}}
+    {{/if}}
     - Upcoming Bills:
     {{#each reminders}}
       - {{this.title}} for {{this.amount}} on {{this.date}}
@@ -115,7 +120,8 @@ const prompt = ai.definePrompt({
 
     Based on their status, provide a single, actionable sentence of advice in a supportive tone.
     - If 'atRisk', give a specific, gentle warning and a suggestion. Example: "Your spending has been a bit high lately. Try to cut back on 'Shopping' to stay on track and avoid needing to borrow."
-    - If 'onTrack', provide encouragement. Example: "Great job managing your finances! Keep building your savings to stay prepared for anything."
+    - If 'onTrack' and they have a custom goal, encourage them towards it. Example: "You're doing great! Keep saving consistently to reach your ₱{{customEmergencyFundTarget}} goal."
+    - If 'onTrack' and no custom goal, provide general encouragement. Example: "Great job managing your finances! Keep building your savings to stay prepared for anything."
   `,
 });
 
@@ -129,13 +135,13 @@ const loanAdvisorFlow = ai.defineFlow(
   async (input) => {
     const { balance, averageMonthlyExpenses, hasEnoughData } = calculateFinancials(input.transactions);
     
-    const emergencyFundTarget = Math.max(averageMonthlyExpenses, 5000); // Target is 1 month of expenses, or a minimum of 5000.
+    const recommendedEmergencyFundTarget = Math.max(averageMonthlyExpenses, 5000); // Target is 1 month of expenses, or a minimum of 5000.
 
     if (!hasEnoughData) {
         return {
             status: 'noData',
             advice: "Track your spending for a while and I'll help you build an emergency fund to stay financially secure.",
-            emergencyFundTarget,
+            recommendedEmergencyFundTarget,
             currentEmergencyFund: balance > 0 ? balance : 0
         };
     }
@@ -144,7 +150,7 @@ const loanAdvisorFlow = ai.defineFlow(
     
     return {
         ...output!,
-        emergencyFundTarget,
+        recommendedEmergencyFundTarget,
         currentEmergencyFund: balance > 0 ? balance : 0,
     };
   }
