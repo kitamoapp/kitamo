@@ -74,7 +74,7 @@ export default function OpportunitiesPage() {
   }, [transactions, canUseFeature]);
 
   const handleActionClick = (opportunity: FinancialOpportunity) => {
-    if (opportunity.type === 'income') {
+    if (opportunity.action === 'Go to Referrals') {
       router.push('/referrals');
     }
     // Handle other actions if necessary
@@ -118,7 +118,21 @@ export default function OpportunitiesPage() {
           <Button
             variant="outline"
             onClick={() => {
-              /* re-fetch */
+              // Re-trigger the fetch
+              const fetchOpportunities = async () => {
+                setIsLoading(true);
+                setError(null);
+                try {
+                  const result = await getFinancialOpportunities({ transactions });
+                  setOpportunities(result.opportunities);
+                } catch (err) {
+                  console.error('Error fetching financial opportunities:', err);
+                  setError("We couldn't generate opportunities right now. Please try again later.");
+                } finally {
+                  setIsLoading(false);
+                }
+              };
+              fetchOpportunities();
             }}
             disabled={isLoading}
           >
@@ -176,7 +190,7 @@ export default function OpportunitiesPage() {
           </Card>
         )}
 
-        {!isLoading && !error && (
+        {!isLoading && !error && opportunities.length > 0 && (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {opportunities.map((opp, index) => {
               const Icon = opportunityIcons[opp.type] || Sparkles;
@@ -216,3 +230,5 @@ export default function OpportunitiesPage() {
         )}
       </div>
     </AppLayout>
+  );
+}
