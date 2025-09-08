@@ -17,6 +17,7 @@ import {
   Sparkles,
   Loader2,
   AlertCircle,
+  Users,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTransactions } from '@/context/transaction-context';
@@ -27,19 +28,23 @@ import {
 } from '@/ai/flows/opportunity-finder-flow';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { UpgradeCard } from '@/components/upgrade-card';
+import { useRouter } from 'next/navigation';
 
 const opportunityIcons = {
   savings: PiggyBank,
-  income: TrendingUp,
+  income: Users, // Changed to Users icon for referral
   negotiation: MessageSquareQuote,
 };
 
 export default function OpportunitiesPage() {
-  const [opportunities, setOpportunities] = useState<FinancialOpportunity[]>([]);
+  const [opportunities, setOpportunities] = useState<FinancialOpportunity[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { transactions } = useTransactions();
   const { currentTier } = useSubscription();
+  const router = useRouter();
 
   const canUseFeature = currentTier.name !== 'Free';
 
@@ -68,29 +73,33 @@ export default function OpportunitiesPage() {
     fetchOpportunities();
   }, [transactions, canUseFeature]);
 
-  const handleRefresh = () => {
-    // This is just a placeholder for now. In a real app you might re-fetch.
-    console.log('Refresh Opportunities');
+  const handleActionClick = (opportunity: FinancialOpportunity) => {
+    if (opportunity.type === 'income') {
+      router.push('/referrals');
+    }
+    // Handle other actions if necessary
   };
-  
+
   if (!canUseFeature) {
     return (
-        <AppLayout>
-            <div className="space-y-8">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Opportunities</h1>
-                    <p className="text-muted-foreground">
-                        Unlock AI-powered suggestions to improve your financial health.
-                    </p>
-                </div>
-                 <UpgradeCard 
-                    title="Find Ways to Save and Earn"
-                    description="Upgrade to get personalized AI suggestions for saving money, boosting your income, and negotiating better deals on your bills."
-                    buttonText="Upgrade to Unlock"
-                    featureIcon='ai'
-                />
-            </div>
-        </AppLayout>
+      <AppLayout>
+        <div className="space-y-8">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Opportunities
+            </h1>
+            <p className="text-muted-foreground">
+              Unlock AI-powered suggestions to improve your financial health.
+            </p>
+          </div>
+          <UpgradeCard
+            title="Find Ways to Save and Earn"
+            description="Upgrade to get personalized AI suggestions for saving money, boosting your income, and negotiating better deals on your bills."
+            buttonText="Upgrade to Unlock"
+            featureIcon="ai"
+          />
+        </div>
+      </AppLayout>
     );
   }
 
@@ -106,7 +115,13 @@ export default function OpportunitiesPage() {
               Your AI-powered guide to saving more and earning more.
             </p>
           </div>
-          <Button variant="outline" onClick={handleRefresh} disabled={isLoading}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              /* re-fetch */
+            }}
+            disabled={isLoading}
+          >
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -175,15 +190,21 @@ export default function OpportunitiesPage() {
                       <CardTitle className="text-lg">{opp.title}</CardTitle>
                       <CardDescription>
                         {opp.type === 'savings' && 'Savings Suggestion'}
-                        {opp.type === 'income' && 'Income Idea'}
+                        {opp.type === 'income' && 'Income Opportunity'}
                         {opp.type === 'negotiation' && 'Negotiation Tip'}
                       </CardDescription>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-foreground whitespace-pre-wrap font-sans">{opp.description}</p>
+                    <p className="text-sm text-foreground whitespace-pre-wrap font-sans">
+                      {opp.description}
+                    </p>
                     {opp.action && (
-                      <Button variant="link" className="px-0 pt-4">
+                      <Button
+                        variant="link"
+                        className="px-0 pt-4"
+                        onClick={() => handleActionClick(opp)}
+                      >
                         {opp.action}
                       </Button>
                     )}
@@ -195,5 +216,3 @@ export default function OpportunitiesPage() {
         )}
       </div>
     </AppLayout>
-  );
-}
