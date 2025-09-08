@@ -90,7 +90,7 @@ export function EmergencyFundCard() {
     )
   }
   
-  if (status === 'noData' && !error) {
+  if (status === 'noData' && !error && displayTarget === 0) {
     return (
         <>
             <Card className="flex flex-col items-center justify-center text-center p-6 bg-muted/40">
