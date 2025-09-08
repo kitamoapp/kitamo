@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import {
-  Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
   TrendingDown,
@@ -21,7 +20,6 @@ import type { Transaction, Reminder } from '@/lib/types';
 import { useCurrency } from '@/context/currency-context';
 import { useReminders } from '@/context/reminder-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 
