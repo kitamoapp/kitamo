@@ -1,17 +1,10 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, ReactElement } from 'react';
 import {
   CalendarIcon,
-  Car,
-  Gift,
-  Heart,
-  Home,
   Plus,
-  ShoppingBag,
-  Utensils,
-  Briefcase,
 } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -61,7 +54,12 @@ const formSchema = z.object({
   description: z.string().min(1, 'Please enter a description.'),
 });
 
-export function AddTransactionDialog() {
+interface AddTransactionDialogProps {
+    defaultDate?: Date;
+    triggerButton?: ReactElement;
+}
+
+export function AddTransactionDialog({ defaultDate, triggerButton }: AddTransactionDialogProps) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const { addTransaction } = useTransactions();
@@ -71,7 +69,7 @@ export function AddTransactionDialog() {
       type: 'expense',
       amount: 0,
       description: '',
-      date: new Date(),
+      date: defaultDate || new Date(),
     },
   });
 
@@ -91,18 +89,22 @@ export function AddTransactionDialog() {
       type: 'expense',
       amount: 0,
       description: '',
-      date: new Date(),
+      date: defaultDate || new Date(),
     });
     setOpen(false);
   }
+  
+  const trigger = triggerButton || (
+    <Button>
+      <Plus className="-ml-1 mr-2 h-4 w-4" />
+      Add Transaction
+    </Button>
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="-ml-1 mr-2 h-4 w-4" />
-          Add Transaction
-        </Button>
+        {trigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

@@ -10,6 +10,10 @@ import {
   Bell,
   Wallet,
   Calendar as CalendarIcon,
+  MoreHorizontal,
+  FileText,
+  Edit,
+  Trash2,
 } from 'lucide-react';
 import { DayPicker, type DateFormatter } from 'react-day-picker';
 import { format, isSameDay, getYear, getMonth } from 'date-fns';
@@ -20,12 +24,17 @@ import { useTransactions } from '@/context/transaction-context';
 import type { Transaction, Reminder } from '@/lib/types';
 import { useCurrency } from '@/context/currency-context';
 import { useReminders } from '@/context/reminder-context';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Label } from '../ui/label';
+import { AddTransactionDialog } from '../transactions/add-transaction-dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { EditTransactionDialog } from '../transactions/edit-transaction-dialog';
+import { TransactionDetailsDialog } from '../transactions/transaction-details-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 
 const formatDay: DateFormatter = (day) => day.getDate().toString();
 
@@ -37,7 +46,7 @@ const months = [
 ];
 
 export function FinancialCalendar() {
-  const { transactions } = useTransactions();
+  const { transactions, deleteTransaction } = useTransactions();
   const { reminders } = useReminders();
   const { formatCurrency } = useCurrency();
 
@@ -46,6 +55,12 @@ export function FinancialCalendar() {
   
   const [jumpToMonth, setJumpToMonth] = React.useState(getMonth(new Date()));
   const [jumpToYear, setJumpToYear] = React.useState(getYear(new Date()));
+
+  // State for managing dialogs
+  const [editingTransaction, setEditingTransaction] = React.useState<Transaction | null>(null);
+  const [detailsTransaction, setDetailsTransaction] = React.useState<Transaction | null>(null);
+  const [deletingTransactionId, setDeletingTransactionId] = React.useState<string | null>(null);
+
 
   const dailyData = React.useMemo(() => {
     const data: Record<string, { income: number; expense: number, reminders: Reminder[] }> = {};
@@ -73,6 +88,14 @@ export function FinancialCalendar() {
         reminders: reminders.filter(r => isSameDay(new Date(r.date), selectedDay))
     }
   }, [selectedDay, transactions, reminders]);
+
+  const handleDeleteConfirm = () => {
+    if (deletingTransactionId) {
+      deleteTransaction(deletingTransactionId);
+    }
+    setDeletingTransactionId(null);
+  };
+
 
   const DayWithDetails = ({ date, displayMonth }: { date: Date; displayMonth: Date }) => {
     const dayKey = format(date, 'yyyy-MM-dd');
@@ -129,6 +152,7 @@ export function FinancialCalendar() {
   
 
   return (
+    <>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div className="md:col-span-2">
         <DayPicker
@@ -253,14 +277,35 @@ export function FinancialCalendar() {
                                 <ul className="space-y-3">
                                   {selectedDayDetails.transactions.map(t => (
                                     <li key={`txn-${t.id}`} className="flex justify-between items-center text-sm">
-                                      <div>
-                                        <p>{t.description}</p>
+                                      <div className='flex-1 min-w-0'>
+                                        <p className="truncate">{t.description}</p>
                                         <p className='text-xs text-muted-foreground'>{t.category}</p>
                                       </div>
-                                      <span className={cn(
-                                        'font-medium',
-                                        t.type === 'income' ? 'text-green-600' : 'text-destructive'
-                                      )}>{formatCurrency(t.amount)}</span>
+                                      <div className='flex items-center gap-2 ml-2'>
+                                        <span className={cn(
+                                            'font-medium',
+                                            t.type === 'income' ? 'text-green-600' : 'text-destructive'
+                                        )}>{formatCurrency(t.amount)}</span>
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                                              <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={() => setDetailsTransaction(t)}>
+                                              <FileText className="mr-2 h-4 w-4" /> View Details
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => setEditingTransaction(t)}>
+                                              <Edit className="mr-2 h-4 w-4" /> Edit
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="text-red-500" onClick={() => setDeletingTransactionId(t.id)}>
+                                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      </div>
                                     </li>
                                   ))}
                                 </ul>
@@ -275,8 +320,44 @@ export function FinancialCalendar() {
                     </div>
                 </ScrollArea>
             </CardContent>
+             <CardFooter>
+                <AddTransactionDialog defaultDate={selectedDay} triggerButton={
+                    <Button variant="outline" className='w-full'>Add Transaction for this Day</Button>
+                }/>
+            </CardFooter>
         </Card>
       </div>
     </div>
+    
+    {/* Dialogs */}
+    {editingTransaction && (
+      <EditTransactionDialog 
+        transaction={editingTransaction}
+        onOpenChange={(open) => !open && setEditingTransaction(null)}
+      />
+    )}
+    {detailsTransaction && (
+      <TransactionDetailsDialog
+        transaction={detailsTransaction}
+        onOpenChange={(open) => !open && setDetailsTransaction(null)}
+      />
+    )}
+    {deletingTransactionId && (
+       <AlertDialog open={!!deletingTransactionId} onOpenChange={(open) => !open && setDeletingTransactionId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the transaction.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )}
+    </>
   );
 }
