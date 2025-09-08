@@ -12,7 +12,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useSettings } from '@/hooks/use-settings';
-import type { Setting } from '@/hooks/use-settings';
+import type { SettingKey } from '@/hooks/use-settings';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MfaCard } from '@/components/settings/mfa-card';
 import { ThemeCard } from '@/components/settings/theme-card';
@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Shield, User, Briefcase, Award, Gem } from 'lucide-react';
 import type { SubscriptionTier } from '@/lib/types';
+import { LanguageCard } from '@/components/settings/language-card';
 
 
 const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
@@ -122,7 +123,7 @@ export default function SettingsPage() {
   const router = useRouter();
 
 
-  const handleSettingChange = async (setting: Setting, checked: boolean) => {
+  const handleSettingChange = async (setting: SettingKey, checked: boolean) => {
     await updateSetting(setting, checked);
   };
 
@@ -145,6 +146,7 @@ export default function SettingsPage() {
         </div>
 
         <ThemeCard />
+        <LanguageCard />
         <MfaCard />
 
         <Card>

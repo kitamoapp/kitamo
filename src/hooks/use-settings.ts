@@ -6,13 +6,16 @@ import { useToast } from './use-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { requestNotificationPermission } from '@/lib/firebase/client';
 
-export type Setting = 
-  | 'biometricLogin'
-  | 'emailNotifications'
-  | 'pushNotifications'
-  | 'autoRenewSubscription';
+export interface Settings {
+  biometricLogin: boolean;
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  autoRenewSubscription: boolean;
+  language: string;
+}
 
-export type Settings = Record<Setting, boolean>;
+export type SettingKey = keyof Settings;
+
 
 const LOCAL_STORAGE_KEY = 'kitamo-settings';
 const BIOMETRIC_PROMPT_SEEN_KEY = 'hasSeenBiometricPrompt';
@@ -22,6 +25,7 @@ const defaultSettings: Settings = {
   emailNotifications: true,
   pushNotifications: false, // Default to false until user enables it
   autoRenewSubscription: true,
+  language: 'en',
 };
 
 export function useSettings() {
@@ -117,13 +121,13 @@ export function useSettings() {
             title: 'Biometric Setup Failed',
             description: 'Could not set up biometric login. Your device may not support it or you may have cancelled the request.',
         });
-        setSettings(prev => ({...prev, biometricLogin: false}));
+        setSettings(prev => ({...-prev, biometricLogin: false}));
         return false;
     }
   }, [toast]);
 
 
-  const updateSetting = useCallback(async (setting: Setting, value: boolean): Promise<void> => {
+  const updateSetting = useCallback(async (setting: SettingKey, value: boolean | string): Promise<void> => {
     if (setting === 'biometricLogin') {
       if (value) {
         await setupBiometrics();
