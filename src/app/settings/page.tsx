@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 import { Shield, User, Briefcase, Award, Gem } from 'lucide-react';
 import type { SubscriptionTier } from '@/lib/types';
 import { LanguageCard } from '@/components/settings/language-card';
+import { FeedbackCard } from '@/components/settings/feedback-card';
 
 
 const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
@@ -240,6 +241,8 @@ export default function SettingsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <FeedbackCard />
 
       </div>
     </AppLayout>
