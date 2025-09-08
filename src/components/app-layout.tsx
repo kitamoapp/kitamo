@@ -116,12 +116,6 @@ function UserMenu() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/subscriptions">
-              <Heart />
-              <span>Subscriptions</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
             <Link href="/settings">
               <Settings />
               <span>Settings</span>
