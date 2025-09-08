@@ -1,4 +1,3 @@
-
 'use client';
 
 import { AppLayout } from '@/components/app-layout';
@@ -61,6 +60,7 @@ import { useTransactions } from '@/context/transaction-context';
 import { FinancialInsightsCard } from '@/components/dashboard/financial-insights-card';
 import { useDashboardComponents } from '@/hooks/use-dashboard-components';
 import { useSettings } from '@/hooks/use-settings';
+import { EmergencyFundCard } from '@/components/dashboard/emergency-fund-card';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -193,6 +193,14 @@ export default function DashboardPage() {
                       onCheckedChange={(checked) => handleVisibilityChange('expenseBreakdown', checked)}
                     />
                   </div>
+                   <div className="flex items-center justify-between rounded-lg border p-4">
+                    <Label htmlFor="emergency-fund-toggle" className="font-normal">Show Emergency Fund</Label>
+                    <Switch
+                      id="emergency-fund-toggle"
+                      checked={visibleComponents.emergencyFund}
+                      onCheckedChange={(checked) => handleVisibilityChange('emergencyFund', checked)}
+                    />
+                  </div>
                   <div className="flex items-center justify-between rounded-lg border p-4">
                     <Label htmlFor="transaction-history-toggle" className="font-normal">Show Transaction History</Label>
                     <Switch
@@ -239,6 +247,9 @@ export default function DashboardPage() {
            )}
            {visibleComponents.upcomingBills && (
              <UpcomingBillsCard />
+           )}
+           {visibleComponents.emergencyFund && (
+             <EmergencyFundCard />
            )}
         </div>
         

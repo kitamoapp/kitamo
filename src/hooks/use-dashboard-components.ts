@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -10,7 +9,8 @@ export type DashboardComponent =
   | 'transactionHistory'
   | 'budgetSummary'
   | 'upcomingBills'
-  | 'financialInsights';
+  | 'financialInsights'
+  | 'emergencyFund';
 
 type ComponentVisibility = Record<DashboardComponent, boolean>;
 
@@ -24,6 +24,7 @@ const defaultVisibility: ComponentVisibility = {
   budgetSummary: true,
   upcomingBills: true,
   financialInsights: true,
+  emergencyFund: true,
 };
 
 export function useDashboardComponents() {
@@ -34,10 +35,16 @@ export function useDashboardComponents() {
     try {
       const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
       if (item) {
-        setVisibleComponents(JSON.parse(item));
+        // Ensure that new components from updates are added to the user's settings
+        const storedVisibility = JSON.parse(item);
+        const mergedVisibility = { ...defaultVisibility, ...storedVisibility };
+        setVisibleComponents(mergedVisibility);
+      } else {
+        setVisibleComponents(defaultVisibility);
       }
     } catch (error) {
       console.error('Error reading from localStorage', error);
+      setVisibleComponents(defaultVisibility);
     }
     setIsLoaded(true);
   }, []);
