@@ -27,7 +27,7 @@ const FinancialOpportunitiesInputSchema = z.object({
 });
 export type FinancialOpportunitiesInput = z.infer<typeof FinancialOpportunitiesInputSchema>;
 
-export const FinancialOpportunitySchema = z.object({
+const FinancialOpportunitySchema = z.object({
     type: z.enum(['savings', 'income', 'negotiation']).describe("The type of opportunity."),
     title: z.string().describe("A short, catchy title for the opportunity."),
     description: z.string().describe("A 2-3 sentence, actionable description of the opportunity, written in a friendly and encouraging tone. Use plain text with newlines for paragraphs."),
