@@ -53,8 +53,6 @@ const navItems = [
   { href: '/transactions', label: 'Transactions', icon: Wallet },
   { href: '/opportunities', label: 'Opportunities', icon: Sparkles },
   { href: '/referrals', label: 'Referrals', icon: Users },
-  { href: '/subscriptions', label: 'Subscriptions', icon: CreditCard },
-  { href: '/notifications', label: 'Notifications', icon: Bell },
 ];
 
 function UserMenu() {
@@ -115,6 +113,18 @@ function UserMenu() {
             <Link href="/profile">
               <User />
               <span>Profile</span>
+            </Link>
+          </DropdownMenuItem>
+           <DropdownMenuItem asChild>
+            <Link href="/subscriptions">
+              <CreditCard />
+              <span>Subscriptions</span>
+            </Link>
+          </DropdownMenuItem>
+           <DropdownMenuItem asChild>
+            <Link href="/notifications">
+              <Bell />
+              <span>Notifications</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
