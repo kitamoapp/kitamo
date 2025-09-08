@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import type { Transaction } from '@/lib/types';
 import { transactions as initialTransactions } from '@/lib/data';
 
@@ -11,6 +11,7 @@ interface TransactionContextType {
   updateTransaction: (transaction: Transaction) => void;
   deleteTransaction: (id: string) => void;
   deleteMultipleTransactions: (ids: string[]) => void;
+  toggleBookmark: (id: string) => void;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -66,9 +67,15 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const deleteMultipleTransactions = (ids: string[]) => {
     setTransactions(prev => prev.filter(t => !ids.includes(t.id)));
   }
+  
+  const toggleBookmark = useCallback((id: string) => {
+    setTransactions(prev => prev.map(t => 
+        t.id === id ? { ...t, bookmarked: !t.bookmarked } : t
+    ));
+  }, []);
 
   return (
-    <TransactionContext.Provider value={{ transactions, addTransaction, updateTransaction, deleteTransaction, deleteMultipleTransactions }}>
+    <TransactionContext.Provider value={{ transactions, addTransaction, updateTransaction, deleteTransaction, deleteMultipleTransactions, toggleBookmark }}>
       {children}
     </TransactionContext.Provider>
   );

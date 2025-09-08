@@ -7,6 +7,9 @@ export type Transaction = {
   amount: number;
   date: string;
   description: string;
+  bookmarked?: boolean;
+  notes?: string;
+  photoDataUri?: string;
 };
 
 export type ReferredUser = {

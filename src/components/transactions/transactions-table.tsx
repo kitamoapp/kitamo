@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import {
@@ -21,11 +22,12 @@ import {
 import { useCurrency } from '@/context/currency-context';
 import { useTransactions } from '@/context/transaction-context';
 import { Button } from '../ui/button';
-import { MoreHorizontal, Receipt, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Receipt, Trash2, Bookmark, FileText } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { EditTransactionDialog } from './edit-transaction-dialog';
@@ -42,11 +44,14 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { Checkbox } from '../ui/checkbox';
+import { TransactionDetailsDialog } from './transaction-details-dialog';
 
 export function TransactionsTable() {
   const { formatCurrency } = useCurrency();
-  const { transactions, deleteTransaction, deleteMultipleTransactions } = useTransactions();
+  const { transactions, deleteTransaction, deleteMultipleTransactions, toggleBookmark } = useTransactions();
   const [editingTransaction, setEditingTransaction] =
+    useState<Transaction | null>(null);
+  const [detailsTransaction, setDetailsTransaction] =
     useState<Transaction | null>(null);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [transactionToDelete, setTransactionToDelete] =
@@ -62,6 +67,10 @@ export function TransactionsTable() {
   const handleEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
   };
+  
+  const handleViewDetails = (transaction: Transaction) => {
+    setDetailsTransaction(transaction);
+  }
 
   const handleDeleteInitiate = (id: string) => {
     setTransactionToDelete(id);
@@ -141,7 +150,12 @@ export function TransactionsTable() {
                                 aria-label="Select row"
                               />
                               <div className="flex-1 space-y-1">
+                                <div className='flex items-center gap-2'>
+                                  <button onClick={() => toggleBookmark(transaction.id)} className="flex-shrink-0">
+                                      <Bookmark className={cn("h-4 w-4 text-muted-foreground transition-colors", transaction.bookmarked && "fill-amber-400 text-amber-500")} />
+                                  </button>
                                   <p className="font-medium">{transaction.description}</p>
+                                </div>
                                   <p className="text-sm text-muted-foreground">{transaction.category}</p>
                                   <p className="text-xs text-muted-foreground">{new Date(transaction.date).toLocaleDateString()}</p>
                               </div>
@@ -178,15 +192,19 @@ export function TransactionsTable() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => handleEdit(transaction)}>
+                                      <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
+                                          <FileText className="mr-2 h-4 w-4" />
+                                          View Details
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => handleEdit(transaction)}>
                                         Edit
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
                                         onClick={() => handleDeleteInitiate(transaction.id)}
                                         className="text-red-600"
-                                        >
+                                      >
                                         Delete
-                                        </DropdownMenuItem>
+                                      </DropdownMenuItem>
                                     </DropdownMenuContent>
                                     </DropdownMenu>
                               </div>
@@ -226,7 +244,12 @@ export function TransactionsTable() {
                             />
                         </TableCell>
                         <TableCell className="font-medium">
-                          {transaction.description}
+                          <div className='flex items-center gap-2'>
+                            <button onClick={() => toggleBookmark(transaction.id)} className="flex-shrink-0">
+                                <Bookmark className={cn("h-4 w-4 text-muted-foreground transition-colors", transaction.bookmarked && "fill-amber-400 text-amber-500")} />
+                            </button>
+                            {transaction.description}
+                          </div>
                         </TableCell>
                         <TableCell>{transaction.category}</TableCell>
                         <TableCell>
@@ -266,7 +289,12 @@ export function TransactionsTable() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEdit(transaction)}>
+                                <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
+                                    <FileText className="mr-2 h-4 w-4" />
+                                    View Details
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => handleEdit(transaction)}>
                                 Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem
@@ -296,6 +324,17 @@ export function TransactionsTable() {
               setEditingTransaction(null);
             }
           }}
+        />
+      )}
+      
+      {detailsTransaction && (
+        <TransactionDetailsDialog 
+            transaction={detailsTransaction}
+            onOpenChange={(open) => {
+                if (!open) {
+                    setDetailsTransaction(null);
+                }
+            }}
         />
       )}
 
