@@ -68,42 +68,25 @@ const DownlineNode = ({ user, allUsers, level = 0, expandedNodes, toggleNode }: 
     )
 }
 
-const DirectReferralColumn = ({ user, allUsers, expandedNodes, toggleNode }: { user: ReferredUser, allUsers: ReferredUser[], expandedNodes: Set<string>, toggleNode: (id: string) => void }) => {
-    const children = allUsers.filter(u => u.referredBy === user.id);
-    const isExpanded = expandedNodes.has(user.id);
-    const hasChildren = children.length > 0;
+const LegColumn = ({ leg, users, allUsers, expandedNodes, toggleNode }: { leg: 'left' | 'right', users: ReferredUser[], allUsers: ReferredUser[], expandedNodes: Set<string>, toggleNode: (id: string) => void }) => (
+    <div className="flex flex-col items-center gap-4">
+        {/* Connector from top */}
+        <div className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border"></div>
 
-    return (
-        <div className="relative flex flex-col items-center gap-4">
-            {/* Connector from top */}
-            <div className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border"></div>
-            
-            <div className="relative flex items-center gap-3 rounded-lg border bg-card p-3 shadow-sm min-w-max z-10">
-                <Avatar className="h-10 w-10">
-                    <AvatarImage src={`https://picsum.photos/100/100?random=${user.id}`} alt={user.name} data-ai-hint="person portrait" />
-                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className='flex-1'>
-                    <p className="font-semibold">{user.name}</p>
-                    <div className='flex items-center gap-2'>
-                        <PlanIcon plan={user.plan} />
-                        <p className="text-sm text-muted-foreground">{user.plan} Plan</p>
-                    </div>
-                </div>
-                {hasChildren && <NodeToggleButton isExpanded={isExpanded} onClick={(e) => { e.stopPropagation(); toggleNode(user.id); }} />}
+        <h3 className='font-semibold text-lg'>{leg === 'left' ? 'Left' : 'Right'} Leg</h3>
+
+        {users.length > 0 ? (
+            <div className="space-y-4">
+                {users.map(user => <DownlineNode key={user.id} user={user} allUsers={allUsers} level={1} expandedNodes={expandedNodes} toggleNode={toggleNode} />)}
             </div>
+        ) : (
+            <div className="text-center text-muted-foreground p-4 border-2 border-dashed rounded-lg">
+                No users on this leg yet.
+            </div>
+        )}
+    </div>
+);
 
-            {isExpanded && children.length > 0 && (
-                <>
-                    <div className="absolute left-1/2 top-16 h-4 w-px -translate-x-1/2 bg-border"></div>
-                    <div className="pt-4 space-y-4">
-                        {children.map(child => <DownlineNode key={child.id} user={child} allUsers={allUsers} level={1} expandedNodes={expandedNodes} toggleNode={toggleNode} />)}
-                    </div>
-                </>
-            )}
-        </div>
-    )
-}
 
 const VisualizerSkeleton = () => (
     <Card>
@@ -161,6 +144,10 @@ export function ReferralNetworkVisualizer() {
     return referredUsers.filter(u => u.referredBy === 'currentUser');
   }, [referredUsers]);
 
+  const leftLegUsers = directReferrals.filter(u => u.leg === 'left');
+  const rightLegUsers = directReferrals.filter(u => u.leg === 'right');
+
+
   if (!isLoaded) {
       return <VisualizerSkeleton />;
   }
@@ -206,12 +193,14 @@ export function ReferralNetworkVisualizer() {
         <div className="relative h-px w-full max-w-lg bg-border">
           {/* Vertical line down from 'You' */}
           <div className="absolute bottom-0 left-1/2 h-4 w-px -translate-x-1/2 bg-border"></div>
+           {/* T-junctions for legs */}
+           <div className="absolute top-0 left-1/4 h-4 w-px bg-border"></div>
+           <div className="absolute top-0 right-1/4 h-4 w-px bg-border"></div>
         </div>
 
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 justify-center items-start pt-4">
-           {directReferrals.map(user => (
-              <DirectReferralColumn key={user.id} user={user} allUsers={referredUsers} expandedNodes={expandedNodes} toggleNode={toggleNode} />
-            ))}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 justify-center items-start pt-4">
+            <LegColumn leg="left" users={leftLegUsers} allUsers={referredUsers} expandedNodes={expandedNodes} toggleNode={toggleNode} />
+            <LegColumn leg="right" users={rightLegUsers} allUsers={referredUsers} expandedNodes={expandedNodes} toggleNode={toggleNode} />
         </div>
       </CardContent>
     </Card>
