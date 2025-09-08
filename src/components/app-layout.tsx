@@ -27,6 +27,8 @@ import {
   Wallet,
   Calendar,
   Sparkles,
+  Heart,
+  Briefcase,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -114,6 +116,12 @@ function UserMenu() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
+            <Link href="/subscriptions">
+              <Heart />
+              <span>Subscriptions</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href="/settings">
               <Settings />
               <span>Settings</span>
@@ -157,18 +165,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
-             <SidebarMenuItem>
-                <SidebarMenuButton
-                    asChild
-                    isActive={pathname.startsWith('/opportunities')}
-                    tooltip={'Opportunities'}
-                >
-                    <Link href={'/opportunities'}>
-                        <Sparkles />
-                        <span>{'Opportunities'}</span>
-                    </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AppLayout } from '@/components/app-layout';
@@ -5,6 +6,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -19,6 +21,7 @@ import {
   TrendingUp,
   Settings2,
   Fingerprint,
+  Sparkles,
 } from 'lucide-react';
 import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-chart';
 import { useCurrency } from '@/context/currency-context';
@@ -61,6 +64,7 @@ import { FinancialInsightsCard } from '@/components/dashboard/financial-insights
 import { useDashboardComponents } from '@/hooks/use-dashboard-components';
 import { useSettings } from '@/hooks/use-settings';
 import { EmergencyFundCard } from '@/components/dashboard/emergency-fund-card';
+import Link from 'next/link';
 
 const currencyIcons: Record<Currency, React.ElementType> = {
   USD: DollarSign,
@@ -71,6 +75,27 @@ const currencyIcons: Record<Currency, React.ElementType> = {
 };
 
 export type Period = 'day' | 'week' | 'month' | 'year';
+
+const OpportunitiesCard = () => (
+    <Card className="col-span-1 lg:col-span-3 bg-gradient-to-br from-primary/10 to-transparent">
+        <CardHeader>
+            <div className='flex items-center gap-4'>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
+                    <Sparkles className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                    <CardTitle>Discover Financial Opportunities</CardTitle>
+                    <CardDescription>Let AI find ways for you to save money and increase your income.</CardDescription>
+                </div>
+            </div>
+        </CardHeader>
+        <CardFooter>
+            <Button asChild>
+                <Link href="/opportunities">Explore Opportunities</Link>
+            </Button>
+        </CardFooter>
+    </Card>
+)
 
 export default function DashboardPage() {
   const { currency, formatCurrency } = useCurrency();
@@ -253,6 +278,8 @@ export default function DashboardPage() {
            )}
         </div>
         
+        {canViewInsights ? <OpportunitiesCard /> : null}
+
         {visibleComponents.financialInsights && (
           <>
             {canViewInsights ? (
