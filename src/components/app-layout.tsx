@@ -48,7 +48,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/transactions', label: 'Transactions', icon: Wallet },
   { href: '/calendar', label: 'Calendar', icon: Calendar },
-  { href: '/referrals', label: 'Community', icon: Users },
+  { href: '/community', label: 'Community', icon: Users },
 ];
 
 function UserMenu() {
@@ -155,6 +155,18 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+             <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.startsWith('/opportunities')}
+                  tooltip='Opportunities'
+                >
+                  <Link href="/opportunities">
+                    <Sparkles />
+                    <span>Opportunities</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>

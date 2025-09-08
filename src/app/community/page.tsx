@@ -8,7 +8,7 @@ import { MilestoneProgressCard } from '@/components/community/milestone-progress
 import { CommunityNetworkVisualizer } from '@/components/community/community-network-visualizer';
 import { HelpFriendDialog } from '@/components/community/help-friend-dialog';
 
-export default function ReferralsPage() {
+export default function CommunityPage() {
   return (
     <AppLayout>
       <div className="space-y-8">
