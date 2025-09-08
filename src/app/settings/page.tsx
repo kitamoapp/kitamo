@@ -16,6 +16,45 @@ import type { Setting } from '@/hooks/use-settings';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MfaCard } from '@/components/settings/mfa-card';
 import { ThemeCard } from '@/components/settings/theme-card';
+import { useSubscription } from '@/hooks/use-subscription';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Shield, User, Briefcase, Award, Gem } from 'lucide-react';
+import type { SubscriptionTier } from '@/lib/types';
+
+
+const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
+  const getIcon = () => {
+    switch (tier.name) {
+        case 'Free': return <Shield className="h-4 w-4" />;
+        case 'Personal': return <User className="h-4 w-4" />;
+        case 'Lite': return <Briefcase className="h-4 w-4" />;
+        case 'Pro': return <Award className="h-4 w-4" />;
+        case 'Max': return <Gem className="h-4 w-4" />;
+        default: return <Shield className="h-4 w-4" />;
+    }
+  };
+
+  return (
+    <Badge
+      className={cn(
+        'text-base gap-2',
+        tier.name === 'Max' && 'border-sky-500/50 text-sky-500 bg-sky-500/10',
+        tier.name === 'Pro' && 'border-amber-500/50 text-amber-500 bg-amber-500/10',
+        tier.name === 'Lite' && 'border-slate-500/50 text-slate-500 bg-slate-500/10',
+        tier.name === 'Personal' && 'border-green-500/50 text-green-500 bg-green-500/10',
+        tier.name === 'Free' && 'border-gray-500/50 text-gray-500 bg-gray-500/10'
+      )}
+      variant="outline"
+    >
+      {getIcon()}
+      {tier.name}
+    </Badge>
+  );
+};
+
 
 function SettingsSkeleton() {
   return (
@@ -79,6 +118,9 @@ function SettingsSkeleton() {
 
 export default function SettingsPage() {
   const { settings, updateSetting, isLoaded } = useSettings();
+  const { currentTier } = useSubscription();
+  const router = useRouter();
+
 
   const handleSettingChange = async (setting: Setting, checked: boolean) => {
     await updateSetting(setting, checked);
@@ -126,6 +168,20 @@ export default function SettingsPage() {
                 checked={settings.biometricLogin}
                 onCheckedChange={(checked) => handleSettingChange('biometricLogin', checked)}
               />
+            </div>
+             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-x-4 rounded-lg border p-4">
+                <div className="space-y-0.5">
+                    <p className="text-base font-medium">Subscription Plan</p>
+                    <div className="flex items-center gap-2">
+                        <p className="text-sm text-muted-foreground">
+                            You are currently on the
+                        </p>
+                         <PlanBadge tier={currentTier} />
+                    </div>
+                </div>
+                <Button onClick={() => router.push('/subscriptions')} variant="outline" className='mt-4 sm:mt-0 w-full sm:w-auto'>
+                    Manage Subscription
+                </Button>
             </div>
              <div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
               <div className="space-y-0.5">
