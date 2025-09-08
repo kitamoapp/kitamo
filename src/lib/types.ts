@@ -58,6 +58,7 @@ export type Reminder = {
     category: string;
     date: string;
     recurrence: 'none' | 'daily' | 'weekly' | 'monthly';
+    sendNotification?: boolean;
 };
 
 

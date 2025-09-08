@@ -2,10 +2,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Info } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +24,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -40,6 +42,9 @@ import {
 import { useReminders } from '@/context/reminder-context';
 import { expenseCategories } from '@/lib/categories';
 import type { Reminder } from '@/lib/types';
+import { Switch } from '../ui/switch';
+import { useSettings } from '@/hooks/use-settings';
+import { Alert } from '../ui/alert';
 
 
 const formSchema = z.object({
@@ -48,6 +53,7 @@ const formSchema = z.object({
   category: z.string().min(1, 'Please select a category.'),
   date: z.date({ required_error: 'Please select a date.' }),
   recurrence: z.enum(['none', 'daily', 'weekly', 'monthly']),
+  sendNotification: z.boolean().optional(),
 });
 
 interface EditReminderDialogProps {
@@ -60,6 +66,7 @@ export function EditReminderDialog({ reminder, onOpenChange }: EditReminderDialo
   const [open, setOpen] = useState(true);
   const { toast } = useToast();
   const { updateReminder } = useReminders();
+  const { settings } = useSettings();
   
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -67,6 +74,7 @@ export function EditReminderDialog({ reminder, onOpenChange }: EditReminderDialo
     defaultValues: {
         ...reminder,
         date: new Date(reminder.date),
+        sendNotification: reminder.sendNotification || false,
     },
   });
 
@@ -74,6 +82,7 @@ export function EditReminderDialog({ reminder, onOpenChange }: EditReminderDialo
     form.reset({
         ...reminder,
         date: new Date(reminder.date),
+        sendNotification: reminder.sendNotification || false,
     })
   }, [reminder, form]);
 
@@ -228,6 +237,45 @@ export function EditReminderDialog({ reminder, onOpenChange }: EditReminderDialo
                 </FormItem>
               )}
             />
+            
+            <FormField
+              control={form.control}
+              name="sendNotification"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Notify me
+                    </FormLabel>
+                    <FormDescription>
+                      Send a push notification when this is due.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={!settings.pushNotifications}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {!settings.pushNotifications && (
+               <Alert variant="default" className="text-sm p-3">
+                 <div className="flex items-start gap-3">
+                  <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                      To receive notifications, you must first{' '}
+                      <Link href="/settings" className="font-semibold underline">
+                          enable them in settings
+                      </Link>.
+                  </div>
+                 </div>
+               </Alert>
+            )}
+
 
             <DialogFooter>
               <Button type="submit">Save Changes</Button>

@@ -2,10 +2,11 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { BellRing, CalendarIcon, Loader2 } from 'lucide-react';
+import { BellRing, CalendarIcon, Loader2, Info } from 'lucide-react';
 import { useDebounce } from 'use-debounce';
 
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -43,6 +45,9 @@ import { useReminders } from '@/context/reminder-context';
 import { useTransactions } from '@/context/transaction-context';
 import { getSmartSuggestion } from '@/ai/flows/smart-suggestion-flow';
 import { expenseCategories } from '@/lib/categories';
+import { Switch } from '../ui/switch';
+import { useSettings } from '@/hooks/use-settings';
+import { Alert, AlertTitle } from '../ui/alert';
 
 const formSchema = z.object({
   title: z.string().min(1, 'Please enter a title for the reminder.'),
@@ -50,6 +55,7 @@ const formSchema = z.object({
   category: z.string().min(1, 'Please select a category.'),
   date: z.date({ required_error: 'Please select a date.' }),
   recurrence: z.enum(['none', 'daily', 'weekly', 'monthly']),
+  sendNotification: z.boolean(),
 });
 
 export function SetReminderDialog() {
@@ -57,6 +63,7 @@ export function SetReminderDialog() {
   const { toast } = useToast();
   const { addReminder } = useReminders();
   const { transactions } = useTransactions();
+  const { settings } = useSettings();
   const [isFetchingSuggestion, setIsFetchingSuggestion] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -67,6 +74,7 @@ export function SetReminderDialog() {
       category: '',
       date: new Date(),
       recurrence: 'none',
+      sendNotification: false,
     },
   });
 
@@ -133,6 +141,7 @@ export function SetReminderDialog() {
       category: '',
       date: new Date(),
       recurrence: 'none',
+      sendNotification: false,
     });
     setOpen(false);
   }
@@ -283,6 +292,44 @@ export function SetReminderDialog() {
                 </FormItem>
               )}
             />
+            
+            <FormField
+              control={form.control}
+              name="sendNotification"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Notify me
+                    </FormLabel>
+                    <FormDescription>
+                      Send a push notification when this is due.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={!settings.pushNotifications}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {!settings.pushNotifications && (
+               <Alert variant="default" className="text-sm p-3">
+                 <div className="flex items-start gap-3">
+                  <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                      To receive notifications, you must first{' '}
+                      <Link href="/settings" className="font-semibold underline">
+                          enable them in settings
+                      </Link>.
+                  </div>
+                 </div>
+               </Alert>
+            )}
 
             <DialogFooter>
               <Button type="submit">Save Reminder</Button>
