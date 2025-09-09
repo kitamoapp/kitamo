@@ -42,6 +42,7 @@ export function SubscriptionComparisonTable({
   const { paymentMethods, addPaymentMethod } = usePaymentMethods();
   const [isClient, setIsClient] = React.useState(false);
   const [isPurchasing, setIsPurchasing] = React.useState<string | null>(null);
+  const [showPaymentDialog, setShowPaymentDialog] = React.useState(false);
   const [selectedTier, setSelectedTier] = React.useState<SubscriptionTier | null>(null);
 
   React.useEffect(() => {
@@ -52,10 +53,10 @@ export function SubscriptionComparisonTable({
   
   const handleChoosePlan = async (tier: SubscriptionTier) => {
     setIsPurchasing(tier.name);
+    setSelectedTier(tier);
     // If no payment methods, show the form to add one.
     if (!hasPaymentMethod) {
-        setSelectedTier(tier);
-        // The dialog will open. The form submission will handle the purchase.
+        setShowPaymentDialog(true);
         setIsPurchasing(null);
         return;
     }
@@ -66,16 +67,17 @@ export function SubscriptionComparisonTable({
         description: `You are now subscribed to the ${tier.name} plan.`,
     });
     setIsPurchasing(null);
+    setSelectedTier(null);
     router.push('/dashboard');
   };
 
   const handlePaymentMethodAdded = (values: PaymentMethodValues) => {
-    const newMethod = addPaymentMethod(values);
-    // Now that a payment method is added, proceed with the original plan selection.
+    addPaymentMethod(values);
+    setShowPaymentDialog(false);
     if (selectedTier) {
+        // Automatically proceed with the purchase after adding the card
         handleChoosePlan(selectedTier);
     }
-    setSelectedTier(null); // Close the dialog
   }
 
 
@@ -188,13 +190,21 @@ export function SubscriptionComparisonTable({
       </Card>
       
       <Dialog
-        open={!!selectedTier && !hasPaymentMethod}
-        onOpenChange={(open) => !open && setSelectedTier(null)}
+        open={showPaymentDialog}
+        onOpenChange={(open) => {
+            setShowPaymentDialog(open)
+            if (!open) {
+                setSelectedTier(null);
+            }
+        }}
       >
         <DialogContent>
           <PaymentMethodForm 
             onSubmit={handlePaymentMethodAdded}
-            onCancel={() => setSelectedTier(null)}
+            onCancel={() => {
+                setShowPaymentDialog(false)
+                setSelectedTier(null)
+            }}
             isSubscriptionContext={true}
           />
         </DialogContent>
