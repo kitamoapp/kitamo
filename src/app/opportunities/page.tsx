@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTransactions } from '@/context/transaction-context';
-import { useSubscription } from '@/hooks/use-subscription';
 import {
   getFinancialOpportunities,
   type FinancialOpportunity,
@@ -43,10 +42,9 @@ export default function OpportunitiesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { transactions } = useTransactions();
-  const { currentTier } = useSubscription();
   const router = useRouter();
 
-  const canUseFeature = currentTier.name !== 'Free';
+  const canUseFeature = true;
 
   useEffect(() => {
     if (!canUseFeature) {

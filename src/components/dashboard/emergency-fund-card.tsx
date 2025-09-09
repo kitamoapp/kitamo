@@ -17,7 +17,6 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Progress } from '../ui/progress';
 import { useCurrency } from '@/context/currency-context';
 import { cn } from '@/lib/utils';
-import { useSubscription } from '@/hooks/use-subscription';
 import { UpgradeCard } from '../upgrade-card';
 import { Button } from '../ui/button';
 import { SetGoalDialog } from './set-goal-dialog';
@@ -27,7 +26,6 @@ export function EmergencyFundCard() {
   const { transactions } = useTransactions();
   const { reminders } = useReminders();
   const { formatCurrency } = useCurrency();
-  const { currentTier } = useSubscription();
   const { emergencyFundGoal, setEmergencyFundGoal } = useGoals();
 
   const [advice, setAdvice] = useState('');
@@ -37,7 +35,7 @@ export function EmergencyFundCard() {
   const [currentFund, setCurrentFund] = useState(0);
   const [showGoalDialog, setShowGoalDialog] = useState(false);
 
-  const canUseFeature = currentTier.name !== 'Free';
+  const canUseFeature = true;
   const displayTarget = emergencyFundGoal || recommendedTarget;
 
   useEffect(() => {

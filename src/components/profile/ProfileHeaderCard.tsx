@@ -4,7 +4,6 @@
 import { useState, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Camera, Trash2, Users, Shield, Award, Gem, Briefcase, User as UserIcon } from 'lucide-react';
-import { useSubscription } from '@/hooks/use-subscription';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -21,9 +20,9 @@ interface ProfileHeaderCardProps {
   email: string;
 }
 
-const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
+const PlanBadge = ({ tierName }: { tierName: string }) => {
   const getIcon = () => {
-    switch (tier.name) {
+    switch (tierName) {
         case 'Free': return <Shield className="h-4 w-4" />;
         case 'Lite': return <Briefcase className="h-4 w-4" />;
         case 'Pro': return <Award className="h-4 w-4" />;
@@ -36,22 +35,21 @@ const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
     <Badge
       className={cn(
         'text-base gap-2',
-        tier.name === 'Max' && 'border-sky-500/50 text-sky-500 bg-sky-500/10',
-        tier.name === 'Pro' && 'border-amber-500/50 text-amber-500 bg-amber-500/10',
-        tier.name === 'Lite' && 'border-slate-500/50 text-slate-500 bg-slate-500/10',
-        tier.name === 'Free' && 'border-gray-500/50 text-gray-500 bg-gray-500/10'
+        tierName === 'Max' && 'border-sky-500/50 text-sky-500 bg-sky-500/10',
+        tierName === 'Pro' && 'border-amber-500/50 text-amber-500 bg-amber-500/10',
+        tierName === 'Lite' && 'border-slate-500/50 text-slate-500 bg-slate-500/10',
+        tierName === 'Free' && 'border-gray-500/50 text-gray-500 bg-gray-500/10'
       )}
       variant="outline"
     >
       {getIcon()}
-      {tier.name}
+      {tierName}
     </Badge>
   );
 };
 
 
 export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
-  const { currentTier } = useSubscription();
   const { referredUsers } = useReferredUsers();
   const router = useRouter();
   const { toast } = useToast();
@@ -155,7 +153,7 @@ export function ProfileHeaderCard({ fullName, email }: ProfileHeaderCardProps) {
         <div className="flex justify-around items-center text-center mb-4">
             <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Current Plan</p>
-                <PlanBadge tier={currentTier} />
+                <PlanBadge tierName="Free" />
             </div>
              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Community Size</p>

@@ -30,7 +30,6 @@ import { expenseCategories } from '@/lib/categories';
 import { useBudgets } from '@/context/budget-context';
 import { ScrollArea } from '../ui/scroll-area';
 import { useCurrency } from '@/context/currency-context';
-import { useSubscription } from '@/hooks/use-subscription';
 import { useTransactions } from '@/context/transaction-context';
 import { createBudget } from '@/ai/flows/create-budget-flow';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
@@ -45,10 +44,9 @@ export function SetBudgetDialog() {
   const { budgets, setBudget } = useBudgets();
   const { currency } = useCurrency();
   const { transactions } = useTransactions();
-  const { currentTier } = useSubscription();
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const canUseSmartBudget = currentTier.name !== 'Free';
+  const canUseSmartBudget = true;
 
   const defaultValues = expenseCategories.reduce((acc, category) => {
     acc[category.value] = budgets[category.value] || 0;

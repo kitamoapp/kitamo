@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { CurrencyProvider } from '@/context/currency-context';
 import { TransactionProvider } from '@/context/transaction-context';
 import { ThemeProvider } from '@/components/theme-provider';
-import { SubscriptionProvider } from '@/context/subscription-context';
 import { ReferredUserProvider } from '@/context/referred-user-context';
 import { BudgetProvider } from '@/context/budget-context';
 import { ReminderProvider } from '@/context/reminder-context';
@@ -57,7 +56,6 @@ export default function RootLayout({
             <CurrencyProvider>
               <TransactionProvider>
                 <ReferredUserProvider>
-                  <SubscriptionProvider>
                     <BudgetProvider>
                       <ReminderProvider>
                         <PaymentMethodProvider>
@@ -67,7 +65,6 @@ export default function RootLayout({
                         </PaymentMethodProvider>
                       </ReminderProvider>
                     </BudgetProvider>
-                  </SubscriptionProvider>
                 </ReferredUserProvider>
               </TransactionProvider>
             </CurrencyProvider>

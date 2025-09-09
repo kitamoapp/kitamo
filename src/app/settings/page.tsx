@@ -16,7 +16,6 @@ import type { SettingKey } from '@/hooks/use-settings';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MfaCard } from '@/components/settings/mfa-card';
 import { ThemeCard } from '@/components/settings/theme-card';
-import { useSubscription } from '@/hooks/use-subscription';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
@@ -28,9 +27,9 @@ import { ChangePasswordCard } from '@/components/settings/change-password-card';
 import { BiometricLoginCard } from '@/components/settings/biometric-login-card';
 
 
-const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
+const PlanBadge = ({ tierName }: { tierName: string }) => {
   const getIcon = () => {
-    switch (tier.name) {
+    switch (tierName) {
         case 'Free': return <Shield className="h-4 w-4" />;
         case 'Personal': return <User className="h-4 w-4" />;
         case 'Lite': return <Briefcase className="h-4 w-4" />;
@@ -44,16 +43,16 @@ const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
     <Badge
       className={cn(
         'text-base gap-2',
-        tier.name === 'Max' && 'border-sky-500/50 text-sky-500 bg-sky-500/10',
-        tier.name === 'Pro' && 'border-amber-500/50 text-amber-500 bg-amber-500/10',
-        tier.name === 'Lite' && 'border-slate-500/50 text-slate-500 bg-slate-500/10',
-        tier.name === 'Personal' && 'border-green-500/50 text-green-500 bg-green-500/10',
-        tier.name === 'Free' && 'border-gray-500/50 text-gray-500 bg-gray-500/10'
+        tierName === 'Max' && 'border-sky-500/50 text-sky-500 bg-sky-500/10',
+        tierName === 'Pro' && 'border-amber-500/50 text-amber-500 bg-amber-500/10',
+        tierName === 'Lite' && 'border-slate-500/50 text-slate-500 bg-slate-500/10',
+        tierName === 'Personal' && 'border-green-500/50 text-green-500 bg-green-500/10',
+        tierName === 'Free' && 'border-gray-500/50 text-gray-500 bg-gray-500/10'
       )}
       variant="outline"
     >
       {getIcon()}
-      {tier.name}
+      {tierName}
     </Badge>
   );
 };
@@ -121,7 +120,6 @@ function SettingsSkeleton() {
 
 export default function SettingsPage() {
   const { settings, updateSetting, isLoaded } = useSettings();
-  const { currentTier } = useSubscription();
   const router = useRouter();
 
 
@@ -198,7 +196,7 @@ export default function SettingsPage() {
                         <p className="text-sm text-muted-foreground">
                             You are currently on the
                         </p>
-                         <PlanBadge tier={currentTier} />
+                         <PlanBadge tierName="Free" />
                     </div>
                 </div>
                 <Button onClick={() => router.push('/subscriptions')} variant="outline" className='mt-4 sm:mt-0 w-full sm:w-auto'>

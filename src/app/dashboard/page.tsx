@@ -27,7 +27,6 @@ import { FinancialSummaryChart } from '@/components/dashboard/financial-summary-
 import { useCurrency } from '@/context/currency-context';
 import type { Currency } from '@/lib/types';
 import { ExpenseBreakdownChart } from '@/components/dashboard/expense-breakdown-chart';
-import { useSubscription } from '@/hooks/use-subscription';
 import { UpgradeCard } from '@/components/upgrade-card';
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
@@ -100,7 +99,6 @@ const OpportunitiesCard = () => (
 export default function DashboardPage() {
   const { currency, formatCurrency } = useCurrency();
   const { transactions } = useTransactions();
-  const { currentTier } = useSubscription();
   const {
     setupBiometrics,
     showBiometricPrompt,
@@ -143,10 +141,8 @@ export default function DashboardPage() {
 
   const BalanceIcon = currencyIcons[currency] || DollarSign;
 
-  const canViewAdvancedAnalytics =
-    currentTier.name === 'Pro' || currentTier.name === 'Max';
-    
-  const canViewInsights = currentTier.name !== 'Free';
+  const canViewAdvancedAnalytics = true;
+  const canViewInsights = true;
 
   return (
     <>

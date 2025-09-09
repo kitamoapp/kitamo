@@ -7,7 +7,6 @@ import { useCurrency } from '@/context/currency-context';
 import type { SubscriptionTier } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Check, X, Loader2, CheckCircle, Minus } from 'lucide-react';
-import { useSubscription } from '@/hooks/use-subscription';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
 import type { BillingCycle } from '@/app/subscriptions/page';
@@ -30,7 +29,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import type { PurchasesStoreProduct } from '@revenuecat/purchases-js';
 
 interface SubscriptionComparisonTableProps {
   billingCycle: BillingCycle;
@@ -40,44 +38,25 @@ export function SubscriptionComparisonTable({
   billingCycle,
 }: SubscriptionComparisonTableProps) {
   const { convertAndFormatCurrency, formatCurrency } = useCurrency();
-  const { currentTier, offerings, purchasePackage, isLoaded, isPurchasing } = useSubscription();
   const router = useRouter();
   const { toast } = useToast();
   const [isClient, setIsClient] = React.useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = React.useState(false);
+  const [isPurchasing, setIsPurchasing] = React.useState(false);
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
   
   const handleChoosePlan = async (tier: SubscriptionTier) => {
-    if (!offerings) return;
-  
-    const pkg = (billingCycle === 'monthly'
-      ? offerings.monthly
-      : offerings.annual
-    )?.find(p => {
-      const tierForProduct = subscriptionTiers.find(t => t.priceId === p.identifier || t.annualPriceId === p.identifier);
-      return tierForProduct?.name === tier.name;
-    });
-
-    if (pkg) {
-      await purchasePackage(pkg);
-      // Check if the purchase was successful (tier might have changed)
-      // The dialog will now be controlled by the `isPurchasing` state
-      if (!isPurchasing) {
-         setShowSuccessDialog(true);
-      }
-    } else {
-        toast({
-            title: "Plan not available",
-            description: "This plan is not available for purchase at the moment.",
-            variant: "destructive"
-        })
-    }
+    setIsPurchasing(true);
+    // Mock purchase
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setIsPurchasing(false);
+    setShowSuccessDialog(true);
   };
 
-  if (!isClient || !isLoaded) {
+  if (!isClient) {
     return (
       <Card>
         <div className="p-6">
@@ -99,8 +78,7 @@ export function SubscriptionComparisonTable({
     );
   }
 
-  // Get packages for the selected billing cycle
-  const packages = billingCycle === 'annually' ? offerings?.annual : offerings?.monthly;
+  const currentTierName = "Free";
 
   return (
     <>
@@ -112,7 +90,7 @@ export function SubscriptionComparisonTable({
               {subscriptionTiers.map((tier) => (
                 <TableHead
                   key={tier.name}
-                  className={cn('text-center', tier.name === currentTier.name && "text-primary")}
+                  className={cn('text-center', tier.name === currentTierName && "text-primary")}
                 >
                   <p className="text-lg font-semibold">{tier.name}</p>
                   <div className="text-sm">
@@ -170,12 +148,12 @@ export function SubscriptionComparisonTable({
                 <TableCell key={`${tier.name}-footer`} className="text-center p-4">
                   <Button
                     className="w-full"
-                    disabled={tier.name === currentTier.name || isPurchasing}
+                    disabled={tier.name === currentTierName || isPurchasing}
                     onClick={() => handleChoosePlan(tier)}
-                    variant={tier.name === currentTier.name ? 'outline' : 'default'}
+                    variant={tier.name === currentTierName ? 'outline' : 'default'}
                   >
                     {isPurchasing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {tier.name === currentTier.name
+                    {tier.name === currentTierName
                       ? 'Current Plan'
                       : 'Choose Plan'}
                   </Button>
@@ -197,9 +175,7 @@ export function SubscriptionComparisonTable({
               Upgrade Successful!
             </DialogTitle>
             <DialogDescription className="text-center">
-              You are now subscribed to the{' '}
-              <span className="font-bold">{currentTier?.name}</span> plan.
-              Welcome aboard!
+              You are now subscribed to a new plan. Welcome aboard!
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -14,15 +14,14 @@ import {
   CardTitle,
 } from '../ui/card';
 import { Progress } from '../ui/progress';
-import { useSubscription } from '@/hooks/use-subscription';
 
 export function CommunityProgressCard() {
   const { convertAndFormatCurrency } = useCurrency();
-  const { currentTier, totalEarnings } = useSubscription();
   const router = useRouter();
 
-  const earnsCommission = currentTier.commissionRate > 0;
-  const earningCap = currentTier.earningCap;
+  const earnsCommission = true;
+  const totalEarnings = 0;
+  const earningCap = 5000;
   
   const progress = earningCap > 0 && earningCap !== Infinity 
     ? (totalEarnings / earningCap) * 100 
