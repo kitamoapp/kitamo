@@ -25,6 +25,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (
+    config,
+    { isServer }
+  ) => {
+    // This is to prevent the error: "Module not found: Can't resolve 'react-native'"
+    // See: https://github.com/facebook/react-native/issues/28773
+    config.resolve.alias = {
+        ...(config.resolve.alias || {}),
+        'react-native$': 'react-native-web',
+    }
+
+
+    return config
+  },
 };
 
 if (process.env.NODE_ENV === 'development') {
