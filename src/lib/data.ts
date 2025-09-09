@@ -38,22 +38,6 @@ export const subscriptionTiers: SubscriptionTier[] = [
     earningCap: 0,
   },
   {
-    name: 'Personal',
-    price: 149,
-    annualPrice: 1490,
-    priceId: 'price_php_personal_plus_monthly',
-    annualPriceId: 'price_php_personal_plus_annual',
-    features: [
-      { text: 'Basic financial tracking tools', id: 'basic_tracking' },
-      { text: 'Manual budget setup', id: 'manual_budget' },
-      { text: 'AI-Powered financial insights', id: 'ai_insights' },
-      { text: 'AI-Powered "Smart Budget" generation', id: 'ai_budget' },
-      { text: 'Advanced analytics', id: 'advanced_analytics' },
-    ],
-    commissionRate: 0,
-    earningCap: 0,
-  },
-  {
     name: 'Lite',
     price: 299,
     annualPrice: 2870,

@@ -10,9 +10,11 @@ import {
   useCallback,
   useEffect,
 } from 'react';
+import Purchases, { PurchasesStoreProduct, CustomerInfo, PurchasesOffering } from 'react-native-purchases';
 import type { SubscriptionTier, ReferredUser } from '@/lib/types';
 import { subscriptionTiers } from '@/lib/data';
 import { useReferredUsers } from './referred-user-context';
+import { useAuth } from './auth-context';
 
 interface ReferralEarnings {
   totalEarnings: number;
@@ -23,17 +25,15 @@ interface ReferralEarnings {
 
 interface SubscriptionContextType extends ReferralEarnings {
   currentTier: SubscriptionTier;
-  setCurrentTier: (tier: SubscriptionTier) => void;
-  nextTier: SubscriptionTier | undefined;
+  offerings: PurchasesOffering | null;
+  purchasePackage: (pkg: PurchasesStoreProduct) => Promise<void>;
   isLoaded: boolean;
+  isPurchasing: boolean;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
   undefined
 );
-
-const LOCAL_STORAGE_KEY = 'kitamo-subscription-tier';
-
 
 const getDownlineVolume = (
   userId: string,
@@ -112,69 +112,98 @@ const calculateEarnings = (
 
 export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const { referredUsers, isLoaded: usersLoaded } = useReferredUsers();
-  const [currentTier, setCurrentTierState] =
-    useState<SubscriptionTier>(subscriptionTiers[0]);
+  const { user, loading: authLoading } = useAuth();
+
+  const [currentTier, setCurrentTier] = useState<SubscriptionTier>(subscriptionTiers[0]);
+  const [offerings, setOfferings] = useState<PurchasesOffering | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isPurchasing, setIsPurchasing] = useState(false);
+
+  const updateTierFromCustomerInfo = (customerInfo: CustomerInfo) => {
+    const premiumEntitlement = customerInfo.entitlements.active['premium_access'];
+    if (premiumEntitlement) {
+      const tier = subscriptionTiers.find(t => t.priceId === premiumEntitlement.productIdentifier || t.annualPriceId === premiumEntitlement.productIdentifier);
+      if (tier) {
+        setCurrentTier(tier);
+      }
+    } else {
+      setCurrentTier(subscriptionTiers[0]); // Free plan
+    }
+  };
+
 
   useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (item) {
-        const storedTier = JSON.parse(item);
-        const foundTier = subscriptionTiers.find(t => t.name === storedTier.name);
-        if (foundTier) {
-          setCurrentTierState(foundTier);
+    const initRevenueCat = async () => {
+      if (process.env.NEXT_PUBLIC_REVENUECAT_API_KEY) {
+        Purchases.setDebugLogsEnabled(true);
+        Purchases.configure({ apiKey: process.env.NEXT_PUBLIC_REVENUECAT_API_KEY });
+      }
+    };
+    initRevenueCat();
+  }, []);
+
+  useEffect(() => {
+    const setupUser = async () => {
+      if (user) {
+        try {
+          await Purchases.logIn(user.uid);
+          const customerInfo = await Purchases.getCustomerInfo();
+          updateTierFromCustomerInfo(customerInfo);
+          const offerings = await Purchases.getOfferings();
+          if (offerings.current) {
+            setOfferings(offerings.current);
+          }
+        } catch (e) {
+          console.error("RevenueCat setup error:", e);
+        } finally {
+          setIsLoaded(true);
         }
       } else {
-        setCurrentTierState(subscriptionTiers[0]);
+        // Handle user logout
+        try {
+            await Purchases.logOut();
+            setCurrentTier(subscriptionTiers[0]);
+            setOfferings(null);
+        } catch (e) {
+            console.error("RevenueCat logout error:", e);
+        }
       }
-    } catch (error) {
-      console.error('Error reading subscription tier from localStorage', error);
-      setCurrentTierState(subscriptionTiers[0]);
-    }
-    setIsLoaded(true);
-  }, []);
+    };
 
-  const setCurrentTier = useCallback((tier: SubscriptionTier) => {
-    setCurrentTierState(tier);
-  }, []);
-  
-  useEffect(() => {
-    if (isLoaded) {
-       try {
-        window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(currentTier));
-      } catch (error) {
-        console.error('Error saving subscription tier to localStorage', error);
-      }
+    if (!authLoading) {
+      setupUser();
     }
-  }, [currentTier, isLoaded]);
+  }, [user, authLoading]);
 
-  const nextTier: SubscriptionTier | undefined = useMemo(() => {
-    return subscriptionTiers.find((t) => (t.price || 0) > (currentTier.price || 0));
-  }, [currentTier]);
+  const purchasePackage = async (pkg: PurchasesStoreProduct) => {
+    setIsPurchasing(true);
+    try {
+      const { customerInfo } = await Purchases.purchaseStoreProduct(pkg);
+      updateTierFromCustomerInfo(customerInfo);
+    } catch (e: any) {
+        if (!e.userCancelled) {
+            console.error("Purchase error", e);
+        }
+    } finally {
+      setIsPurchasing(false);
+    }
+  };
 
   const { totalEarnings, leftLegVolume, rightLegVolume, payableVolume } =
     useMemo(() => {
-      if (currentTier.name === 'Bronze') {
-        return {
-          totalEarnings: 0,
-          leftLegVolume: 0,
-          rightLegVolume: 0,
-          payableVolume: 0,
-        };
-      }
       return calculateEarnings(currentTier, referredUsers);
     }, [currentTier, referredUsers]);
 
   const value = {
     currentTier,
-    setCurrentTier,
-    nextTier,
+    offerings,
+    purchasePackage,
     totalEarnings,
     leftLegVolume,
     rightLegVolume,
     payableVolume,
     isLoaded: isLoaded && usersLoaded,
+    isPurchasing,
   };
 
   return (

@@ -38,7 +38,7 @@ import { subscriptionTiers } from '@/lib/data';
 
 const formSchema = z.object({
   name: z.string().min(1, 'Please enter a name.'),
-  plan: z.enum(['Free', 'Personal', 'Lite', 'Pro', 'Max']),
+  plan: z.enum(['Free', 'Lite', 'Pro', 'Max']),
   leg: z.enum(['left', 'right']),
 });
 

@@ -18,7 +18,7 @@ export type ReferredUser = {
   status: 'Active' | 'Pending';
   referredBy: string | 'currentUser';
   leg: 'left' | 'right';
-  plan: 'Free' | 'Personal' | 'Lite' | 'Pro' | 'Max';
+  plan: 'Free' | 'Lite' | 'Pro' | 'Max';
 };
 
 export type Currency = 'USD' | 'EUR' | 'JPY' | 'GBP' | 'PHP';
@@ -35,7 +35,7 @@ export type SubscriptionFeature = {
 };
 
 export type SubscriptionTier = {
-  name: 'Free' | 'Personal' | 'Lite' | 'Pro' | 'Max';
+  name: 'Free' | 'Lite' | 'Pro' | 'Max';
   price: number;
   annualPrice?: number;
   priceId: string;
@@ -104,7 +104,7 @@ export type PaymentMethodValues = {
 export type NewReferredUser = {
   name: string;
   leg: 'left' | 'right';
-  plan: 'Free' | 'Personal' | 'Lite' | 'Pro' | 'Max';
+  plan: 'Free' | 'Lite' | 'Pro' | 'Max';
   referredBy?: string; // This can be the invite code
 };
 

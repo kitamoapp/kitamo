@@ -25,7 +25,6 @@ const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
   const getIcon = () => {
     switch (tier.name) {
         case 'Free': return <Shield className="h-4 w-4" />;
-        case 'Personal': return <UserIcon className="h-4 w-4" />;
         case 'Lite': return <Briefcase className="h-4 w-4" />;
         case 'Pro': return <Award className="h-4 w-4" />;
         case 'Max': return <Gem className="h-4 w-4" />;
@@ -40,7 +39,6 @@ const PlanBadge = ({ tier }: { tier: SubscriptionTier }) => {
         tier.name === 'Max' && 'border-sky-500/50 text-sky-500 bg-sky-500/10',
         tier.name === 'Pro' && 'border-amber-500/50 text-amber-500 bg-amber-500/10',
         tier.name === 'Lite' && 'border-slate-500/50 text-slate-500 bg-slate-500/10',
-        tier.name === 'Personal' && 'border-green-500/50 text-green-500 bg-green-500/10',
         tier.name === 'Free' && 'border-gray-500/50 text-gray-500 bg-gray-500/10'
       )}
       variant="outline"

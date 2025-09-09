@@ -23,7 +23,6 @@ const PlanIcon = ({ plan }: { plan: ReferredUser['plan']}) => {
     const tier = subscriptionTiers.find(t => t.name === plan);
     switch (plan) {
         case 'Free': return <Shield className="h-4 w-4 text-gray-500" />;
-        case 'Personal': return <User className="h-4 w-4 text-green-500" />;
         case 'Lite': return <Briefcase className="h-4 w-4 text-slate-500" />;
         case 'Pro': return <Award className="h-4 w-4 text-amber-500" />;
         case 'Max': return <Gem className="h-4 w-4 text-sky-500" />;
