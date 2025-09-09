@@ -31,7 +31,10 @@ const nextConfig: NextConfig = {
   ) => {
     // This is to prevent the error: "Module not found: Can't resolve 'react-native'"
     // See: https://github.com/facebook/react-native/issues/28773
-    config.externals = [...config.externals, 'react-native'];
+    config.resolve.alias = {
+        ...(config.resolve.alias || {}),
+        'react-native$': 'react-native-web',
+    }
 
 
     return config
