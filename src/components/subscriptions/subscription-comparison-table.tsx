@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { useCurrency } from '@/context/currency-context';
-import type { SubscriptionTier } from '@/lib/types';
+import type { PaymentMethod, SubscriptionTier } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Check, X, Loader2, CheckCircle, Minus } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -23,12 +23,11 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { usePaymentMethods } from '@/context/payment-method-context';
+import { PaymentMethodForm } from '../payment-method-form';
+import type { PaymentMethodValues } from '@/lib/types';
 
 interface SubscriptionComparisonTableProps {
   billingCycle: BillingCycle;
@@ -40,21 +39,45 @@ export function SubscriptionComparisonTable({
   const { convertAndFormatCurrency, formatCurrency } = useCurrency();
   const router = useRouter();
   const { toast } = useToast();
+  const { paymentMethods, addPaymentMethod } = usePaymentMethods();
   const [isClient, setIsClient] = React.useState(false);
-  const [showSuccessDialog, setShowSuccessDialog] = React.useState(false);
-  const [isPurchasing, setIsPurchasing] = React.useState(false);
+  const [isPurchasing, setIsPurchasing] = React.useState<string | null>(null);
+  const [selectedTier, setSelectedTier] = React.useState<SubscriptionTier | null>(null);
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const hasPaymentMethod = paymentMethods.length > 0;
   
   const handleChoosePlan = async (tier: SubscriptionTier) => {
-    setIsPurchasing(true);
+    setIsPurchasing(tier.name);
+    // If no payment methods, show the form to add one.
+    if (!hasPaymentMethod) {
+        setSelectedTier(tier);
+        // The dialog will open. The form submission will handle the purchase.
+        setIsPurchasing(null);
+        return;
+    }
     // Mock purchase
     await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsPurchasing(false);
-    setShowSuccessDialog(true);
+    toast({
+        title: "Upgrade Successful!",
+        description: `You are now subscribed to the ${tier.name} plan.`,
+    });
+    setIsPurchasing(null);
+    router.push('/dashboard');
   };
+
+  const handlePaymentMethodAdded = (values: PaymentMethodValues) => {
+    const newMethod = addPaymentMethod(values);
+    // Now that a payment method is added, proceed with the original plan selection.
+    if (selectedTier) {
+        handleChoosePlan(selectedTier);
+    }
+    setSelectedTier(null); // Close the dialog
+  }
+
 
   if (!isClient) {
     return (
@@ -148,11 +171,11 @@ export function SubscriptionComparisonTable({
                 <TableCell key={`${tier.name}-footer`} className="text-center p-4">
                   <Button
                     className="w-full"
-                    disabled={tier.name === currentTierName || isPurchasing}
+                    disabled={tier.name === currentTierName || !!isPurchasing}
                     onClick={() => handleChoosePlan(tier)}
                     variant={tier.name === currentTierName ? 'outline' : 'default'}
                   >
-                    {isPurchasing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isPurchasing === tier.name && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {tier.name === currentTierName
                       ? 'Current Plan'
                       : 'Choose Plan'}
@@ -162,33 +185,18 @@ export function SubscriptionComparisonTable({
             </TableRow>
           </TableBody>
         </Table>
-      </Card>
+      </Card>>
       
       <Dialog
-        open={showSuccessDialog}
-        onOpenChange={(open) => !open && setShowSuccessDialog(false)}
+        open={!!selectedTier && !hasPaymentMethod}
+        onOpenChange={(open) => !open && setSelectedTier(null)}
       >
         <DialogContent>
-          <DialogHeader>
-            <CheckCircle className="mx-auto mb-4 h-12 w-12 text-green-500" />
-            <DialogTitle className="text-center text-2xl">
-              Upgrade Successful!
-            </DialogTitle>
-            <DialogDescription className="text-center">
-              You are now subscribed to a new plan. Welcome aboard!
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              className="w-full"
-              onClick={() => {
-                setShowSuccessDialog(false);
-                router.push('/dashboard');
-              }}
-            >
-              Go to Dashboard
-            </Button>
-          </DialogFooter>
+          <PaymentMethodForm 
+            onSubmit={handlePaymentMethodAdded}
+            onCancel={() => setSelectedTier(null)}
+            isSubscriptionContext={true}
+          />
         </DialogContent>
       </Dialog>
     </>
