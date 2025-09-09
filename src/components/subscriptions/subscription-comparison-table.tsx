@@ -30,7 +30,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import type { PurchasesStoreProduct } from 'react-native-purchases';
+import type { PurchasesStoreProduct } from '@revenuecat/purchases-js';
 
 interface SubscriptionComparisonTableProps {
   billingCycle: BillingCycle;

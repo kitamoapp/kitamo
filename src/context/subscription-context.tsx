@@ -7,14 +7,20 @@ import {
   useState,
   ReactNode,
   useMemo,
-  useCallback,
   useEffect,
 } from 'react';
-import Purchases, { PurchasesStoreProduct, CustomerInfo, PurchasesOffering } from '@revenuecat/purchases-js';
+import type { CustomerInfo, PurchasesOffering, PurchasesStoreProduct } from '@revenuecat/purchases-js';
 import type { SubscriptionTier, ReferredUser } from '@/lib/types';
 import { subscriptionTiers } from '@/lib/data';
 import { useReferredUsers } from './referred-user-context';
 import { useAuth } from './auth-context';
+import { 
+  loginUser, 
+  logoutUser, 
+  getOfferings, 
+  purchasePackage as purchase, 
+  getCustomerInfo 
+} from '@/lib/revenuecat';
 
 interface ReferralEarnings {
   totalEarnings: number;
@@ -119,7 +125,11 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
 
-  const updateTierFromCustomerInfo = (customerInfo: CustomerInfo) => {
+  const updateTierFromCustomerInfo = (customerInfo: CustomerInfo | null) => {
+    if (!customerInfo) {
+      setCurrentTier(subscriptionTiers[0]);
+      return;
+    }
     const premiumEntitlement = customerInfo.entitlements.active['premium_access'];
     if (premiumEntitlement) {
       const tier = subscriptionTiers.find(t => t.priceId === premiumEntitlement.productIdentifier || t.annualPriceId === premiumEntitlement.productIdentifier);
@@ -133,35 +143,22 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
-    const initRevenueCat = async () => {
-      if (process.env.NEXT_PUBLIC_REVENUECAT_API_KEY) {
-        Purchases.setDebugLogsEnabled(true);
-        Purchases.configure({ apiKey: process.env.NEXT_PUBLIC_REVENUECAT_API_KEY });
-      }
-    };
-    initRevenueCat();
-  }, []);
-
-  useEffect(() => {
     const setupUser = async () => {
       if (user) {
         try {
-          await Purchases.logIn(user.uid);
-          const customerInfo = await Purchases.getCustomerInfo();
+          await loginUser(user.uid);
+          const customerInfo = await getCustomerInfo();
           updateTierFromCustomerInfo(customerInfo);
-          const offerings = await Purchases.getOfferings();
-          if (offerings.current) {
-            setOfferings(offerings.current);
-          }
+          const offerings = await getOfferings();
+          setOfferings(offerings);
         } catch (e) {
           console.error("RevenueCat setup error:", e);
         } finally {
           setIsLoaded(true);
         }
       } else {
-        // Handle user logout
         try {
-            await Purchases.logOut();
+            await logoutUser();
             setCurrentTier(subscriptionTiers[0]);
             setOfferings(null);
         } catch (e) {
@@ -178,7 +175,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const purchasePackage = async (pkg: PurchasesStoreProduct) => {
     setIsPurchasing(true);
     try {
-      const { customerInfo } = await Purchases.purchaseStoreProduct(pkg);
+      const { customerInfo } = await purchase(pkg);
       updateTierFromCustomerInfo(customerInfo);
     } catch (e: any) {
         if (!e.userCancelled) {
