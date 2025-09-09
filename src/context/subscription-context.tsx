@@ -10,7 +10,7 @@ import {
   useCallback,
   useEffect,
 } from 'react';
-import Purchases, { PurchasesStoreProduct, CustomerInfo, PurchasesOffering } from 'react-native-purchases';
+import Purchases, { PurchasesStoreProduct, CustomerInfo, PurchasesOffering } from '@revenuecat/purchases-js';
 import type { SubscriptionTier, ReferredUser } from '@/lib/types';
 import { subscriptionTiers } from '@/lib/data';
 import { useReferredUsers } from './referred-user-context';
