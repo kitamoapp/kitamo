@@ -185,7 +185,7 @@ export function SubscriptionComparisonTable({
             </TableRow>
           </TableBody>
         </Table>
-      </Card>>
+      </Card>
       
       <Dialog
         open={!!selectedTier && !hasPaymentMethod}
